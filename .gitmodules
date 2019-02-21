@@ -1,0 +1,24 @@
+[submodule "src/libexpat"]
+	path = src/libexpat
+	url = git://github.com/libexpat/libexpat.git
+[submodule "src/libusb"]
+	path = src/libusb
+	url = git://github.com/libusb/libusb.git
+[submodule "src/libftdi"]
+	path = src/libftdi
+	url = git://developer.intra2net.com/libftdi
+[submodule "src/riscv-binutils"]
+	path = src/riscv-binutils
+	url = git://github.com/sifive/riscv-binutils-gdb.git
+[submodule "src/riscv-gcc"]
+	path = src/riscv-gcc
+	url = git://github.com/sifive/riscv-gcc.git
+[submodule "src/riscv-gdb"]
+	path = src/riscv-gdb
+	url = git://sourceware.org/git/binutils-gdb.git
+[submodule "src/riscv-newlib"]
+	path = src/riscv-newlib
+	url = git://github.com/sifive/riscv-newlib.git
+[submodule "src/riscv-openocd"]
+	path = src/riscv-openocd
+	url = git://github.com/riscv/riscv-openocd.git
