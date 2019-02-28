@@ -61,8 +61,8 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.1.0-2019.01.0
-ROCD_VERSION := 0.10.0-2019.01.0
+RGT_VERSION := 8.2.0-2019.01.0-scie-rve-b1
+ROCD_VERSION := 0.10.0-2019.01.0-scie-rve-b1
 
 # Misc common variables
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
@@ -144,7 +144,6 @@ WITH_ARCH := rv64imafdc
 WITH_CMODEL := medany
 NEWLIB_TUPLE := riscv64-unknown-elf
 MULTILIB_FLAGS := --enable-multilib
-NEWLIB_MULTILIB_NAMES := rv32i-ilp32 rv32iac-ilp32 rv32im-ilp32 rv32imac-ilp32 rv32imafc-ilp32f rv32imafdc-ilp32d rv64imac-lp64 rv64imafc-lp64f rv64imafdc-lp64d
 GCC_CHECKING_FLAGS := --enable-checking=yes
 GCC_SYSTEM_ZLIB_FLAGS := --without-system-zlib
 
