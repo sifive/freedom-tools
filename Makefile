@@ -144,6 +144,7 @@ WITH_ARCH := rv64imafdc
 WITH_CMODEL := medany
 NEWLIB_TUPLE := riscv64-unknown-elf
 MULTILIB_FLAGS := --enable-multilib
+NEWLIB_MULTILIBS := rv32e-ilp32e--c rv32em-ilp32e--c rv32eac-ilp32e-- rv32emac-ilp32e-- rv32i-ilp32--c rv32im-ilp32--c rv32iac-ilp32-- rv32imac-ilp32-- rv32imafc-ilp32f-rv32imafdc- rv32imafdc-ilp32d-- rv64imac-lp64-- rv64imafc-lp64f-rv64imafdc- rv64imafdc-lp64d--
 GCC_CHECKING_FLAGS := --enable-checking=yes
 GCC_SYSTEM_ZLIB_FLAGS := --without-system-zlib
 
@@ -188,6 +189,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp:
 	mkdir -p $(dir $@)
 	cp -a $(SRC_RBU) $(SRC_RGCC) $(SRC_RGDB) $(SRC_RNL) $(dir $@)
 	cd $(dir $@)/riscv-gcc; ./contrib/download_prerequisites
+	cd $(dir $@)/riscv-gcc/gcc/config/riscv; rm t-elf-multilib; ./multilib-generator $(NEWLIB_MULTILIBS) > t-elf-multilib
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
