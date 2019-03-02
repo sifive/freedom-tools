@@ -61,8 +61,8 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.2.0-2019.01.0-scie-rve-b1
-ROCD_VERSION := 0.10.0-2019.01.0-scie-rve-b1
+RGT_VERSION := 8.2.0-2019.01.0-scie-rve-b2
+ROCD_VERSION := 0.10.0-2019.01.0-scie-rve-b2
 
 # Misc common variables
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
