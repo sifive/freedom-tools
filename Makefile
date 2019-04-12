@@ -61,8 +61,8 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.2.0-2019.02.0-sifive-7-integration
-ROCD_VERSION := 0.10.0-2019.02.0-sifive-7-integration
+RGT_VERSION := 8.2.0-2019.02.0
+ROCD_VERSION := 0.10.0-2019.02.0
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
