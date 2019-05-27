@@ -1,6 +1,9 @@
 # The default target
-.PHONY: all
+.PHONY: all toolchain openocd qemu
 all:
+toolchain:
+openocd:
+qemu:
 
 BINDIR := bin
 OBJDIR := obj
@@ -18,15 +21,25 @@ DARWIN ?= x86_64-apple-darwin
 ifneq ($(wildcard /etc/redhat-release),)
 NATIVE ?= $(REDHAT)
 all: redhat
+toolchain: redhat-gcc
+openocd: redhat-openocd
 else ifeq ($(DISTRIB_ID),Ubuntu)
 ifeq ($(shell uname -m),x86_64)
 NATIVE ?= $(UBUNTU64)
 all: ubuntu64
+toolchain: ubuntu64-gcc
+openocd: ubuntu64-openocd
+qemu: ubuntu64-qemu
 else
 NATIVE ?= $(UBUNTU32)
 all: ubuntu32
+toolchain: ubuntu32-gcc
+openocd: ubuntu32-openocd
 endif
 all: win64
+toolchain: win64-gcc
+openocd: win64-openocd
+qemu: win64-qemu
 else ifeq ($(shell uname),Darwin)
 NATIVE ?= $(DARWIN)
 LIBTOOLIZE ?= glibtoolize
@@ -34,6 +47,9 @@ TAR ?= gtar
 SED ?= gsed
 AWK ?= gawk
 all: darwin
+toolchain: darwin-gcc
+openocd: darwin-openocd
+qemu: darwin-qemu
 else
 $(error Unknown host)
 endif
@@ -62,9 +78,11 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.2.0-2019.04.0-qemu0
-ROCD_VERSION := 0.10.0-2019.04.0-qemu0
-RQEMU_VERSION := 3.1.0-2019.04.0-qemu0
+RGT_VERSION := 8.2.0-2019.05.0
+RGDB_VERSION := 8.3.0-2019.05.0
+RGBU_VERSION := 2.32.0-2019.05.0
+ROCD_VERSION := 0.10.0-2019.05.0
+RQEMU_VERSION := 3.1.0-2019.05.0
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
@@ -72,8 +90,7 @@ export PATH
 
 # The actual output of this repository is a set of tarballs.
 .PHONY: win64 win64-openocd win64-gcc win64-qemu
-#win64: win64-openocd win64-gcc
-win64: win64-qemu
+win64: win64-openocd win64-gcc win64-qemu
 win64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).zip
 win64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).src.zip
 win64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).tar.gz
@@ -97,7 +114,7 @@ win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).tar.gz
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.tar.gz
 .PHONY: ubuntu64 ubuntu64-gcc ubuntu64-openocd ubuntu64-qemu
-ubuntu64: ubuntu64-qemu
+ubuntu64: ubuntu64-gcc ubuntu64-openocd ubuntu64-qemu
 ubuntu64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64).tar.gz
@@ -117,8 +134,7 @@ redhat-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).src.tar.g
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).tar.gz
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).src.tar.gz
 .PHONY: darwin darwin-gcc darwin-openocd darwin-qemu
-#darwin: darwin-gcc darwin-openocd
-darwin: darwin-qemu
+darwin: darwin-gcc darwin-openocd darwin-qemu
 darwin-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).tar.gz
 darwin-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).src.tar.gz
 darwin-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(DARWIN).tar.gz
@@ -245,6 +261,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
 		--target=$(NEWLIB_TUPLE) \
 		$($($@_TARGET)-rgt-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive Binutils $(RGBU_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(BINUTILS_TARGET_FLAGS) \
 		--disable-gdb \
@@ -270,6 +288,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
 		--target=$(NEWLIB_TUPLE) \
 		$($($@_TARGET)-rgt-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GDB $(RGDB_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
 		--enable-gdb \
@@ -295,6 +315,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp: \
 		--target=$(NEWLIB_TUPLE) \
 		$($($@_TARGET)-rgt-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GCC $(RGT_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-shared \
 		--disable-threads \
 		--disable-tls \
@@ -416,6 +438,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp: \
 		--target=$(NEWLIB_TUPLE) \
 		$($($@_TARGET)-rgt-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GCC $(RGT_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-shared \
 		--disable-threads \
 		--enable-languages=c,c++ \
