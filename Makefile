@@ -700,6 +700,7 @@ $(OBJDIR)/%/build/riscv-qemu/stamp:
 	cd $(dir $@); mv pixman-0.38.0 pixman
 	cp -a $(SRC_RQEMU) $(dir $@)
 	$(SED) -i -f scripts/qemu-common.sed $(dir $@)/riscv-qemu/include/qemu-common.h
+	$(SED) -i -f scripts/qemu-vl.sed $(dir $@)/riscv-qemu/vl.c
 	date > $@
 
 $(OBJ_NATIVE)/build/riscv-qemu/zlib/stamp: \
