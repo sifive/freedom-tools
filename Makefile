@@ -699,6 +699,7 @@ $(OBJDIR)/%/build/riscv-qemu/stamp:
 	cd $(dir $@); $(TAR) -xf pixman-0.38.0.tar.gz
 	cd $(dir $@); mv pixman-0.38.0 pixman
 	cp -a $(SRC_RQEMU) $(dir $@)
+	$(SED) -i -f scripts/qemu-common.sed $(dir $@)/riscv-qemu/include/qemu-common.h
 	date > $@
 
 $(OBJ_NATIVE)/build/riscv-qemu/zlib/stamp: \
@@ -845,6 +846,7 @@ $(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp: \
 	cd $(dir $@) && $($($@_TARGET)-rqemu-vars) ./configure \
 		$($($@_TARGET)-rqemu-cross) \
 		--prefix=$(abspath $($@_INSTALL))$($($@_TARGET)-rqemu-bindir) \
+		--with-pkgversion="SiFive QEMU $(RQEMU_VERSION)" \
 		--target-list=riscv32-softmmu,riscv64-softmmu \
 		--interp-prefix=$(abspath $($@_INSTALL))/sysroot \
 		--disable-libusb &>make-configure.log
