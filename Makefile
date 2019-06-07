@@ -718,9 +718,9 @@ $(OBJDIR)/%/build/riscv-qemu/stamp:
 
 $(OBJ_NATIVE)/build/riscv-qemu/zlib/stamp: \
 		$(OBJ_NATIVE)/build/riscv-qemu/stamp
-	cd $(dir $@) && $($($@_TARGET)-deps-vars) ./configure \
+	cd $(dir $@) && $($(NATIVE)-deps-vars) ./configure \
 		--prefix=$(abspath $(OBJ_NATIVE)/install/riscv-qemu-$(RQEMU_VERSION)-$(NATIVE)) \
-		$($($@_TARGET)-zlib-configure) &>make-configure.log
+		$($(NATIVE)-zlib-configure) &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
 	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
 	date > $@
