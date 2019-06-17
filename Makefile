@@ -82,8 +82,8 @@ SRC_LIBFTDI  := $(SRCDIR)/libftdi
 RGT_VERSION := 8.2.0-2019.05.3
 RGDB_VERSION := 8.3.0-2019.05.3
 RGBU_VERSION := 2.32.0-2019.05.3
-ROCD_VERSION := 0.10.0-2019.05.3
-RQEMU_VERSION := 3.1.0-2019.05.3
+ROCD_VERSION := 0.10.0-2019.05.1
+RQEMU_VERSION := 3.1.0-2019.05.1
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
