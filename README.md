@@ -17,6 +17,9 @@ we use to build these tools.
     * OpenOCD
     * LibFTDI
     * LibUSB
+* RISC-V QEMU (`riscv-qemu-*`)
+    * QEMU (riscv32-softmmu + riscv64-softmmu)
+    * ZLib, LibFFI, LibIConv, GetText, GLib, LibPNG, JPEG, PixMan
 
 All the packages has a uniquely named root folder, making it easy to untar/unzip'ing
 multiple versions next to each other.
