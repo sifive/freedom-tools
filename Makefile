@@ -136,12 +136,12 @@ $(WIN64)-expat-configure     := --host=$(WIN64)
 $(WIN64)-libusb-configure    := --host=$(WIN64)
 $(WIN64)-libftdi-configure   := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(SRC_LIBFTDI)/cmake/Toolchain-x86_64-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/include/libusb-1.0)"
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
-$(UBUNTU32)-rgcc-configure   := --without-system-zlib
+$(UBUNTU32)-rgcc-configure   := --with-system-zlib
 $(UBUNTU32)-rocd-configure   := --host=i686-linux-gnu
 $(UBUNTU32)-expat-configure  := --host=i686-linux-gnu
 $(UBUNTU32)-libusb-configure := --host=i686-linux-gnu
 $(UBUNTU64)-rgt-host         := --host=x86_64-linux-gnu
-$(UBUNTU64)-rgcc-configure   := --without-system-zlib
+$(UBUNTU64)-rgcc-configure   := --with-system-zlib
 $(UBUNTU64)-rocd-configure   := --host=x86_64-linux-gnu
 $(UBUNTU64)-expat-configure  := --host=x86_64-linux-gnu
 $(UBUNTU64)-libusb-configure := --host=x86_64-linux-gnu

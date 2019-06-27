@@ -39,7 +39,7 @@ Several standard packages are needed to build the tools on the different support
 
 On Ubuntu, executing the following command should suffice:
 
-    $ sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64
+    $ sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64 python texlive
 
 On OS X, you can use [Homebrew](http://brew.sh) to install the dependencies:
 
