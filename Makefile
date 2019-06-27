@@ -1,6 +1,9 @@
 # The default target
-.PHONY: all
+.PHONY: all toolchain openocd qemu
 all:
+toolchain:
+openocd:
+qemu:
 
 BINDIR := bin
 OBJDIR := obj
@@ -18,15 +21,26 @@ DARWIN ?= x86_64-apple-darwin
 ifneq ($(wildcard /etc/redhat-release),)
 NATIVE ?= $(REDHAT)
 all: redhat
+toolchain: redhat-gcc
+openocd: redhat-openocd
+qemu: redhat-qemu
 else ifeq ($(DISTRIB_ID),Ubuntu)
 ifeq ($(shell uname -m),x86_64)
 NATIVE ?= $(UBUNTU64)
 all: ubuntu64
+toolchain: ubuntu64-gcc
+openocd: ubuntu64-openocd
+qemu: ubuntu64-qemu
 else
 NATIVE ?= $(UBUNTU32)
 all: ubuntu32
+toolchain: ubuntu32-gcc
+openocd: ubuntu32-openocd
 endif
 all: win64
+toolchain: win64-gcc
+openocd: win64-openocd
+qemu: win64-qemu
 else ifeq ($(shell uname),Darwin)
 NATIVE ?= $(DARWIN)
 LIBTOOLIZE ?= glibtoolize
@@ -34,6 +48,9 @@ TAR ?= gtar
 SED ?= gsed
 AWK ?= gawk
 all: darwin
+toolchain: darwin-gcc
+openocd: darwin-openocd
+qemu: darwin-qemu
 else
 $(error Unknown host)
 endif
@@ -56,21 +73,25 @@ SRC_RGCC     := $(SRCDIR)/riscv-gcc
 SRC_RGDB     := $(SRCDIR)/riscv-gdb
 SRC_RNL      := $(SRCDIR)/riscv-newlib
 SRC_ROCD     := $(SRCDIR)/riscv-openocd
+SRC_RQEMU    := $(SRCDIR)/riscv-qemu
 SRC_EXPAT    := $(SRCDIR)/libexpat/expat
 SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.2.0-2019.02.0
-ROCD_VERSION := 0.10.0-2019.02.0
+RGT_VERSION := 8.2.0-2019.05.3
+RGDB_VERSION := 8.3.0-2019.05.3
+RGBU_VERSION := 2.32.0-2019.05.3
+ROCD_VERSION := 0.10.0-2019.05.1
+RQEMU_VERSION := 3.1.0-2019.05.1
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
 export PATH
 
 # The actual output of this repository is a set of tarballs.
-.PHONY: win64 win64-openocd win64-gcc
-win64: win64-openocd win64-gcc
+.PHONY: win64 win64-openocd win64-gcc win64-qemu
+win64: win64-openocd win64-gcc win64-qemu
 win64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).zip
 win64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).src.zip
 win64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).tar.gz
@@ -79,6 +100,10 @@ win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).zip
 win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).src.zip
 win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).tar.gz
 win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).src.tar.gz
+win64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(WIN64).zip
+win64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(WIN64).src.zip
+win64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(WIN64).tar.gz
+win64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(WIN64).src.tar.gz
 .PHONY: win32 win32-openocd win32-gcc
 win32: win32-openocd win32-gcc
 win32-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN32).zip
@@ -89,47 +114,61 @@ win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).tar.gz
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.tar.gz
-.PHONY: ubuntu64 ubuntu64-gcc ubuntu64-openocd
-ubuntu64: ubuntu64-gcc ubuntu64-openocd
+.PHONY: ubuntu64 ubuntu64-gcc ubuntu64-openocd ubuntu64-qemu
+ubuntu64: ubuntu64-gcc ubuntu64-openocd ubuntu64-qemu
 ubuntu64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64).src.tar.gz
+ubuntu64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64).tar.gz
+ubuntu64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64).src.tar.gz
 .PHONY: ubuntu32 ubuntu32-gcc ubuntu32-openocd
 ubuntu32: ubuntu32-gcc ubuntu32-openocd
 ubuntu32-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32).tar.gz
 ubuntu32-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32).src.tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).src.tar.gz
-.PHONY: redhat redhat-gcc redhat-openocd
-redhat: redhat-gcc redhat-openocd
+.PHONY: redhat redhat-gcc redhat-openocd redhat-qemu
+redhat: redhat-gcc redhat-openocd redhat-qemu
 redhat-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).tar.gz
 redhat-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).src.tar.gz
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).tar.gz
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).src.tar.gz
-.PHONY: darwin darwin-gcc darwin-openocd
-darwin: darwin-gcc darwin-openocd
+redhat-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT).tar.gz
+redhat-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT).src.tar.gz
+.PHONY: darwin darwin-gcc darwin-openocd darwin-qemu
+darwin: darwin-gcc darwin-openocd darwin-qemu
 darwin-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).tar.gz
 darwin-gcc: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).src.tar.gz
 darwin-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(DARWIN).tar.gz
 darwin-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(DARWIN).src.tar.gz
+darwin-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN).tar.gz
+darwin-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN).src.tar.gz
 
 
 # Some special riscv-gnu-toolchain configure flags for specific targets.
 $(WIN32)-rgt-host            := --host=$(WIN32)
 $(WIN32)-rgcc-configure      := --without-system-zlib
-$(WIN32)-rocd-vars           := LIBUSB1_LIBS="-L$(abspath $(OBJ_WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32))/lib" CFLAGS="-O2"
+$(WIN32)-rocd-vars           := LIBUSB1_CFLAGS="-I$(abspath $(OBJ_WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32))/include/libusb-1.0" LIBUSB1_LIBS="-L$(abspath $(OBJ_WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32))/lib -lusb-1.0" CFLAGS="-O2"
 $(WIN32)-rocd-configure      := --host=$(WIN32)
 $(WIN32)-expat-configure     := --host=$(WIN32)
 $(WIN32)-libusb-configure    := --host=$(WIN32)
 $(WIN32)-libftdi-configure   := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(SRC_LIBFTDI)/cmake/Toolchain-i686-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32)/include/libusb-1.0)"
 $(WIN64)-rgt-host            := --host=$(WIN64)
 $(WIN64)-rgcc-configure      := --without-system-zlib
-$(WIN64)-rocd-vars           := LIBUSB1_LIBS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib" CFLAGS="-O2"
+$(WIN64)-rocd-vars           := LIBUSB1_CFLAGS="-I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include/libusb-1.0" LIBUSB1_LIBS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -lusb-1.0" CFLAGS="-O2"
 $(WIN64)-rocd-configure      := --host=$(WIN64)
+$(WIN64)-rqemu-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include"
+$(WIN64)-rqemu-host          := --host=$(WIN64)
+$(WIN64)-rqemu-cross         := --cross-prefix=x86_64-w64-mingw32-
+$(WIN64)-rqemu-bindir        := /bin
 $(WIN64)-expat-configure     := --host=$(WIN64)
 $(WIN64)-libusb-configure    := --host=$(WIN64)
 $(WIN64)-libftdi-configure   := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(SRC_LIBFTDI)/cmake/Toolchain-x86_64-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/include/libusb-1.0)"
+$(WIN64)-gettext-configure   := --enable-threads=windows
+$(WIN64)-glib-vars           := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include"
+$(WIN64)-libpng-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include"
+$(WIN64)-pixman-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include"
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
 $(UBUNTU32)-rgcc-configure   := --without-system-zlib
 $(UBUNTU32)-rocd-configure   := --host=i686-linux-gnu
@@ -138,22 +177,37 @@ $(UBUNTU32)-libusb-configure := --host=i686-linux-gnu
 $(UBUNTU64)-rgt-host         := --host=x86_64-linux-gnu
 $(UBUNTU64)-rgcc-configure   := --without-system-zlib
 $(UBUNTU64)-rocd-configure   := --host=x86_64-linux-gnu
+$(UBUNTU64)-rqemu-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-expat-configure  := --host=x86_64-linux-gnu
 $(UBUNTU64)-libusb-configure := --host=x86_64-linux-gnu
+$(UBUNTU64)-gettext-configure:= --enable-threads=posix
+$(UBUNTU64)-glib-vars        := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64))/lib -I$(abspath $(OBJ_UBUNTU64)/install/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64))/include"
 $(DARWIN)-rgcc-configure     := --with-system-zlib
 $(DARWIN)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-O2" LDFLAGS="-Wl,-framework,IOKit -Wl,-framework,CoreFoundation"
+$(DARWIN)-rqemu-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework Carbon" PATH=/usr/local/opt/gettext/bin:$(PATH)
 $(DARWIN)-expat-configure    := --disable-shared --enable-static
 $(DARWIN)-libusb-configure   := --disable-shared --enable-static
 $(DARWIN)-libftdi-configure  := -DCMAKE_SHARED_LINKER_FLAGS="-framework corefoundation -framework iokit"
+$(DARWIN)-gettext-configure  := --enable-threads=posix
+$(DARWIN)-glib-configure     := --enable-static
+$(DARWIN)-glib-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib -I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" PATH=/usr/local/opt/gettext/bin:$(PATH)
 $(REDHAT)-rgcc-configure     := --with-system-zlib
 $(REDHAT)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig" CFLAGS="-O2" LDFLAGS="-lrt"
+$(REDHAT)-rqemu-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib/pkgconfig" CFLAGS="-fPIC -I$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/include -Wno-unused-result" CPPFLAGS="-fPIC -I$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib -liconv" LIBS="-L$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib -liconv" SIFIVE_LIBS_QGA="-L$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib -liconv"
+$(REDHAT)-zlib-configure     := -static
+$(REDHAT)-gettext-configure  := --enable-threads=posix
+$(REDHAT)-glib-configure     := --enable-static
+$(REDHAT)-glib-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib/pkgconfig" CFLAGS="-fPIC -L$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib -I$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/include"
+$(REDHAT)-libpng-vars        := CFLAGS="-fPIC" CPPFLAGS="-fPIC"
+$(REDHAT)-pixman-vars        := CFLAGS="-fPIC" CPPFLAGS="-fPIC"
+$(REDHAT)-deps-vars          := CFLAGS="-fPIC"
 
 # Some general riscv-gnu-toolchain flags and list of multilibs for the multilibs generator script
 WITH_ABI := lp64d
 WITH_ARCH := rv64imafdc
 WITH_CMODEL := medany
 NEWLIB_TUPLE := riscv64-unknown-elf
-MULTILIBS_GEN := rv32e-ilp32e--c rv32em-ilp32e--c rv32eac-ilp32e-- rv32emac-ilp32e-- rv32i-ilp32--c rv32im-ilp32--c rv32iac-ilp32-- rv32imac-ilp32-- rv32imafc-ilp32f-rv32imafdc- rv32imafdc-ilp32d-- rv64imac-lp64-- rv64imafc-lp64f-rv64imafdc- rv64imafdc-lp64d--
+MULTILIBS_GEN := rv32e-ilp32e--c rv32em-ilp32e--c rv32eac-ilp32e-- rv32emac-ilp32e-- rv32i-ilp32--c rv32im-ilp32--c rv32imf-ilp32f--c rv32iac-ilp32-- rv32imac-ilp32-- rv32imafc-ilp32f-rv32imafdc- rv32imafdc-ilp32d-- rv64i-lp64--c rv64im-lp64--c rv64imf-lp64f--c rv64iac-lp64-- rv64imac-lp64-- rv64imafc-lp64f-rv64imafdc- rv64imafdc-lp64d--
 
 CFLAGS_FOR_TARGET := $(CFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
 CXXFLAGS_FOR_TARGET := $(CXXFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
@@ -218,6 +272,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
 		--target=$(NEWLIB_TUPLE) \
 		$($($@_TARGET)-rgt-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive Binutils $(RGBU_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(BINUTILS_TARGET_FLAGS) \
 		--disable-gdb \
@@ -243,6 +299,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
 		--target=$(NEWLIB_TUPLE) \
 		$($($@_TARGET)-rgt-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GDB $(RGDB_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
 		--enable-gdb \
@@ -268,6 +326,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp: \
 		--target=$(NEWLIB_TUPLE) \
 		$($($@_TARGET)-rgt-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GCC $(RGT_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-shared \
 		--disable-threads \
 		--disable-tls \
@@ -389,6 +449,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp: \
 		--target=$(NEWLIB_TUPLE) \
 		$($($@_TARGET)-rgt-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GCC $(RGT_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-shared \
 		--disable-threads \
 		--enable-languages=c,c++ \
@@ -489,6 +551,7 @@ $(OBJDIR)/%/build/riscv-openocd/configure:
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
 	cp -a $(SRC_ROCD)/* $(dir $@)
+	$(SED) -i -f scripts/openocd.sed -e "s/SIFIVE_PACKAGE_VERSION/SiFive OpenOCD $(ROCD_VERSION)/" $(dir $@)/src/openocd.c
 	find $(dir $@) -iname configure.ac | $(SED) s/configure.ac/m4/ | xargs mkdir -p
 	cd $(dir $@); ./bootstrap nosubmodule &>make-bootstrap.log
 	touch -c $@
@@ -553,7 +616,8 @@ $(OBJDIR)/%/stamps/libftdi/install.stamp: \
 	$(MAKE) -C $($@_BUILD) &>$($@_BUILD)/make-build.log
 	$(MAKE) -C $($@_BUILD) install &>$($@_BUILD)/make-install.log
 	rm -f $(abspath $($@_INSTALL))/lib/libftdi*.dylib
-	rm -f $(abspath $($@_INSTALL))/lib/libftdi*.so.*
+	rm -f $(abspath $($@_INSTALL))/lib/libftdi*.so*
+	rm -f $(abspath $($@_INSTALL))/lib64/libftdi*.so*
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -562,6 +626,254 @@ $(OBJDIR)/%/build/libftdi/CMakeLists.txt:
 	mkdir -p $(dir $@)
 	cp -a $(SRC_LIBFTDI)/* $(dir $@)
 	touch -c $@
+
+# The QEMU builds go here
+$(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.zip: \
+		$(OBJDIR)/%/stamps/riscv-qemu/install.stamp \
+		$(OBJDIR)/%/stamps/riscv-qemu/libs.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.zip,%,$@))
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$($@_TARGET)/install; zip -rq $(abspath $@) riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET)
+
+$(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.src.zip: \
+		$(OBJDIR)/%/stamps/riscv-qemu/install.stamp \
+		$(OBJDIR)/%/stamps/riscv-qemu/libs.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.src.zip,%,$@))
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-qemu
+
+$(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.tar.gz: \
+		$(OBJDIR)/%/stamps/riscv-qemu/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.tar.gz,%,$@))
+	mkdir -p $(dir $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/install -c riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET) | gzip > $(abspath $@)
+
+$(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.src.tar.gz: \
+		$(OBJDIR)/%/stamps/riscv-qemu/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.src.tar.gz,%,$@))
+	mkdir -p $(dir $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-qemu | gzip > $(abspath $@)
+
+$(OBJDIR)/%/stamps/riscv-qemu/install.stamp: \
+		$(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp
+	mkdir -p $(dir $@)
+	date > $@
+
+# We might need some extra target libraries for QEMU
+$(OBJ_NATIVE)/stamps/riscv-qemu/libs.stamp: \
+		$(OBJ_NATIVE)/stamps/riscv-qemu/install.stamp
+	date > $@
+
+$(OBJ_WIN64)/stamps/riscv-qemu/libs.stamp: \
+		$(OBJ_WIN64)/stamps/riscv-qemu/install.stamp
+	$(WIN64)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libgcc_s_seh*.dll" | xargs cp -t $(OBJDIR)/$(WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64)/bin
+	$(WIN64)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libssp*.dll" | xargs cp -t $(OBJDIR)/$(WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64)/bin
+	$(WIN64)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libwinpthread*.dll" | xargs cp -t $(OBJDIR)/$(WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64)/bin
+	date > $@
+
+$(OBJ_WIN32)/stamps/riscv-qemu/libs.stamp: \
+		$(OBJ_WIN32)/stamps/riscv-qemu/install.stamp
+	$(WIN32)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libgcc_s_seh*.dll" | xargs cp -t $(OBJDIR)/$(WIN32)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN32)/bin
+	$(WIN32)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libssp*.dll" | xargs cp -t $(OBJDIR)/$(WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN32)/bin
+	$(WIN32)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libwinpthread*.dll" | xargs cp -t $(OBJDIR)/$(WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN32)/bin
+	date > $@
+
+$(OBJDIR)/%/build/riscv-qemu/stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
+	rm -rf $($@_INSTALL)
+	mkdir -p $($@_INSTALL)
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	cd $(dir $@); curl -L -f -s -o zlib-1.2.11.tar.gz http://zlib.net/fossils/zlib-1.2.11.tar.gz
+	cd $(dir $@); $(TAR) -xf zlib-1.2.11.tar.gz
+	cd $(dir $@); mv zlib-1.2.11 zlib
+	cd $(dir $@); curl -L -f -s -o libffi-3.2.1.tar.gz ftp://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz
+	cd $(dir $@); $(TAR) -xf libffi-3.2.1.tar.gz
+	cd $(dir $@); mv libffi-3.2.1 libffi
+	cd $(dir $@); curl -L -f -s -o libiconv-1.15.tar.gz https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.15.tar.gz
+	cd $(dir $@); $(TAR) -xf libiconv-1.15.tar.gz
+	cd $(dir $@); mv libiconv-1.15 libiconv
+	cd $(dir $@); curl -L -f -s -o gettext-0.19.8.1.tar.gz https://ftp.gnu.org/pub/gnu/gettext/gettext-0.19.8.1.tar.gz
+	cd $(dir $@); $(TAR) -xf gettext-0.19.8.1.tar.gz
+	cd $(dir $@); mv gettext-0.19.8.1 gettext
+	cd $(dir $@); curl -L -f -s -o glib-2.56.4.tar.xz http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.56/glib-2.56.4.tar.xz
+	cd $(dir $@); $(TAR) -xf glib-2.56.4.tar.xz
+	cd $(dir $@); mv glib-2.56.4 glib
+	cd $(dir $@); curl -L -f -s -o libpng-1.6.36.tar.gz https://sourceforge.net/projects/libpng/files/libpng16/1.6.36/libpng-1.6.36.tar.gz
+	cd $(dir $@); $(TAR) -xf libpng-1.6.36.tar.gz
+	cd $(dir $@); mv libpng-1.6.36 libpng
+	cd $(dir $@); curl -L -f -s -o jpegsrc.v9b.tar.gz http://www.ijg.org/files/jpegsrc.v9b.tar.gz
+	cd $(dir $@); $(TAR) -xf jpegsrc.v9b.tar.gz
+	cd $(dir $@); mv jpeg-9b jpeg
+	cd $(dir $@); curl -L -f -s -o pixman-0.38.0.tar.gz https://cairographics.org/releases/pixman-0.38.0.tar.gz
+	cd $(dir $@); $(TAR) -xf pixman-0.38.0.tar.gz
+	cd $(dir $@); mv pixman-0.38.0 pixman
+	cp -a $(SRC_RQEMU) $(dir $@)
+	$(SED) -i -f scripts/qemu-configure.sed $(dir $@)/riscv-qemu/configure
+	$(SED) -i -f scripts/qemu-common.sed $(dir $@)/riscv-qemu/include/qemu-common.h
+	$(SED) -i -f scripts/qemu-vl.sed $(dir $@)/riscv-qemu/vl.c
+	date > $@
+
+$(OBJ_NATIVE)/build/riscv-qemu/zlib/stamp: \
+		$(OBJ_NATIVE)/build/riscv-qemu/stamp
+	cd $(dir $@) && $($(NATIVE)-deps-vars) ./configure \
+		--prefix=$(abspath $(OBJ_NATIVE)/install/riscv-qemu-$(RQEMU_VERSION)-$(NATIVE)) \
+		$($(NATIVE)-zlib-configure) &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJ_WIN64)/build/riscv-qemu/zlib/stamp: \
+		$(OBJ_WIN64)/build/riscv-qemu/stamp
+	$(MAKE) -C $(dir $@) -f win32/Makefile.gcc PREFIX=$(WIN64)- prefix=$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/ &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) -f win32/Makefile.gcc SHARED_MODE=1 install DESTDIR=$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/ INCLUDE_PATH=include LIBRARY_PATH=lib BINARY_PATH=bin &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-qemu/libffi/stamp: \
+		$(OBJDIR)/%/build/riscv-qemu/zlib/stamp \
+		$(OBJDIR)/%/build/riscv-qemu/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/libffi/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/libffi/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-qemu/libffi/stamp,%/build/riscv-qemu,$@))
+	cd $(dir $@) && $($($@_TARGET)-deps-vars) ./configure \
+		$($($@_TARGET)-rqemu-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--enable-static &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-qemu/libiconv/stamp: \
+		$(OBJDIR)/%/build/riscv-qemu/libffi/stamp \
+		$(OBJDIR)/%/build/riscv-qemu/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/libiconv/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/libiconv/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-qemu/libiconv/stamp,%/build/riscv-qemu,$@))
+	cd $(dir $@) && $($($@_TARGET)-deps-vars) ./configure \
+		$($($@_TARGET)-rqemu-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--enable-static &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-qemu/gettext/stamp: \
+		$(OBJDIR)/%/build/riscv-qemu/libiconv/stamp \
+		$(OBJDIR)/%/build/riscv-qemu/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/gettext/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/gettext/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-qemu/gettext/stamp,%/build/riscv-qemu,$@))
+	cd $(dir $@) && $($($@_TARGET)-deps-vars) ./configure \
+		$($($@_TARGET)-rqemu-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--disable-installed-tests \
+		--disable-always-build-tests \
+		--disable-rpath \
+		--disable-java \
+		--disable-native-java \
+		--disable-c++ \
+		--enable-static \
+		$($($@_TARGET)-gettext-configure) &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-qemu/glib/stamp: \
+		$(OBJDIR)/%/build/riscv-qemu/gettext/stamp \
+		$(OBJDIR)/%/build/riscv-qemu/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/glib/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/glib/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-qemu/glib/stamp,%/build/riscv-qemu,$@))
+	mkdir -p $(dir $@)/gio/lib
+	cd $(dir $@) && $($($@_TARGET)-glib-vars) ./configure \
+		$($($@_TARGET)-rqemu-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		$($($@_TARGET)-glib-configure) \
+		--with-libiconv=gnu \
+		--without-pcre \
+		--disable-selinux \
+		--disable-fam \
+		--disable-xattr \
+		--disable-libelf \
+		--disable-libmount \
+		--disable-dtrace \
+		--disable-systemtap \
+		--disable-coverage \
+		--disable-Bsymbolic \
+		--disable-znodelete \
+		--disable-compile-warnings \
+		--disable-installed-tests \
+		--disable-always-build-tests &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-qemu/libpng/stamp: \
+		$(OBJDIR)/%/build/riscv-qemu/libffi/stamp \
+		$(OBJDIR)/%/build/riscv-qemu/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/libpng/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/libpng/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-qemu/libpng/stamp,%/build/riscv-qemu,$@))
+	cd $(dir $@) && $($($@_TARGET)-libpng-vars) ./configure \
+		$($($@_TARGET)-rqemu-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--enable-static &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-qemu/jpeg/stamp: \
+		$(OBJDIR)/%/build/riscv-qemu/libpng/stamp \
+		$(OBJDIR)/%/build/riscv-qemu/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/jpeg/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/jpeg/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-qemu/jpeg/stamp,%/build/riscv-qemu,$@))
+	cd $(dir $@) && $($($@_TARGET)-deps-vars) ./configure \
+		$($($@_TARGET)-rqemu-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--enable-static &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-qemu/pixman/stamp: \
+		$(OBJDIR)/%/build/riscv-qemu/jpeg/stamp \
+		$(OBJDIR)/%/build/riscv-qemu/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/pixman/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/pixman/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-qemu/pixman/stamp,%/build/riscv-qemu,$@))
+	mkdir -p $(dir $@)/test/lib
+	cd $(dir $@) && $($($@_TARGET)-pixman-vars) ./configure \
+		$($($@_TARGET)-rqemu-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--enable-static \
+		--with-gnu-ld \
+		--disable-static-testprogs &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp: \
+		$(OBJDIR)/%/build/riscv-qemu/glib/stamp \
+		$(OBJDIR)/%/build/riscv-qemu/pixman/stamp \
+		$(OBJDIR)/%/build/riscv-qemu/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/riscv-qemu/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-qemu/riscv-qemu/stamp,%/build/riscv-qemu,$@))
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.so*
+	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
+	cd $(dir $@) && $($($@_TARGET)-rqemu-vars) ./configure \
+		$($($@_TARGET)-rqemu-cross) \
+		--prefix=$(abspath $($@_INSTALL))$($($@_TARGET)-rqemu-bindir) \
+		--with-pkgversion="SiFive QEMU $(RQEMU_VERSION)" \
+		--target-list=riscv32-softmmu,riscv64-softmmu \
+		--interp-prefix=$(abspath $($@_INSTALL))/sysroot \
+		--disable-libusb &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
 
 # Targets that don't build anything
 .PHONY: clean
