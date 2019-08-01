@@ -240,7 +240,25 @@ WITH_ABI := lp64d
 WITH_ARCH := rv64imafdc
 WITH_CMODEL := medany
 NEWLIB_TUPLE := riscv64-unknown-elf
-MULTILIBS_GEN := rv32e-ilp32e--c rv32em-ilp32e--c rv32eac-ilp32e-- rv32emac-ilp32e-- rv32i-ilp32--c rv32im-ilp32--c rv32imf-ilp32f--c rv32iac-ilp32-- rv32imac-ilp32-- rv32imafc-ilp32f-rv32imafdc- rv32imafdc-ilp32d-- rv64i-lp64--c rv64im-lp64--c rv64imf-lp64f--c rv64iac-lp64-- rv64imac-lp64-- rv64imafc-lp64f-rv64imafdc- rv64imafdc-lp64d--
+MULTILIBS_GEN := \
+	rv32e-ilp32e--c \
+	rv32em-ilp32e--c \
+	rv32eac-ilp32e-- \
+	rv32emac-ilp32e-- \
+	rv32i-ilp32--c \
+	rv32im-ilp32--c \
+	rv32imf-ilp32f--c \
+	rv32iac-ilp32-- \
+	rv32imac-ilp32-- \
+	rv32imafc-ilp32f-rv32imafdc- \
+	rv32imafdc-ilp32d-- \
+	rv64i-lp64--c \
+	rv64im-lp64--c \
+	rv64imf-lp64f--c \
+	rv64iac-lp64-- \
+	rv64imac-lp64-- \
+	rv64imafc-lp64f-rv64imafdc- \
+	rv64imafdc-lp64d--
 
 CFLAGS_FOR_TARGET := $(CFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
 CXXFLAGS_FOR_TARGET := $(CXXFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
