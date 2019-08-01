@@ -242,15 +242,22 @@ WITH_CMODEL := medany
 NEWLIB_TUPLE := riscv64-unknown-elf
 MULTILIBS_GEN := \
 	rv32e-ilp32e--c \
+	rv32ea-ilp32e--m \
 	rv32em-ilp32e--c \
 	rv32eac-ilp32e-- \
 	rv32emac-ilp32e-- \
 	rv32i-ilp32--c \
+	rv32ia-ilp32--m \
 	rv32im-ilp32--c \
-	rv32imf-ilp32f--c \
+	rv32if-ilp32f-rv32ifd-c \
+	rv32iaf-ilp32f-rv32imaf,rv32iafc-d \
+	rv32imf-ilp32f-rv32imfd-c \
 	rv32iac-ilp32-- \
 	rv32imac-ilp32-- \
 	rv32imafc-ilp32f-rv32imafdc- \
+	rv32ifd-ilp32d--c \
+	rv32imfd-ilp32d--c \
+	rv32iafd-ilp32d-rv32imafd,rv32iafdc- \
 	rv32imafdc-ilp32d-- \
 	rv64i-lp64--c \
 	rv64im-lp64--c \
