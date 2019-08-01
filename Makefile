@@ -260,11 +260,16 @@ MULTILIBS_GEN := \
 	rv32iafd-ilp32d-rv32imafd,rv32iafdc- \
 	rv32imafdc-ilp32d-- \
 	rv64i-lp64--c \
+	rv64ia-lp64--m \
 	rv64im-lp64--c \
-	rv64imf-lp64f--c \
+	rv64if-lp64f-rv64ifd-c \
+	rv64iaf-lp64f-rv64imaf,rv64iafc-d \
+	rv64imf-lp64f-rv64imfd-c \
 	rv64iac-lp64-- \
 	rv64imac-lp64-- \
 	rv64imafc-lp64f-rv64imafdc- \
+	rv64ifd-lp64d--m,c \
+	rv64iafd-lp64d-rv64imafd,rv64iafdc- \
 	rv64imafdc-lp64d--
 
 CFLAGS_FOR_TARGET := $(CFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
