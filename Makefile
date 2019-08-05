@@ -740,6 +740,7 @@ $(OBJDIR)/%/build/riscv-qemu/stamp:
 	cd $(dir $@); mv pixman-0.38.0 pixman
 	cp -a $(SRC_RQEMU) $(dir $@)
 	$(SED) -i -f scripts/qemu-configure.sed $(dir $@)/riscv-qemu/configure
+	$(SED) -i -f scripts/qemu-sifive-e.sed $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
 	$(SED) -i -f scripts/qemu-common.sed $(dir $@)/riscv-qemu/include/qemu-common.h
 	$(SED) -i -f scripts/qemu-vl.sed $(dir $@)/riscv-qemu/vl.c
 	date > $@
@@ -796,12 +797,6 @@ $(OBJDIR)/%/build/riscv-qemu/gettext/stamp: \
 	cd $(dir $@) && $($($@_TARGET)-deps-vars) ./configure \
 		$($($@_TARGET)-rqemu-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
-		--disable-installed-tests \
-		--disable-always-build-tests \
-		--disable-rpath \
-		--disable-java \
-		--disable-native-java \
-		--disable-c++ \
 		--enable-static \
 		$($($@_TARGET)-gettext-configure) &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
@@ -836,6 +831,7 @@ $(OBJDIR)/%/build/riscv-qemu/glib/stamp: \
 		--disable-always-build-tests &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
 	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	rm -rf $(abspath $($@_INSTALL))/share/gdb
 	date > $@
 
 $(OBJDIR)/%/build/riscv-qemu/libpng/stamp: \
