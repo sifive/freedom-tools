@@ -430,6 +430,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib/stamp: \
 		--enable-newlib-io-long-double \
 		--enable-newlib-io-long-long \
 		--enable-newlib-io-c99-formats \
+		--enable-newlib-register-fini \
 		CFLAGS_FOR_TARGET="-Os $(CFLAGS_FOR_TARGET)" \
 		CXXFLAGS_FOR_TARGET="-Os $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
@@ -462,7 +463,6 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano/stamp: \
 		--enable-newlib-nano-formatted-io \
 		--disable-newlib-supplied-syscalls \
 		--disable-nls \
-		--enable-newlib-register-fini \
 		CFLAGS_FOR_TARGET="-Os -ffunction-sections -fdata-sections $(CFLAGS_FOR_TARGET)" \
 		CXXFLAGS_FOR_TARGET="-Os -ffunction-sections -fdata-sections $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
@@ -492,6 +492,11 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp: \
 	for bnls in `find $${bnl} -name libgloss.a`; \
 	do \
 		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libgloss\.a:libgloss_nano.a:g"`; \
+		cp $${bnls} $${inl}$${inls}; \
+	done
+	for bnls in `find $${bnl} -name crt0.0`; \
+	do \
+		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::"`; \
 		cp $${bnls} $${inl}$${inls}; \
 	done
 # Copy nano header files into newlib install dir.
