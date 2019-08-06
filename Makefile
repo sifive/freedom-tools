@@ -402,6 +402,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp: \
 		--disable-libquadmath \
 		--disable-libgomp \
 		--disable-nls \
+		--disable-tm-clone-registry \
 		--src=../riscv-gcc \
 		$($($@_TARGET)-rgcc-configure) \
 		--enable-checking=yes \
@@ -531,6 +532,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp: \
 		--disable-libquadmath \
 		--disable-libgomp \
 		--disable-nls \
+		--disable-tm-clone-registry \
 		--src=../riscv-gcc \
 		$($($@_TARGET)-rgcc-configure) \
 		--enable-checking=yes \
