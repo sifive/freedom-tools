@@ -90,7 +90,7 @@ RGDB_VERSION := 8.3.0-2019.08.0-RC1
 RGBU_VERSION := 2.32.0-2019.08.0-RC1
 ROCD_VERSION := 0.10.0-2019.08.0-RC1
 RQEMU_VERSION := 3.1.0-2019.08.0-RC1
-XC3SP_VERSION := 0.1.2-2019.08.0-RC1-preview1
+XC3SP_VERSION := 0.1.2-2019.08.0-RC1
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
@@ -230,6 +230,9 @@ $(REDHAT)-glib-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install
 $(REDHAT)-libpng-vars        := CFLAGS="-fPIC" CPPFLAGS="-fPIC"
 $(REDHAT)-pixman-vars        := CFLAGS="-fPIC" CPPFLAGS="-fPIC"
 $(REDHAT)-deps-vars          := CFLAGS="-fPIC"
+$(REDHAT)-xdeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib64 -lrt"
+$(REDHAT)-xc3sp-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" CPPFLAGS="-I$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib64 -lrt"
+$(REDHAT)-xc3sp-configure    := -DLIBRT_LIBRARIES="rt"
 
 # Some general riscv-gnu-toolchain flags and list of multilibs for the multilibs generator script
 WITH_ABI := lp64d
@@ -974,6 +977,7 @@ $(OBJDIR)/%/build/xc3sprog/stamp:
 	$(SED) -i -f scripts/xc3sprog.sed -e "s/SIFIVE_PACKAGE_VERSION/SiFive XC3SPROG $(XC3SP_VERSION)/" $(dir $@)/xc3sprog/xc3sprog.cpp
 	$(SED) -i -f scripts/xc3sprog-cmake.sed $(dir $@)/xc3sprog/CMakeLists.txt
 	$(SED) -i -f scripts/xc3sprog-cmake.sed $(dir $@)/xc3sprog/javr/CMakeLists.txt
+	$(SED) -i -f scripts/xc3sprog-mingw32.sed $(dir $@)/xc3sprog/Toolchain-mingw32.cmake
 	date > $@
 
 $(OBJDIR)/%/build/xc3sprog/libusb/stamp: \
@@ -1037,7 +1041,7 @@ $(OBJDIR)/%/build/xc3sprog/xc3sprog/stamp: \
 	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
 	cd $(dir $@) && $($($@_TARGET)-xc3sp-vars) cmake \
 		-DCMAKE_INSTALL_PREFIX:PATH=$(abspath $($@_INSTALL)) \
-		-DCMAKE_EXE_LINKER_FLAGS="-L$(abspath $($@_INSTALL))/lib -pthread" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(abspath $($@_INSTALL))/lib -L$(abspath $($@_INSTALL))/lib64 -pthread" \
 		-DLIBUSB_INCLUDE_DIRS=$(abspath $($@_INSTALL))/include \
 		-DLIBFTDI_LIBRARIES=ftdi1 \
 		$($($@_TARGET)-xc3sp-configure) \
