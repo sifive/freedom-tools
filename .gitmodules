@@ -28,3 +28,6 @@
 [submodule "src/xc3sprog"]
 	path = src/xc3sprog
 	url = git://github.com/sifive/xc3sprog.git
+[submodule "src/trace-decoder"]
+	path = src/trace-decoder
+	url = git://github.com/sifive/trace-decoder.git
