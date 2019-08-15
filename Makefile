@@ -250,8 +250,17 @@ GDB_TARGET_FLAGS := --with-expat=yes $(GDB_TARGET_FLAGS_EXTRA) --with-mpc=no --w
 NEWLIB_CC_FOR_TARGET ?= $(NEWLIB_TUPLE)-gcc
 NEWLIB_CXX_FOR_TARGET ?= $(NEWLIB_TUPLE)-g++
 
+# Extra building package path, use comma to seperated if there is more than one
+# package.
+EXTRA_PACKAGES?=
+COMMA=,
+SPACE=
+SPACE+=
+
 # There's enough % rules that make starts blowing intermediate files away.
 .SECONDARY:
+
+include $(addsuffix /config.mak, $(subst $(COMMA), $(SPACE), $(EXTRA_PACKAGES)))
 
 # Builds riscv-gnu-toolchain for various targets.
 $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.zip: \
