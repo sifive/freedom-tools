@@ -20,6 +20,11 @@ we use to build these tools.
 * RISC-V QEMU (`riscv-qemu-*`)
     * QEMU (riscv32-softmmu + riscv64-softmmu)
     * ZLib, LibFFI, LibIConv, GetText, GLib, LibPNG, JPEG, PixMan
+* Trace Decoder (`trace-decoder-*`)
+    * Trace Decoder
+* XC3SPROG (`xc3sprog-*`)
+    * XC3SPROG
+    * LibUSB, LibUSB-Compat, LibFTDI, LibIConv
 
 All the packages has a uniquely named root folder, making it easy to untar/unzip'ing
 multiple versions next to each other.
