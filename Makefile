@@ -1,10 +1,11 @@
 # The default target
-.PHONY: all toolchain openocd qemu xc3sprog
+.PHONY: all toolchain openocd qemu xc3sprog trace-decoder
 all:
 toolchain:
 openocd:
 qemu:
 xc3sprog:
+trace-decoder:
 
 BINDIR := bin
 OBJDIR := obj
@@ -26,6 +27,7 @@ toolchain: redhat-toolchain
 openocd: redhat-openocd
 qemu: redhat-qemu
 xc3sprog: redhat-xc3sprog
+trace-decoder: redhat-trace-decoder
 else ifeq ($(DISTRIB_ID),Ubuntu)
 ifeq ($(shell uname -m),x86_64)
 NATIVE ?= $(UBUNTU64)
@@ -34,6 +36,7 @@ toolchain: ubuntu64-toolchain
 openocd: ubuntu64-openocd
 qemu: ubuntu64-qemu
 xc3sprog: ubuntu64-xc3sprog
+trace-decoder: ubuntu64-trace-decoder
 else
 NATIVE ?= $(UBUNTU32)
 all: ubuntu32
@@ -45,6 +48,7 @@ toolchain: win64-toolchain
 openocd: win64-openocd
 qemu: win64-qemu
 xc3sprog: win64-xc3sprog
+trace-decoder: win64-trace-decoder
 else ifeq ($(shell uname),Darwin)
 NATIVE ?= $(DARWIN)
 LIBTOOLIZE ?= glibtoolize
@@ -56,6 +60,7 @@ toolchain: darwin-toolchain
 openocd: darwin-openocd
 qemu: darwin-qemu
 xc3sprog: darwin-xc3sprog
+trace-decoder: darwin-trace-decoder
 else
 $(error Unknown host)
 endif
@@ -80,6 +85,7 @@ SRC_RNL      := $(SRCDIR)/riscv-newlib
 SRC_ROCD     := $(SRCDIR)/riscv-openocd
 SRC_RQEMU    := $(SRCDIR)/riscv-qemu
 SRC_XC3SP    := $(SRCDIR)/xc3sprog
+SRC_TDC      := $(SRCDIR)/trace-decoder
 SRC_EXPAT    := $(SRCDIR)/libexpat/expat
 SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
@@ -91,14 +97,15 @@ RGBU_VERSION := 2.32.0-2019.08.0-RC1
 ROCD_VERSION := 0.10.0-2019.08.0-RC1
 RQEMU_VERSION := 3.1.0-2019.08.0-RC1
 XC3SP_VERSION := 0.1.2-2019.08.0-RC1
+TDC_VERSION := 0.0.0-2019.08.0-RC1
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
 export PATH
 
 # The actual output of this repository is a set of tarballs.
-.PHONY: win64 win64-openocd win64-toolchain win64-qemu win64-xc3sprog
-win64: win64-openocd win64-toolchain win64-qemu win64-xc3sprog
+.PHONY: win64 win64-openocd win64-toolchain win64-qemu win64-xc3sprog win64-trace-decoder
+win64: win64-openocd win64-toolchain win64-qemu win64-xc3sprog win64-trace-decoder
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).src.zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).tar.gz
@@ -115,6 +122,10 @@ win64-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(WIN64).zip
 win64-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(WIN64).src.zip
 win64-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(WIN64).tar.gz
 win64-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(WIN64).src.tar.gz
+win64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(WIN64).zip
+win64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(WIN64).src.zip
+win64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(WIN64).tar.gz
+win64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(WIN64).src.tar.gz
 .PHONY: win32 win32-openocd win32-toolchain
 win32: win32-openocd win32-toolchain
 win32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN32).zip
@@ -125,8 +136,8 @@ win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).tar.gz
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.tar.gz
-.PHONY: ubuntu64 ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog
-ubuntu64: ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog
+.PHONY: ubuntu64 ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-xc3sprog
+ubuntu64: ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-xc3sprog
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64).tar.gz
@@ -135,14 +146,16 @@ ubuntu64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64).src.tar.gz
+ubuntu64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(UBUNTU64).tar.gz
+ubuntu64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(UBUNTU64).src.tar.gz
 .PHONY: ubuntu32 ubuntu32-toolchain ubuntu32-openocd
 ubuntu32: ubuntu32-toolchain ubuntu32-openocd
 ubuntu32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32).tar.gz
 ubuntu32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32).src.tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).src.tar.gz
-.PHONY: redhat redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog
-redhat: redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog
+.PHONY: redhat redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-xc3sprog
+redhat: redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-xc3sprog
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).tar.gz
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).src.tar.gz
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).tar.gz
@@ -151,8 +164,10 @@ redhat-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT).tar.gz
 redhat-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT).src.tar.gz
 redhat-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(REDHAT).tar.gz
 redhat-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(REDHAT).src.tar.gz
-.PHONY: darwin darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog
-darwin: darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog
+redhat-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(REDHAT).tar.gz
+redhat-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(REDHAT).src.tar.gz
+.PHONY: darwin darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder
+darwin: darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).tar.gz
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).src.tar.gz
 darwin-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(DARWIN).tar.gz
@@ -161,6 +176,8 @@ darwin-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN).tar.gz
 darwin-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN).src.tar.gz
 darwin-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(DARWIN).tar.gz
 darwin-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(DARWIN).src.tar.gz
+darwin-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(DARWIN).tar.gz
+darwin-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(DARWIN).src.tar.gz
 
 
 # Some special riscv-gnu-toolchain configure flags for specific targets.
@@ -192,6 +209,8 @@ $(WIN64)-xftdi-configure     := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(OBJ_WIN64)/b
 $(WIN64)-xdeps-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/include"
 $(WIN64)-xc3sp-configure     := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(OBJ_WIN64)/build/xc3sprog/xc3sprog/Toolchain-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64)/include/libusb-1.0)"
 $(WIN64)-xc3sp-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/include"
+$(WIN64)-tdc-cross           := x86_64-w64-mingw32-
+$(WIN64)-tdc-binext          := .exe
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
 $(UBUNTU32)-rgcc-configure   := --without-system-zlib
 $(UBUNTU32)-rocd-configure   := --host=i686-linux-gnu
@@ -1052,6 +1071,70 @@ $(OBJDIR)/%/build/xc3sprog/xc3sprog/stamp: \
 	rm -f $(abspath $($@_INSTALL))/bin/iconv
 	rm -f $(abspath $($@_INSTALL))/bin/iconv.exe
 	rm -rf $(abspath $($@_INSTALL))/share
+	date > $@
+
+# The Trace Decoder builds go here
+$(BINDIR)/trace-decoder-$(TDC_VERSION)-%.zip: \
+		$(OBJDIR)/%/stamps/trace-decoder/install.stamp \
+		$(OBJDIR)/%/stamps/trace-decoder/libs.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.zip,%,$@))
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$($@_TARGET)/install; zip -rq $(abspath $@) trace-decoder-$(TDC_VERSION)-$($@_TARGET)
+
+$(BINDIR)/trace-decoder-$(TDC_VERSION)-%.src.zip: \
+		$(OBJDIR)/%/stamps/trace-decoder/install.stamp \
+		$(OBJDIR)/%/stamps/trace-decoder/libs.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.src.zip,%,$@))
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) trace-decoder
+
+$(BINDIR)/trace-decoder-$(TDC_VERSION)-%.tar.gz: \
+		$(OBJDIR)/%/stamps/trace-decoder/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.tar.gz,%,$@))
+	mkdir -p $(dir $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/install -c trace-decoder-$(TDC_VERSION)-$($@_TARGET) | gzip > $(abspath $@)
+
+$(BINDIR)/trace-decoder-$(TDC_VERSION)-%.src.tar.gz: \
+		$(OBJDIR)/%/stamps/trace-decoder/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.src.tar.gz,%,$@))
+	mkdir -p $(dir $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c trace-decoder | gzip > $(abspath $@)
+
+$(OBJDIR)/%/stamps/trace-decoder/install.stamp: \
+		$(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp
+	mkdir -p $(dir $@)
+	date > $@
+
+# We might need some extra target libraries for trace-decoder
+$(OBJ_NATIVE)/stamps/trace-decoder/libs.stamp: \
+		$(OBJ_NATIVE)/stamps/trace-decoder/install.stamp
+	date > $@
+
+$(OBJ_WIN64)/stamps/trace-decoder/libs.stamp: \
+		$(OBJ_WIN64)/stamps/trace-decoder/install.stamp
+	date > $@
+
+$(OBJ_WIN32)/stamps/trace-decoder/libs.stamp: \
+		$(OBJ_WIN32)/stamps/trace-decoder/install.stamp
+	date > $@
+
+$(OBJDIR)/%/build/trace-decoder/stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/trace-decoder/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/trace-decoder/stamp,%/install/trace-decoder-$(TDC_VERSION)-$($@_TARGET),$@))
+	rm -rf $($@_INSTALL)
+	mkdir -p $($@_INSTALL)
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	cp -a $(SRC_TDC) $(dir $@)
+	date > $@
+
+$(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp: \
+		$(OBJDIR)/%/build/trace-decoder/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/trace-decoder/trace-decoder/stamp,%/install/trace-decoder-$(TDC_VERSION)-$($@_TARGET),$@))
+	$(MAKE) -C $(dir $@) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
+	cp $(dir $@)/Debug/dqr$($($@_TARGET)-tdc-binext) $(abspath $($@_INSTALL))
+	cp $(dir $@)/scripts/trace.tcl $(abspath $($@_INSTALL))
 	date > $@
 
 # Targets that don't build anything
