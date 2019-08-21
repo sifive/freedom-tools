@@ -1,11 +1,12 @@
 # The default target
-.PHONY: all toolchain openocd qemu xc3sprog trace-decoder
+.PHONY: all toolchain openocd qemu xc3sprog trace-decoder sdk-utilities
 all:
 toolchain:
 openocd:
 qemu:
 xc3sprog:
 trace-decoder:
+sdk-utilities:
 
 BINDIR := bin
 OBJDIR := obj
@@ -28,6 +29,7 @@ openocd: redhat-openocd
 qemu: redhat-qemu
 xc3sprog: redhat-xc3sprog
 trace-decoder: redhat-trace-decoder
+sdk-utilities: redhat-sdk-utilities
 else ifeq ($(DISTRIB_ID),Ubuntu)
 ifeq ($(shell uname -m),x86_64)
 NATIVE ?= $(UBUNTU64)
@@ -37,6 +39,7 @@ openocd: ubuntu64-openocd
 qemu: ubuntu64-qemu
 xc3sprog: ubuntu64-xc3sprog
 trace-decoder: ubuntu64-trace-decoder
+sdk-utilities: ubuntu64-sdk-utilities
 else
 NATIVE ?= $(UBUNTU32)
 all: ubuntu32
@@ -49,6 +52,7 @@ openocd: win64-openocd
 qemu: win64-qemu
 xc3sprog: win64-xc3sprog
 trace-decoder: win64-trace-decoder
+sdk-utilities: win64-sdk-utilities
 else ifeq ($(shell uname),Darwin)
 NATIVE ?= $(DARWIN)
 LIBTOOLIZE ?= glibtoolize
@@ -61,6 +65,7 @@ openocd: darwin-openocd
 qemu: darwin-qemu
 xc3sprog: darwin-xc3sprog
 trace-decoder: darwin-trace-decoder
+sdk-utilities: darwin-sdk-utilities
 else
 $(error Unknown host)
 endif
@@ -86,6 +91,9 @@ SRC_ROCD     := $(SRCDIR)/riscv-openocd
 SRC_RQEMU    := $(SRCDIR)/riscv-qemu
 SRC_XC3SP    := $(SRCDIR)/xc3sprog
 SRC_TDC      := $(SRCDIR)/trace-decoder
+SRC_DTC      := $(SRCDIR)/dtc
+SRC_FDTT     := $(SRCDIR)/freedom-devicetree-tools
+SRC_FE2H     := $(SRCDIR)/freedom-elf2hex
 SRC_EXPAT    := $(SRCDIR)/libexpat/expat
 SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
@@ -98,14 +106,15 @@ ROCD_VERSION := 0.10.0-2019.08.0-RC1
 RQEMU_VERSION := 3.1.0-2019.08.0-RC1
 XC3SP_VERSION := 0.1.2-2019.08.0-RC1
 TDC_VERSION := 0.0.0-2019.08.0-RC1
+SDKU_VERSION := 0.0.0-2019.08.0-RC1-preview1
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
 export PATH
 
 # The actual output of this repository is a set of tarballs.
-.PHONY: win64 win64-openocd win64-toolchain win64-qemu win64-xc3sprog win64-trace-decoder
-win64: win64-openocd win64-toolchain win64-qemu win64-xc3sprog win64-trace-decoder
+.PHONY: win64 win64-openocd win64-toolchain win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities
+win64: win64-openocd win64-toolchain win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).src.zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).tar.gz
@@ -126,6 +135,10 @@ win64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(WIN64).zip
 win64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(WIN64).src.zip
 win64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(WIN64).tar.gz
 win64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(WIN64).src.tar.gz
+win64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(WIN64).zip
+win64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(WIN64).src.zip
+win64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(WIN64).tar.gz
+win64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(WIN64).src.tar.gz
 .PHONY: win32 win32-openocd win32-toolchain
 win32: win32-openocd win32-toolchain
 win32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN32).zip
@@ -136,8 +149,8 @@ win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).tar.gz
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.tar.gz
-.PHONY: ubuntu64 ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-xc3sprog
-ubuntu64: ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-xc3sprog
+.PHONY: ubuntu64 ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities
+ubuntu64: ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64).tar.gz
@@ -148,14 +161,16 @@ ubuntu64-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(UBUNTU64).src.tar.gz
+ubuntu64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(UBUNTU64).tar.gz
+ubuntu64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(UBUNTU64).src.tar.gz
 .PHONY: ubuntu32 ubuntu32-toolchain ubuntu32-openocd
 ubuntu32: ubuntu32-toolchain ubuntu32-openocd
 ubuntu32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32).tar.gz
 ubuntu32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32).src.tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).src.tar.gz
-.PHONY: redhat redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-xc3sprog
-redhat: redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-xc3sprog
+.PHONY: redhat redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities
+redhat: redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).tar.gz
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).src.tar.gz
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).tar.gz
@@ -166,8 +181,10 @@ redhat-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(REDHAT).tar.gz
 redhat-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(REDHAT).src.tar.gz
 redhat-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(REDHAT).tar.gz
 redhat-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(REDHAT).src.tar.gz
-.PHONY: darwin darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder
-darwin: darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder
+redhat-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(REDHAT).tar.gz
+redhat-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(REDHAT).src.tar.gz
+.PHONY: darwin darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities
+darwin: darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).tar.gz
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).src.tar.gz
 darwin-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(DARWIN).tar.gz
@@ -178,6 +195,8 @@ darwin-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(DARWIN).tar.gz
 darwin-xc3sprog: $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-$(DARWIN).src.tar.gz
 darwin-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(DARWIN).tar.gz
 darwin-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(DARWIN).src.tar.gz
+darwin-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(DARWIN).tar.gz
+darwin-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(DARWIN).src.tar.gz
 
 
 # Some special riscv-gnu-toolchain configure flags for specific targets.
@@ -211,6 +230,9 @@ $(WIN64)-xc3sp-configure     := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(OBJ_WIN64)/b
 $(WIN64)-xc3sp-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64))/include"
 $(WIN64)-tdc-cross           := x86_64-w64-mingw32-
 $(WIN64)-tdc-binext          := .exe
+$(WIN64)-dtc-configure       := CROSSPREFIX=x86_64-w64-mingw32- BINEXT=.exe CC=gcc
+$(WIN64)-fdtt-configure      := --host=$(WIN64) LIBS="-lfdt -lwsock32"
+$(WIN64)-fe2h-configure      := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
 $(UBUNTU32)-rgcc-configure   := --without-system-zlib
 $(UBUNTU32)-rocd-configure   := --host=i686-linux-gnu
@@ -228,6 +250,7 @@ $(UBUNTU64)-glib-vars        := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/insta
 $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
+$(UBUNTU64)-fdtt-configure   := --host=x86_64-linux-gnu
 $(DARWIN)-rgcc-configure     := --with-system-zlib
 $(DARWIN)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-O2" LDFLAGS="-Wl,-framework,IOKit -Wl,-framework,CoreFoundation"
 $(DARWIN)-rqemu-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework Carbon" PATH=/usr/local/opt/gettext/bin:$(PATH)
@@ -667,7 +690,7 @@ $(OBJDIR)/%/stamps/libftdi/install.stamp: \
 	cd $($@_BUILD); cmake -DCMAKE_INSTALL_PREFIX:PATH=$(abspath $($@_INSTALL)) $($($@_TARGET)-libftdi-configure) . &>make-cmake.log
 	$(MAKE) -C $($@_BUILD) &>$($@_BUILD)/make-build.log
 	$(MAKE) -C $($@_BUILD) install &>$($@_BUILD)/make-install.log
-	rm -f $(abspath $($@_INSTALL))/lib/libftdi*.dylib
+	rm -f $(abspath $($@_INSTALL))/lib/libftdi*.dylib*
 	rm -f $(abspath $($@_INSTALL))/lib/libftdi*.so*
 	rm -f $(abspath $($@_INSTALL))/lib64/libftdi*.so*
 	mkdir -p $(dir $@)
@@ -909,7 +932,7 @@ $(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp: \
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/riscv-qemu/riscv-qemu/stamp,%/install/riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET),$@))
 	$(eval $@_BUILD := $(patsubst %/build/riscv-qemu/riscv-qemu/stamp,%/build/riscv-qemu,$@))
-	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib*
 	rm -f $(abspath $($@_INSTALL))/lib/lib*.so*
 	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
 	cd $(dir $@) && $($($@_TARGET)-rqemu-vars) ./configure \
@@ -1056,7 +1079,7 @@ $(OBJDIR)/%/build/xc3sprog/xc3sprog/stamp: \
 		$(OBJDIR)/%/build/xc3sprog/stamp
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/xc3sprog/xc3sprog/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/xc3sprog/xc3sprog/stamp,%/install/xc3sprog-$(XC3SP_VERSION)-$($@_TARGET),$@))
-	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib*
 	rm -f $(abspath $($@_INSTALL))/lib/lib*.so*
 	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
 	cd $(dir $@) && $($($@_TARGET)-xc3sp-vars) cmake \
@@ -1135,6 +1158,100 @@ $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp: \
 	$(MAKE) -C $(dir $@) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
 	cp $(dir $@)/Debug/dqr$($($@_TARGET)-tdc-binext) $(abspath $($@_INSTALL))
 	cp $(dir $@)/scripts/trace.tcl $(abspath $($@_INSTALL))
+	date > $@
+
+# The SDK Utilities builds go here
+$(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.zip: \
+		$(OBJDIR)/%/stamps/sdk-utilities/install.stamp \
+		$(OBJDIR)/%/stamps/sdk-utilities/libs.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.zip,%,$@))
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$($@_TARGET)/install; zip -rq $(abspath $@) sdk-utilities-$(SDKU_VERSION)-$($@_TARGET)
+
+$(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.zip: \
+		$(OBJDIR)/%/stamps/sdk-utilities/install.stamp \
+		$(OBJDIR)/%/stamps/sdk-utilities/libs.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.zip,%,$@))
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) sdk-utilities
+
+$(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.tar.gz: \
+		$(OBJDIR)/%/stamps/sdk-utilities/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.tar.gz,%,$@))
+	mkdir -p $(dir $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/install -c sdk-utilities-$(SDKU_VERSION)-$($@_TARGET) | gzip > $(abspath $@)
+
+$(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.tar.gz: \
+		$(OBJDIR)/%/stamps/sdk-utilities/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.tar.gz,%,$@))
+	mkdir -p $(dir $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c sdk-utilities | gzip > $(abspath $@)
+
+$(OBJDIR)/%/stamps/sdk-utilities/install.stamp: \
+		$(OBJDIR)/%/build/sdk-utilities/dtc/stamp \
+		$(OBJDIR)/%/build/sdk-utilities/freedom-devicetree-tools/stamp \
+		$(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp
+	mkdir -p $(dir $@)
+	date > $@
+
+# We might need some extra target libraries for sdk-utilities
+$(OBJ_NATIVE)/stamps/sdk-utilities/libs.stamp: \
+		$(OBJ_NATIVE)/stamps/sdk-utilities/install.stamp
+	date > $@
+
+$(OBJ_WIN64)/stamps/sdk-utilities/libs.stamp: \
+		$(OBJ_WIN64)/stamps/sdk-utilities/install.stamp
+	date > $@
+
+$(OBJ_WIN32)/stamps/sdk-utilities/libs.stamp: \
+		$(OBJ_WIN32)/stamps/sdk-utilities/install.stamp
+	date > $@
+
+$(OBJDIR)/%/build/sdk-utilities/stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/sdk-utilities/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/sdk-utilities/stamp,%/install/sdk-utilities-$(SDKU_VERSION)-$($@_TARGET),$@))
+	rm -rf $($@_INSTALL)
+	mkdir -p $($@_INSTALL)
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	cp -a $(SRC_DTC) $(SRC_FDTT) $(SRC_FE2H) $(dir $@)
+	rm -rf $(dir $@)/dtc/Makefile
+	cp -a scripts/dtc.mk $(dir $@)/dtc/Makefile
+	$(SED) -i -f scripts/dtc-fstree.sed $(dir $@)/dtc/fstree.c
+	date > $@
+
+$(OBJDIR)/%/build/sdk-utilities/dtc/stamp: \
+		$(OBJDIR)/%/build/sdk-utilities/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/sdk-utilities/dtc/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/sdk-utilities/dtc/stamp,%/install/sdk-utilities-$(SDKU_VERSION)-$($@_TARGET),$@))
+	$(MAKE) -C $(dir $@) install PREFIX=$(abspath $($@_INSTALL)) $($($@_TARGET)-dtc-configure) \
+		NO_PYTHON=1 NO_YAML=1 NO_VALGRIND=1 &>$(dir $@)/make-install.log
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib*
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.so*
+	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
+	date > $@
+
+$(OBJDIR)/%/build/sdk-utilities/freedom-devicetree-tools/stamp: \
+		$(OBJDIR)/%/build/sdk-utilities/dtc/stamp \
+		$(OBJDIR)/%/build/sdk-utilities/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/sdk-utilities/freedom-devicetree-tools/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/sdk-utilities/freedom-devicetree-tools/stamp,%/install/sdk-utilities-$(SDKU_VERSION)-$($@_TARGET),$@))
+	cd $(dir $@) && ./configure \
+		$($($@_TARGET)-fdtt-configure) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		CFLAGS="-I$(abspath $($@_INSTALL))/include -fpermissive" \
+		CPPFLAGS="-I$(abspath $($@_INSTALL))/include -fpermissive" \
+		LDFLAGS="-L$(abspath $($@_INSTALL))/lib" \
+		&>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp: \
+		$(OBJDIR)/%/build/sdk-utilities/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/sdk-utilities/freedom-elf2hex/stamp,%/install/sdk-utilities-$(SDKU_VERSION)-$($@_TARGET),$@))
+	$(MAKE) -C $(dir $@) install INSTALL_PATH=$(abspath $($@_INSTALL)) $($($@_TARGET)-fe2h-configure) &>$(dir $@)/make-install.log
 	date > $@
 
 # Targets that don't build anything
