@@ -1135,6 +1135,7 @@ $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp: \
 	$(MAKE) -C $(dir $@) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
 	cp $(dir $@)/Debug/dqr$($($@_TARGET)-tdc-binext) $(abspath $($@_INSTALL))
 	cp $(dir $@)/scripts/trace.tcl $(abspath $($@_INSTALL))
+	cp -R $(dir $@)/examples $(abspath $($@_INSTALL))
 	date > $@
 
 # Targets that don't build anything
