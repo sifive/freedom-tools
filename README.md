@@ -20,6 +20,10 @@ we use to build these tools.
 * RISC-V QEMU (`riscv-qemu-*`)
     * QEMU (riscv32-softmmu + riscv64-softmmu)
     * ZLib, LibFFI, LibIConv, GetText, GLib, LibPNG, JPEG, PixMan
+* SDK Utilities (`sdk-utilities-*`)
+    * DTC (Device Tree Compiler)
+    * Freedom DeviceTree Tools
+    * Freedom Elf2Hex
 * Trace Decoder (`trace-decoder-*`)
     * Trace Decoder
 * XC3SPROG (`xc3sprog-*`)
