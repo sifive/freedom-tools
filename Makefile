@@ -1201,10 +1201,14 @@ $(OBJ_NATIVE)/stamps/sdk-utilities/libs.stamp: \
 
 $(OBJ_WIN64)/stamps/sdk-utilities/libs.stamp: \
 		$(OBJ_WIN64)/stamps/sdk-utilities/install.stamp
+	$(WIN64)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libgcc_s_seh*.dll" | xargs cp -t $(OBJDIR)/$(WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64)/bin
+	$(WIN64)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libstdc*.dll" | xargs cp -t $(OBJDIR)/$(WIN64)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN64)/bin
 	date > $@
 
 $(OBJ_WIN32)/stamps/sdk-utilities/libs.stamp: \
 		$(OBJ_WIN32)/stamps/sdk-utilities/install.stamp
+	$(WIN32)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libgcc_s_seh*.dll" | xargs cp -t $(OBJDIR)/$(WIN32)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN32)/bin
+	$(WIN32)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | tr : "\n" | xargs -I {} find {} -iname "libstdc*.dll" | xargs cp -t $(OBJDIR)/$(WIN32)/install/xc3sprog-$(XC3SP_VERSION)-$(WIN32)/bin
 	date > $@
 
 $(OBJDIR)/%/build/sdk-utilities/stamp:
