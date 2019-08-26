@@ -942,9 +942,10 @@ $(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp: \
 		--target-list=riscv32-softmmu,riscv64-softmmu \
 		--interp-prefix=$(abspath $($@_INSTALL))/sysroot \
 		--disable-libusb &>make-configure.log
-	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
 	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
 	date > $@
+
+#$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
 
 # The XC3SPROG builds go here
 $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-%.zip: \
