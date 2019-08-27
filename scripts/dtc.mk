@@ -68,8 +68,7 @@ else ifeq ($(BINEXT),.exe)
 SHAREDLIB_EXT     = so
 SHAREDLIB_CFLAGS  =
 SHAREDLIB_LDFLAGS = -shared -Wl,--version-script=$(LIBFDT_version) -Wl,-soname,
-CFLAGS += -fpermissive -DX_LSTAT=stat
-CPPFLAGS += -fpermissive
+CFLAGS += -DX_LSTAT=stat
 else
 SHAREDLIB_EXT     = so
 SHAREDLIB_CFLAGS  = -fPIC
