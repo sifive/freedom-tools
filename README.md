@@ -22,7 +22,6 @@ we use to build these tools.
     * ZLib, LibFFI, LibIConv, GetText, GLib, LibPNG, JPEG, PixMan
 * SDK Utilities (`sdk-utilities-*`)
     * DTC (Device Tree Compiler)
-    * Freedom DeviceTree Tools
     * Freedom Elf2Hex
 * Trace Decoder (`trace-decoder-*`)
     * Trace Decoder

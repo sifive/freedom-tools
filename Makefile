@@ -92,7 +92,6 @@ SRC_RQEMU    := $(SRCDIR)/riscv-qemu
 SRC_XC3SP    := $(SRCDIR)/xc3sprog
 SRC_TDC      := $(SRCDIR)/trace-decoder
 SRC_DTC      := $(SRCDIR)/dtc
-SRC_FDTT     := $(SRCDIR)/freedom-devicetree-tools
 SRC_FE2H     := $(SRCDIR)/freedom-elf2hex
 SRC_EXPAT    := $(SRCDIR)/libexpat/expat
 SRC_LIBUSB   := $(SRCDIR)/libusb
@@ -106,7 +105,7 @@ ROCD_VERSION := 0.10.0-2019.08.0-RC1
 RQEMU_VERSION := 3.1.0-2019.08.0-RC1
 XC3SP_VERSION := 0.1.2-2019.08.0-RC1
 TDC_VERSION := 0.0.0-2019.08.0-RC1
-SDKU_VERSION := 0.0.0-2019.08.0-RC1-preview1
+SDKU_VERSION := 0.0.0-2019.08.0-RC2
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
@@ -231,7 +230,6 @@ $(WIN64)-xc3sp-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/
 $(WIN64)-tdc-cross           := x86_64-w64-mingw32-
 $(WIN64)-tdc-binext          := .exe
 $(WIN64)-dtc-configure       := CROSSPREFIX=x86_64-w64-mingw32- BINEXT=.exe CC=gcc
-$(WIN64)-fdtt-configure      := --host=$(WIN64) LIBS="-lfdt -lwsock32"
 $(WIN64)-fe2h-configure      := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
 $(UBUNTU32)-rgcc-configure   := --without-system-zlib
@@ -250,7 +248,6 @@ $(UBUNTU64)-glib-vars        := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/insta
 $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
-$(UBUNTU64)-fdtt-configure   := --host=x86_64-linux-gnu
 $(DARWIN)-rgcc-configure     := --with-system-zlib
 $(DARWIN)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-O2" LDFLAGS="-Wl,-framework,IOKit -Wl,-framework,CoreFoundation"
 $(DARWIN)-rqemu-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework Carbon" PATH=/usr/local/opt/gettext/bin:$(PATH)
@@ -1190,7 +1187,6 @@ $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.tar.gz: \
 
 $(OBJDIR)/%/stamps/sdk-utilities/install.stamp: \
 		$(OBJDIR)/%/build/sdk-utilities/dtc/stamp \
-		$(OBJDIR)/%/build/sdk-utilities/freedom-devicetree-tools/stamp \
 		$(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp
 	mkdir -p $(dir $@)
 	date > $@
@@ -1219,7 +1215,7 @@ $(OBJDIR)/%/build/sdk-utilities/stamp:
 	mkdir -p $($@_INSTALL)
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
-	cp -a $(SRC_DTC) $(SRC_FDTT) $(SRC_FE2H) $(dir $@)
+	cp -a $(SRC_DTC) $(SRC_FE2H) $(dir $@)
 	rm -rf $(dir $@)/dtc/Makefile
 	cp -a scripts/dtc.mk $(dir $@)/dtc/Makefile
 	$(SED) -i -f scripts/dtc-fstree.sed $(dir $@)/dtc/fstree.c
@@ -1234,22 +1230,6 @@ $(OBJDIR)/%/build/sdk-utilities/dtc/stamp: \
 	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib*
 	rm -f $(abspath $($@_INSTALL))/lib/lib*.so*
 	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
-	date > $@
-
-$(OBJDIR)/%/build/sdk-utilities/freedom-devicetree-tools/stamp: \
-		$(OBJDIR)/%/build/sdk-utilities/dtc/stamp \
-		$(OBJDIR)/%/build/sdk-utilities/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/sdk-utilities/freedom-devicetree-tools/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/sdk-utilities/freedom-devicetree-tools/stamp,%/install/sdk-utilities-$(SDKU_VERSION)-$($@_TARGET),$@))
-	cd $(dir $@) && ./configure \
-		$($($@_TARGET)-fdtt-configure) \
-		--prefix=$(abspath $($@_INSTALL)) \
-		CFLAGS="-I$(abspath $($@_INSTALL))/include -fpermissive" \
-		CPPFLAGS="-I$(abspath $($@_INSTALL))/include -fpermissive" \
-		LDFLAGS="-L$(abspath $($@_INSTALL))/lib" \
-		&>make-configure.log
-	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
 	date > $@
 
 $(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp: \
