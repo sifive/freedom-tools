@@ -34,9 +34,6 @@
 [submodule "src/dtc"]
 	path = src/dtc
 	url = git://github.com/dgibson/dtc.git
-[submodule "src/freedom-devicetree-tools"]
-	path = src/freedom-devicetree-tools
-	url = git://github.com/sifive/freedom-devicetree-tools.git
 [submodule "src/freedom-elf2hex"]
 	path = src/freedom-elf2hex
 	url = git://github.com/sifive/freedom-elf2hex.git
