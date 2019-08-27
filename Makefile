@@ -941,8 +941,10 @@ $(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp: \
 		--with-pkgversion="SiFive QEMU $(RQEMU_VERSION)" \
 		--target-list=riscv32-softmmu,riscv64-softmmu \
 		--interp-prefix=$(abspath $($@_INSTALL))/sysroot \
-		--disable-libusb &>make-configure.log
-	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+		--disable-libusb \
+		--disable-vhost-user \
+		--disable-vhost-kernel &>make-configure.log
+	$($($@_TARGET)-rqemu-vars) $(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
 	date > $@
 
 #$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
