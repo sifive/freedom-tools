@@ -103,7 +103,7 @@ RGDB_VERSION := 8.3.0-2019.08.0-RC1
 RGBU_VERSION := 2.32.0-2019.08.0-RC1
 ROCD_VERSION := 0.10.0-2019.08.0-RC1
 RQEMU_VERSION := 3.1.0-2019.08.0-RC1
-XC3SP_VERSION := 0.1.2-2019.08.0-RC1
+XC3SP_VERSION := 0.1.2-2019.08.0-RC2
 TDC_VERSION := 0.0.0-2019.08.0-RC1
 SDKU_VERSION := 0.0.0-2019.08.0-RC2
 
@@ -1091,6 +1091,7 @@ $(OBJDIR)/%/build/xc3sprog/xc3sprog/stamp: \
 	rm -f $(abspath $($@_INSTALL))/bin/iconv
 	rm -f $(abspath $($@_INSTALL))/bin/iconv.exe
 	rm -rf $(abspath $($@_INSTALL))/share
+	cp -R $(dir $@)/share $(abspath $($@_INSTALL))
 	date > $@
 
 # The Trace Decoder builds go here
