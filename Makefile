@@ -106,7 +106,7 @@ ROCD_VERSION := 0.10.0-2019.08.0-RC1
 RQEMU_VERSION := 3.1.0-2019.08.0-RC1
 XC3SP_VERSION := 0.1.2-2019.08.0-RC1
 TDC_VERSION := 0.0.0-2019.08.0-RC1
-SDKU_VERSION := 0.0.0-2019.08.0-RC1-preview1
+SDKU_VERSION := 0.0.0-2019.08.0-RC1-preview12
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
