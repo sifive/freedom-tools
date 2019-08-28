@@ -279,7 +279,37 @@ WITH_ABI := lp64d
 WITH_ARCH := rv64imafdc
 WITH_CMODEL := medany
 NEWLIB_TUPLE := riscv64-unknown-elf
-MULTILIBS_GEN := rv32e-ilp32e--c rv32em-ilp32e--c rv32eac-ilp32e-- rv32emac-ilp32e-- rv32i-ilp32--c rv32im-ilp32--c rv32imf-ilp32f--c rv32iac-ilp32-- rv32imac-ilp32-- rv32imafc-ilp32f-rv32imafdc- rv32imafdc-ilp32d-- rv64i-lp64--c rv64im-lp64--c rv64imf-lp64f--c rv64iac-lp64-- rv64imac-lp64-- rv64imafc-lp64f-rv64imafdc- rv64imafdc-lp64d--
+MULTILIBS_GEN := \
+	rv32e-ilp32e--c \
+	rv32ea-ilp32e--m \
+	rv32em-ilp32e--c \
+	rv32eac-ilp32e-- \
+	rv32emac-ilp32e-- \
+	rv32i-ilp32--c \
+	rv32ia-ilp32--m \
+	rv32im-ilp32--c \
+	rv32if-ilp32f-rv32ifd-c \
+	rv32iaf-ilp32f-rv32imaf,rv32iafc-d \
+	rv32imf-ilp32f-rv32imfd-c \
+	rv32iac-ilp32-- \
+	rv32imac-ilp32-- \
+	rv32imafc-ilp32f-rv32imafdc- \
+	rv32ifd-ilp32d--c \
+	rv32imfd-ilp32d--c \
+	rv32iafd-ilp32d-rv32imafd,rv32iafdc- \
+	rv32imafdc-ilp32d-- \
+	rv64i-lp64--c \
+	rv64ia-lp64--m \
+	rv64im-lp64--c \
+	rv64if-lp64f-rv64ifd-c \
+	rv64iaf-lp64f-rv64imaf,rv64iafc-d \
+	rv64imf-lp64f-rv64imfd-c \
+	rv64iac-lp64-- \
+	rv64imac-lp64-- \
+	rv64imafc-lp64f-rv64imafdc- \
+	rv64ifd-lp64d--m,c \
+	rv64iafd-lp64d-rv64imafd,rv64iafdc- \
+	rv64imafdc-lp64d--
 
 CFLAGS_FOR_TARGET := $(CFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
 CXXFLAGS_FOR_TARGET := $(CXXFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
@@ -411,6 +441,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp: \
 		--disable-libquadmath \
 		--disable-libgomp \
 		--disable-nls \
+		--disable-tm-clone-registry \
 		--src=../riscv-gcc \
 		$($($@_TARGET)-rgcc-configure) \
 		--enable-checking=yes \
@@ -439,8 +470,9 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib/stamp: \
 		--enable-newlib-io-long-double \
 		--enable-newlib-io-long-long \
 		--enable-newlib-io-c99-formats \
-		CFLAGS_FOR_TARGET="-Os $(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="-Os $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
+		--enable-newlib-register-fini \
+		CFLAGS_FOR_TARGET="-O2 -D_POSIX_MODE $(CFLAGS_FOR_TARGET)" \
+		CXXFLAGS_FOR_TARGET="-O2 -D_POSIX_MODE $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
 	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
 # These install multiple copies of the same docs into the same destination
@@ -471,7 +503,6 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano/stamp: \
 		--enable-newlib-nano-formatted-io \
 		--disable-newlib-supplied-syscalls \
 		--disable-nls \
-		--enable-newlib-register-fini \
 		CFLAGS_FOR_TARGET="-Os -ffunction-sections -fdata-sections $(CFLAGS_FOR_TARGET)" \
 		CXXFLAGS_FOR_TARGET="-Os -ffunction-sections -fdata-sections $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
@@ -501,6 +532,11 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp: \
 	for bnls in `find $${bnl} -name libgloss.a`; \
 	do \
 		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libgloss\.a:libgloss_nano.a:g"`; \
+		cp $${bnls} $${inl}$${inls}; \
+	done
+	for bnls in `find $${bnl} -name crt0.0`; \
+	do \
+		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::"`; \
 		cp $${bnls} $${inl}$${inls}; \
 	done
 # Copy nano header files into newlib install dir.
@@ -535,6 +571,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp: \
 		--disable-libquadmath \
 		--disable-libgomp \
 		--disable-nls \
+		--disable-tm-clone-registry \
 		--src=../riscv-gcc \
 		$($($@_TARGET)-rgcc-configure) \
 		--enable-checking=yes \
