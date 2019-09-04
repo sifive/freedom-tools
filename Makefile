@@ -103,7 +103,7 @@ RGT_VERSION := 8.2.0-2019.08.0-RC1
 RGDB_VERSION := 8.3.0-2019.08.0-RC1
 RGBU_VERSION := 2.32.0-2019.08.0-RC1
 ROCD_VERSION := 0.10.0-2019.08.0-RC1
-RQEMU_VERSION := 4.1.0-2019.08.0-RC2-preview1
+RQEMU_VERSION := 4.1.0-2019.08.0-RC3
 XC3SP_VERSION := 0.1.2-2019.08.0-RC1
 TDC_VERSION := 0.0.0-2019.08.0-RC1
 SDKU_VERSION := 0.0.0-2019.08.0-RC1-preview1
@@ -785,8 +785,17 @@ $(OBJDIR)/%/build/riscv-qemu/stamp:
 	cd $(dir $@); $(TAR) -xf pixman-0.38.0.tar.gz
 	cd $(dir $@); mv pixman-0.38.0 pixman
 	cp -a $(SRC_RQEMU) $(dir $@)
+	rm -rf $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
+	cp -a scripts/qemu-sifive-e.c $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
+	rm -rf $(dir $@)/riscv-qemu/hw/riscv/sifive_test.c
+	cp -a scripts/qemu-sifive-test.c $(dir $@)/riscv-qemu/hw/riscv/sifive_test.c
+	rm -rf $(dir $@)/riscv-qemu/hw/riscv/sifive_u.c
+	cp -a scripts/qemu-sifive-u.c $(dir $@)/riscv-qemu/hw/riscv/sifive_u.c
+	rm -rf $(dir $@)/riscv-qemu/include/hw/riscv/sifive_e.h
+	cp -a scripts/qemu-sifive-e.h $(dir $@)/riscv-qemu/include/hw/riscv/sifive_e.h
+	rm -rf $(dir $@)/riscv-qemu/include/hw/riscv/sifive_u.h
+	cp -a scripts/qemu-sifive-u.h $(dir $@)/riscv-qemu/include/hw/riscv/sifive_u.h
 	$(SED) -i -f scripts/qemu-configure.sed $(dir $@)/riscv-qemu/configure
-	$(SED) -i -f scripts/qemu-sifive-e.sed $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
 	$(SED) -i -f scripts/qemu-common.sed $(dir $@)/riscv-qemu/include/qemu-common.h
 	$(SED) -i -f scripts/qemu-vl.sed $(dir $@)/riscv-qemu/vl.c
 	date > $@
