@@ -102,7 +102,7 @@ RGT_VERSION := 8.3.0-2019.08.0-RC3
 RGDB_VERSION := 8.3.0-2019.08.0-RC3
 RGBU_VERSION := 2.32.0-2019.08.0-RC3
 ROCD_VERSION := 0.10.0-2019.08.0-RC2
-RQEMU_VERSION := 3.1.0-2019.08.0-RC1
+RQEMU_VERSION := 4.1.0-2019.08.0-RC3
 XC3SP_VERSION := 0.1.2-2019.08.0-RC2
 TDC_VERSION := 0.0.0-2019.08.0-RC1
 SDKU_VERSION := 0.0.0-2019.08.0-RC2
@@ -819,8 +819,17 @@ $(OBJDIR)/%/build/riscv-qemu/stamp:
 	cd $(dir $@); $(TAR) -xf pixman-0.38.0.tar.gz
 	cd $(dir $@); mv pixman-0.38.0 pixman
 	cp -a $(SRC_RQEMU) $(dir $@)
+	rm -rf $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
+	cp -a scripts/qemu-sifive-e.c $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
+	rm -rf $(dir $@)/riscv-qemu/hw/riscv/sifive_test.c
+	cp -a scripts/qemu-sifive-test.c $(dir $@)/riscv-qemu/hw/riscv/sifive_test.c
+	rm -rf $(dir $@)/riscv-qemu/hw/riscv/sifive_u.c
+	cp -a scripts/qemu-sifive-u.c $(dir $@)/riscv-qemu/hw/riscv/sifive_u.c
+	rm -rf $(dir $@)/riscv-qemu/include/hw/riscv/sifive_e.h
+	cp -a scripts/qemu-sifive-e.h $(dir $@)/riscv-qemu/include/hw/riscv/sifive_e.h
+	rm -rf $(dir $@)/riscv-qemu/include/hw/riscv/sifive_u.h
+	cp -a scripts/qemu-sifive-u.h $(dir $@)/riscv-qemu/include/hw/riscv/sifive_u.h
 	$(SED) -i -f scripts/qemu-configure.sed $(dir $@)/riscv-qemu/configure
-	$(SED) -i -f scripts/qemu-sifive-e.sed $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
 	$(SED) -i -f scripts/qemu-common.sed $(dir $@)/riscv-qemu/include/qemu-common.h
 	$(SED) -i -f scripts/qemu-vl.sed $(dir $@)/riscv-qemu/vl.c
 	date > $@
@@ -975,9 +984,10 @@ $(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp: \
 		--with-pkgversion="SiFive QEMU $(RQEMU_VERSION)" \
 		--target-list=riscv32-softmmu,riscv64-softmmu \
 		--interp-prefix=$(abspath $($@_INSTALL))/sysroot \
-		--disable-libusb &>make-configure.log
-	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+		--disable-libusb \
+		--disable-vhost-user \
+		--disable-vhost-kernel &>make-configure.log
+	$($($@_TARGET)-rqemu-vars) $(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
 	date > $@
 
 # The XC3SPROG builds go here
