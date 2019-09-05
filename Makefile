@@ -92,21 +92,20 @@ SRC_RQEMU    := $(SRCDIR)/riscv-qemu
 SRC_XC3SP    := $(SRCDIR)/xc3sprog
 SRC_TDC      := $(SRCDIR)/trace-decoder
 SRC_DTC      := $(SRCDIR)/dtc
-SRC_FDTT     := $(SRCDIR)/freedom-devicetree-tools
 SRC_FE2H     := $(SRCDIR)/freedom-elf2hex
 SRC_EXPAT    := $(SRCDIR)/libexpat/expat
 SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.2.0-2019.08.0-RC1
-RGDB_VERSION := 8.3.0-2019.08.0-RC1
-RGBU_VERSION := 2.32.0-2019.08.0-RC1
-ROCD_VERSION := 0.10.0-2019.08.0-RC1
+RGT_VERSION := 8.3.0-2019.08.0-RC3
+RGDB_VERSION := 8.3.0-2019.08.0-RC3
+RGBU_VERSION := 2.32.0-2019.08.0-RC3
+ROCD_VERSION := 0.10.0-2019.08.0-RC2
 RQEMU_VERSION := 4.1.0-2019.08.0-RC3
-XC3SP_VERSION := 0.1.2-2019.08.0-RC1
+XC3SP_VERSION := 0.1.2-2019.08.0-RC2
 TDC_VERSION := 0.0.0-2019.08.0-RC1
-SDKU_VERSION := 0.0.0-2019.08.0-RC1-preview1
+SDKU_VERSION := 0.0.0-2019.08.0-RC2
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
@@ -231,7 +230,6 @@ $(WIN64)-xc3sp-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/
 $(WIN64)-tdc-cross           := x86_64-w64-mingw32-
 $(WIN64)-tdc-binext          := .exe
 $(WIN64)-dtc-configure       := CROSSPREFIX=x86_64-w64-mingw32- BINEXT=.exe CC=gcc
-$(WIN64)-fdtt-configure      := --host=$(WIN64) LIBS="-lfdt -lwsock32"
 $(WIN64)-fe2h-configure      := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
 $(UBUNTU32)-rgcc-configure   := --without-system-zlib
@@ -250,7 +248,6 @@ $(UBUNTU64)-glib-vars        := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/insta
 $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
-$(UBUNTU64)-fdtt-configure   := --host=x86_64-linux-gnu
 $(DARWIN)-rgcc-configure     := --with-system-zlib
 $(DARWIN)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-O2" LDFLAGS="-Wl,-framework,IOKit -Wl,-framework,CoreFoundation"
 $(DARWIN)-rqemu-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework Carbon" PATH=/usr/local/opt/gettext/bin:$(PATH)
@@ -282,7 +279,37 @@ WITH_ABI := lp64d
 WITH_ARCH := rv64imafdc
 WITH_CMODEL := medany
 NEWLIB_TUPLE := riscv64-unknown-elf
-MULTILIBS_GEN := rv32e-ilp32e--c rv32em-ilp32e--c rv32eac-ilp32e-- rv32emac-ilp32e-- rv32i-ilp32--c rv32im-ilp32--c rv32imf-ilp32f--c rv32iac-ilp32-- rv32imac-ilp32-- rv32imafc-ilp32f-rv32imafdc- rv32imafdc-ilp32d-- rv64i-lp64--c rv64im-lp64--c rv64imf-lp64f--c rv64iac-lp64-- rv64imac-lp64-- rv64imafc-lp64f-rv64imafdc- rv64imafdc-lp64d--
+MULTILIBS_GEN := \
+	rv32e-ilp32e--c \
+	rv32ea-ilp32e--m \
+	rv32em-ilp32e--c \
+	rv32eac-ilp32e-- \
+	rv32emac-ilp32e-- \
+	rv32i-ilp32--c \
+	rv32ia-ilp32--m \
+	rv32im-ilp32--c \
+	rv32if-ilp32f-rv32ifd-c \
+	rv32iaf-ilp32f-rv32imaf,rv32iafc-d \
+	rv32imf-ilp32f-rv32imfd-c \
+	rv32iac-ilp32-- \
+	rv32imac-ilp32-- \
+	rv32imafc-ilp32f-rv32imafdc- \
+	rv32ifd-ilp32d--c \
+	rv32imfd-ilp32d--c \
+	rv32iafd-ilp32d-rv32imafd,rv32iafdc- \
+	rv32imafdc-ilp32d-- \
+	rv64i-lp64--c \
+	rv64ia-lp64--m \
+	rv64im-lp64--c \
+	rv64if-lp64f-rv64ifd-c \
+	rv64iaf-lp64f-rv64imaf,rv64iafc-d \
+	rv64imf-lp64f-rv64imfd-c \
+	rv64iac-lp64-- \
+	rv64imac-lp64-- \
+	rv64imafc-lp64f-rv64imafdc- \
+	rv64ifd-lp64d--m,c \
+	rv64iafd-lp64d-rv64imafd,rv64iafdc- \
+	rv64imafdc-lp64d--
 
 CFLAGS_FOR_TARGET := $(CFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
 CXXFLAGS_FOR_TARGET := $(CXXFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
@@ -414,6 +441,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp: \
 		--disable-libquadmath \
 		--disable-libgomp \
 		--disable-nls \
+		--disable-tm-clone-registry \
 		--src=../riscv-gcc \
 		$($($@_TARGET)-rgcc-configure) \
 		--enable-checking=yes \
@@ -442,8 +470,9 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib/stamp: \
 		--enable-newlib-io-long-double \
 		--enable-newlib-io-long-long \
 		--enable-newlib-io-c99-formats \
-		CFLAGS_FOR_TARGET="-Os $(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="-Os $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
+		--enable-newlib-register-fini \
+		CFLAGS_FOR_TARGET="-O2 -D_POSIX_MODE $(CFLAGS_FOR_TARGET)" \
+		CXXFLAGS_FOR_TARGET="-O2 -D_POSIX_MODE $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
 	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
 # These install multiple copies of the same docs into the same destination
@@ -474,7 +503,6 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano/stamp: \
 		--enable-newlib-nano-formatted-io \
 		--disable-newlib-supplied-syscalls \
 		--disable-nls \
-		--enable-newlib-register-fini \
 		CFLAGS_FOR_TARGET="-Os -ffunction-sections -fdata-sections $(CFLAGS_FOR_TARGET)" \
 		CXXFLAGS_FOR_TARGET="-Os -ffunction-sections -fdata-sections $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
@@ -504,6 +532,11 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp: \
 	for bnls in `find $${bnl} -name libgloss.a`; \
 	do \
 		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libgloss\.a:libgloss_nano.a:g"`; \
+		cp $${bnls} $${inl}$${inls}; \
+	done
+	for bnls in `find $${bnl} -name crt0.0`; \
+	do \
+		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::"`; \
 		cp $${bnls} $${inl}$${inls}; \
 	done
 # Copy nano header files into newlib install dir.
@@ -538,6 +571,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp: \
 		--disable-libquadmath \
 		--disable-libgomp \
 		--disable-nls \
+		--disable-tm-clone-registry \
 		--src=../riscv-gcc \
 		$($($@_TARGET)-rgcc-configure) \
 		--enable-checking=yes \
@@ -956,8 +990,6 @@ $(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp: \
 	$($($@_TARGET)-rqemu-vars) $(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
 	date > $@
 
-#$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-
 # The XC3SPROG builds go here
 $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-%.zip: \
 		$(OBJDIR)/%/stamps/xc3sprog/install.stamp \
@@ -1106,6 +1138,7 @@ $(OBJDIR)/%/build/xc3sprog/xc3sprog/stamp: \
 	rm -f $(abspath $($@_INSTALL))/bin/iconv
 	rm -f $(abspath $($@_INSTALL))/bin/iconv.exe
 	rm -rf $(abspath $($@_INSTALL))/share
+	cp -R $(dir $@)/share $(abspath $($@_INSTALL))
 	date > $@
 
 # The Trace Decoder builds go here
@@ -1202,7 +1235,6 @@ $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.tar.gz: \
 
 $(OBJDIR)/%/stamps/sdk-utilities/install.stamp: \
 		$(OBJDIR)/%/build/sdk-utilities/dtc/stamp \
-		$(OBJDIR)/%/build/sdk-utilities/freedom-devicetree-tools/stamp \
 		$(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp
 	mkdir -p $(dir $@)
 	date > $@
@@ -1231,7 +1263,7 @@ $(OBJDIR)/%/build/sdk-utilities/stamp:
 	mkdir -p $($@_INSTALL)
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
-	cp -a $(SRC_DTC) $(SRC_FDTT) $(SRC_FE2H) $(dir $@)
+	cp -a $(SRC_DTC) $(SRC_FE2H) $(dir $@)
 	rm -rf $(dir $@)/dtc/Makefile
 	cp -a scripts/dtc.mk $(dir $@)/dtc/Makefile
 	$(SED) -i -f scripts/dtc-fstree.sed $(dir $@)/dtc/fstree.c
@@ -1246,22 +1278,6 @@ $(OBJDIR)/%/build/sdk-utilities/dtc/stamp: \
 	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib*
 	rm -f $(abspath $($@_INSTALL))/lib/lib*.so*
 	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
-	date > $@
-
-$(OBJDIR)/%/build/sdk-utilities/freedom-devicetree-tools/stamp: \
-		$(OBJDIR)/%/build/sdk-utilities/dtc/stamp \
-		$(OBJDIR)/%/build/sdk-utilities/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/sdk-utilities/freedom-devicetree-tools/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/sdk-utilities/freedom-devicetree-tools/stamp,%/install/sdk-utilities-$(SDKU_VERSION)-$($@_TARGET),$@))
-	cd $(dir $@) && ./configure \
-		$($($@_TARGET)-fdtt-configure) \
-		--prefix=$(abspath $($@_INSTALL)) \
-		CFLAGS="-I$(abspath $($@_INSTALL))/include -fpermissive" \
-		CPPFLAGS="-I$(abspath $($@_INSTALL))/include -fpermissive" \
-		LDFLAGS="-L$(abspath $($@_INSTALL))/lib" \
-		&>make-configure.log
-	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
 	date > $@
 
 $(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp: \
