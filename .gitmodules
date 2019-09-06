@@ -1,12 +1,6 @@
 [submodule "src/libexpat"]
 	path = src/libexpat
 	url = git://github.com/libexpat/libexpat.git
-[submodule "src/libusb"]
-	path = src/libusb
-	url = git://github.com/libusb/libusb.git
-[submodule "src/libftdi"]
-	path = src/libftdi
-	url = git://developer.intra2net.com/libftdi
 [submodule "src/riscv-binutils"]
 	path = src/riscv-binutils
 	url = git://github.com/sifive/riscv-binutils-gdb.git
