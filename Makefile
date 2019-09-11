@@ -101,7 +101,7 @@ SRC_LIBFTDI  := $(SRCDIR)/libftdi
 RGT_VERSION := 8.3.0-2019.08.0-RC3
 RGDB_VERSION := 8.3.0-2019.08.0-RC3
 RGBU_VERSION := 2.32.0-2019.08.0-RC3
-ROCD_VERSION := 0.10.0-2019.08.0-RC4
+ROCD_VERSION := 0.10.0-2019.08.0-RC5
 RQEMU_VERSION := 4.1.0-2019.08.0-RC3
 XC3SP_VERSION := 0.1.2-2019.08.0-RC2
 TDC_VERSION := 0.0.0-2019.08.0-RC1
@@ -678,6 +678,7 @@ $(OBJDIR)/%/build/riscv-openocd/stamp:
 	cd $(dir $@); mv libftdi1-1.4 libftdi
 	cp -a $(SRC_ROCD) $(dir $@)
 	$(SED) -i -f scripts/openocd.sed -e "s/SIFIVE_PACKAGE_VERSION/SiFive OpenOCD $(ROCD_VERSION)/" $(dir $@)/riscv-openocd/src/openocd.c
+	$(SED) -E -i -f scripts/openocd-rtos.sed $(dir $@)/riscv-openocd/src/rtos/rtos.c
 	date > $@
 
 $(OBJDIR)/%/build/riscv-openocd/libusb/stamp: \
