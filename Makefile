@@ -101,7 +101,7 @@ SRC_LIBFTDI  := $(SRCDIR)/libftdi
 RGT_VERSION := 8.3.0-2019.08.0-RC3
 RGDB_VERSION := 8.3.0-2019.08.0-RC3
 RGBU_VERSION := 2.32.0-2019.08.0-RC3
-ROCD_VERSION := 0.10.0-2019.08.0-RC2
+ROCD_VERSION := 0.10.0-2019.08.0-RC5
 RQEMU_VERSION := 4.1.0-2019.08.0-RC3
 XC3SP_VERSION := 0.1.2-2019.08.0-RC2
 TDC_VERSION := 0.0.0-2019.08.0-RC3
@@ -201,23 +201,19 @@ darwin-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(DARWIN).src.tar.
 # Some special riscv-gnu-toolchain configure flags for specific targets.
 $(WIN32)-rgt-host            := --host=$(WIN32)
 $(WIN32)-rgcc-configure      := --without-system-zlib
-$(WIN32)-rocd-vars           := LIBUSB1_CFLAGS="-I$(abspath $(OBJ_WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32))/include/libusb-1.0" LIBUSB1_LIBS="-L$(abspath $(OBJ_WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32))/lib -lusb-1.0" CFLAGS="-O2"
-$(WIN32)-rocd-configure      := --host=$(WIN32)
 $(WIN32)-expat-configure     := --host=$(WIN32)
-$(WIN32)-libusb-configure    := --host=$(WIN32)
-$(WIN32)-libftdi-configure   := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(SRC_LIBFTDI)/cmake/Toolchain-i686-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32)/include/libusb-1.0)"
 $(WIN32)-xc3sp-host          := --host=$(WIN32)
 $(WIN64)-rgt-host            := --host=$(WIN64)
 $(WIN64)-rgcc-configure      := --without-system-zlib
-$(WIN64)-rocd-vars           := LIBUSB1_CFLAGS="-I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include/libusb-1.0" LIBUSB1_LIBS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -lusb-1.0" CFLAGS="-O2"
-$(WIN64)-rocd-configure      := --host=$(WIN64)
+$(WIN64)-rocd-host           := --host=$(WIN64)
+$(WIN64)-oftdi-configure     := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(OBJ_WIN64)/build/riscv-openocd/libftdi/cmake/Toolchain-x86_64-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/include/libusb-1.0)"
+$(WIN64)-odeps-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include"
+$(WIN64)-rocd-vars           := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include"
 $(WIN64)-rqemu-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include"
 $(WIN64)-rqemu-host          := --host=$(WIN64)
 $(WIN64)-rqemu-cross         := --cross-prefix=x86_64-w64-mingw32-
 $(WIN64)-rqemu-bindir        := /bin
 $(WIN64)-expat-configure     := --host=$(WIN64)
-$(WIN64)-libusb-configure    := --host=$(WIN64)
-$(WIN64)-libftdi-configure   := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(SRC_LIBFTDI)/cmake/Toolchain-x86_64-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/include/libusb-1.0)"
 $(WIN64)-gettext-configure   := --enable-threads=windows
 $(WIN64)-glib-vars           := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include"
 $(WIN64)-libpng-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include"
@@ -233,27 +229,27 @@ $(WIN64)-dtc-configure       := CROSSPREFIX=x86_64-w64-mingw32- BINEXT=.exe CC=g
 $(WIN64)-fe2h-configure      := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
 $(UBUNTU32)-rgcc-configure   := --without-system-zlib
-$(UBUNTU32)-rocd-configure   := --host=i686-linux-gnu
 $(UBUNTU32)-expat-configure  := --host=i686-linux-gnu
-$(UBUNTU32)-libusb-configure := --host=i686-linux-gnu
 $(UBUNTU32)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-rgt-host         := --host=x86_64-linux-gnu
 $(UBUNTU64)-rgcc-configure   := --without-system-zlib
-$(UBUNTU64)-rocd-configure   := --host=x86_64-linux-gnu
+$(UBUNTU64)-ousb-configure   := --disable-shared
+$(UBUNTU64)-rocd-host        := --host=x86_64-linux-gnu
+$(UBUNTU64)-odeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib -pthread"
+$(UBUNTU64)-rocd-vars        := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-rqemu-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-expat-configure  := --host=x86_64-linux-gnu
-$(UBUNTU64)-libusb-configure := --host=x86_64-linux-gnu
 $(UBUNTU64)-gettext-configure:= --enable-threads=posix
 $(UBUNTU64)-glib-vars        := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64))/lib -I$(abspath $(OBJ_UBUNTU64)/install/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64))/include"
 $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(DARWIN)-rgcc-configure     := --with-system-zlib
-$(DARWIN)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-O2" LDFLAGS="-Wl,-framework,IOKit -Wl,-framework,CoreFoundation"
+$(DARWIN)-ousb-configure     := --disable-shared
+$(DARWIN)-odeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib -framework CoreFoundation -framework IOKit"
+$(DARWIN)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include -O2" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib -framework CoreFoundation -framework IOKit"
 $(DARWIN)-rqemu-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework Carbon" PATH=/usr/local/opt/gettext/bin:$(PATH)
 $(DARWIN)-expat-configure    := --disable-shared --enable-static
-$(DARWIN)-libusb-configure   := --disable-shared --enable-static
-$(DARWIN)-libftdi-configure  := -DCMAKE_SHARED_LINKER_FLAGS="-framework corefoundation -framework iokit"
 $(DARWIN)-gettext-configure  := --enable-threads=posix
 $(DARWIN)-glib-configure     := --enable-static
 $(DARWIN)-glib-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/lib -I$(abspath $(OBJ_DARWIN)/install/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN))/include" PATH=/usr/local/opt/gettext/bin:$(PATH)
@@ -261,7 +257,9 @@ $(DARWIN)-xdeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install
 $(DARWIN)-xc3sp-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework IOKit"
 $(DARWIN)-xc3sp-framework    := -framework CoreFoundation -framework IOKit
 $(REDHAT)-rgcc-configure     := --with-system-zlib
-$(REDHAT)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig" CFLAGS="-O2" LDFLAGS="-lrt"
+$(REDHAT)-ousb-configure     := --disable-shared
+$(REDHAT)-odeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
+$(REDHAT)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -O2" CPPFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
 $(REDHAT)-rqemu-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib/pkgconfig" CFLAGS="-fPIC -I$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/include -Wno-unused-result" CPPFLAGS="-fPIC -I$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib -liconv" LIBS="-L$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib -liconv" SIFIVE_LIBS_QGA="-L$(abspath $(OBJ_REDHAT)/install/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT))/lib -liconv"
 $(REDHAT)-zlib-configure     := -static
 $(REDHAT)-gettext-configure  := --enable-threads=posix
@@ -628,7 +626,7 @@ $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.src.zip: \
 		$(OBJDIR)/%/stamps/riscv-openocd/libs.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.src.zip,%,$@))
 	mkdir -p $(dir $@)
-	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-openocd libftdi libusb
+	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-openocd
 
 $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-openocd/install.stamp
@@ -640,30 +638,12 @@ $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.src.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-openocd/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.src.tar.gz,%,$@))
 	mkdir -p $(dir $@)
-	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-openocd libftdi libusb | gzip > $(abspath $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-openocd | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/riscv-openocd/install.stamp: \
-		$(OBJDIR)/%/build/riscv-openocd/configure \
-		$(OBJDIR)/%/stamps/libftdi/install.stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/stamps/riscv-openocd/install.stamp,%,$@))
-	$(eval $@_BUILD := $(patsubst %/stamps/riscv-openocd/install.stamp,%/build/riscv-openocd,$@))
-	$(eval $@_INSTALL := $(patsubst %/stamps/riscv-openocd/install.stamp,%/install/riscv-openocd-$(ROCD_VERSION)-$($@_TARGET),$@))
-	mkdir -p $($@_BUILD)
-	cd $($@_BUILD); $($($@_TARGET)-rocd-vars) ./configure --prefix=$(abspath $($@_INSTALL)) --disable-remote-bitbang --disable-werror --enable-ftdi $($($@_TARGET)-rocd-configure) &>make-configure.log
-	$(MAKE) $($($@_TARGET)-rocd-vars) -C $($@_BUILD) &>$($@_BUILD)/make-build.log
-	$(MAKE) $($($@_TARGET)-rocd-vars) -C $($@_BUILD) pdf html &>$($@_BUILD)/make-build-doc.log
-	$(MAKE) $($($@_TARGET)-rocd-vars) -C $($@_BUILD) install install-pdf install-html &>$($@_BUILD)/make-install.log
+		$(OBJDIR)/%/build/riscv-openocd/riscv-openocd/stamp
 	mkdir -p $(dir $@)
 	date > $@
-
-$(OBJDIR)/%/build/riscv-openocd/configure:
-	rm -rf $(dir $@)
-	mkdir -p $(dir $@)
-	cp -a $(SRC_ROCD)/* $(dir $@)
-	$(SED) -i -f scripts/openocd.sed -e "s/SIFIVE_PACKAGE_VERSION/SiFive OpenOCD $(ROCD_VERSION)/" $(dir $@)/src/openocd.c
-	find $(dir $@) -iname configure.ac | $(SED) s/configure.ac/m4/ | xargs mkdir -p
-	cd $(dir $@); ./bootstrap nosubmodule &>make-bootstrap.log
-	touch -c $@
 
 # We might need some extra target libraries for OpenOCD
 $(OBJDIR)/%/stamps/riscv-openocd/libs.stamp: \
@@ -680,61 +660,88 @@ $(OBJ_WIN32)/stamps/riscv-openocd/libs.stamp: \
 	$(WIN32)-gcc -print-search-dirs | grep ^libraries | cut -d= -f2- | xargs -I {} -d: find {} -iname "libgcc_*.dll" | xargs cp -t $(OBJDIR)/$(WIN32)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN32)/bin
 	date > $@
 
-# Use the host libusb unless we expect there to be none
-$(OBJ_WIN64)/stamps/riscv-openocd/install.stamp: \
-		$(OBJ_WIN64)/stamps/libusb/install.stamp
-
-$(OBJ_WIN32)/stamps/riscv-openocd/install.stamp: \
-		$(OBJ_WIN32)/stamps/libusb/install.stamp
-
-$(OBJ_DARWIN)/stamps/riscv-openocd/install.stamp: \
-		$(OBJ_DARWIN)/stamps/libusb/install.stamp
-
-# OpenOCD needs libusb
-$(OBJDIR)/%/stamps/libusb/install.stamp: \
-		$(OBJDIR)/%/build/libusb/configure
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/stamps/libusb/install.stamp,%,$@))
-	$(eval $@_BUILD := $(patsubst %/stamps/libusb/install.stamp,%/build/libusb,$@))
-	$(eval $@_INSTALL := $(patsubst %/stamps/libusb/install.stamp,%/install/riscv-openocd-$(ROCD_VERSION)-$($@_TARGET),$@))
-	mkdir -p $($@_BUILD)
-	cd $($@_BUILD); ./configure --prefix=$(abspath $($@_INSTALL)) --disable-udev $($($@_TARGET)-libusb-configure) &>make-configure.log
-	$(MAKE) -C $($@_BUILD) &>$($@_BUILD)/make-build.log
-	$(MAKE) -C $($@_BUILD) install &>$($@_BUILD)/make-install.log
-	mkdir -p $(dir $@)
-	date > $@
-
-$(OBJDIR)/%/build/libusb/configure:
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/libusb/configure,%,$@))
+$(OBJDIR)/%/build/riscv-openocd/stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-openocd/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-openocd/stamp,%/install/riscv-openocd-$(ROCD_VERSION)-$($@_TARGET),$@))
+	rm -rf $($@_INSTALL)
+	mkdir -p $($@_INSTALL)
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
-	cp -a $(SRC_LIBUSB)/* $(dir $@)
-	mkdir -p $(dir $@)/m4
-	cd $(dir $@); $(LIBTOOLIZE) &>make-libtoolize.log
-	cd $(dir $@); autoreconf -ivf &>make-autoreconf.log
-	touch -c $@
-
-# OpenOCD needs libftdi
-$(OBJDIR)/%/stamps/libftdi/install.stamp: \
-		$(OBJDIR)/%/build/libftdi/CMakeLists.txt \
-		$(OBJDIR)/%/stamps/libusb/install.stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/stamps/libftdi/install.stamp,%,$@))
-	$(eval $@_BUILD := $(patsubst %/stamps/libftdi/install.stamp,%/build/libftdi,$@))
-	$(eval $@_INSTALL := $(patsubst %/stamps/libftdi/install.stamp,%/install/riscv-openocd-$(ROCD_VERSION)-$($@_TARGET),$@))
-	mkdir -p $($@_BUILD)
-	cd $($@_BUILD); cmake -DCMAKE_INSTALL_PREFIX:PATH=$(abspath $($@_INSTALL)) $($($@_TARGET)-libftdi-configure) . &>make-cmake.log
-	$(MAKE) -C $($@_BUILD) &>$($@_BUILD)/make-build.log
-	$(MAKE) -C $($@_BUILD) install &>$($@_BUILD)/make-install.log
-	rm -f $(abspath $($@_INSTALL))/lib/libftdi*.dylib*
-	rm -f $(abspath $($@_INSTALL))/lib/libftdi*.so*
-	rm -f $(abspath $($@_INSTALL))/lib64/libftdi*.so*
-	mkdir -p $(dir $@)
+	cd $(dir $@); curl -L -f -s -o libusb-1.0.22.tar.bz2 https://github.com/libusb/libusb/releases/download/v1.0.22/libusb-1.0.22.tar.bz2
+	cd $(dir $@); $(TAR) -xf libusb-1.0.22.tar.bz2
+	cd $(dir $@); mv libusb-1.0.22 libusb
+	cd $(dir $@); curl -L -f -s -o libusb-compat-0.1.7.tar.bz2 https://github.com/libusb/libusb-compat-0.1/releases/download/v0.1.7/libusb-compat-0.1.7.tar.bz2
+	cd $(dir $@); $(TAR) -xf libusb-compat-0.1.7.tar.bz2
+	cd $(dir $@); mv libusb-compat-0.1.7 libusb-compat
+	cd $(dir $@); curl -L -f -s -o libftdi1-1.4.tar.bz2 https://www.intra2net.com/en/developer/libftdi/download/libftdi1-1.4.tar.bz2
+	cd $(dir $@); $(TAR) -xf libftdi1-1.4.tar.bz2
+	cd $(dir $@); mv libftdi1-1.4 libftdi
+	cp -a $(SRC_ROCD) $(dir $@)
+	$(SED) -i -f scripts/openocd.sed -e "s/SIFIVE_PACKAGE_VERSION/SiFive OpenOCD $(ROCD_VERSION)/" $(dir $@)/riscv-openocd/src/openocd.c
+	$(SED) -E -i -f scripts/openocd-rtos.sed $(dir $@)/riscv-openocd/src/rtos/rtos.c
 	date > $@
 
-$(OBJDIR)/%/build/libftdi/CMakeLists.txt:
-	rm -rf $(dir $@)
-	mkdir -p $(dir $@)
-	cp -a $(SRC_LIBFTDI)/* $(dir $@)
-	touch -c $@
+$(OBJDIR)/%/build/riscv-openocd/libusb/stamp: \
+		$(OBJDIR)/%/build/riscv-openocd/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-openocd/libusb/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-openocd/libusb/stamp,%/install/riscv-openocd-$(ROCD_VERSION)-$($@_TARGET),$@))
+	cd $(dir $@) && $($($@_TARGET)-odeps-vars) ./configure \
+		$($($@_TARGET)-rocd-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--disable-udev \
+		--enable-static \
+		$($($@_TARGET)-ousb-configure) &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-openocd/libusb-compat/stamp: \
+		$(OBJDIR)/%/build/riscv-openocd/libusb/stamp \
+		$(OBJDIR)/%/build/riscv-openocd/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-openocd/libusb-compat/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-openocd/libusb-compat/stamp,%/install/riscv-openocd-$(ROCD_VERSION)-$($@_TARGET),$@))
+	cd $(dir $@) && $($($@_TARGET)-odeps-vars) ./configure \
+		$($($@_TARGET)-rocd-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--enable-static \
+		$($($@_TARGET)-ousb-configure) &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-openocd/libftdi/stamp: \
+		$(OBJDIR)/%/build/riscv-openocd/libusb-compat/stamp \
+		$(OBJDIR)/%/build/riscv-openocd/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-openocd/libftdi/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-openocd/libftdi/stamp,%/install/riscv-openocd-$(ROCD_VERSION)-$($@_TARGET),$@))
+	cd $(dir $@) && $($($@_TARGET)-odeps-vars) cmake \
+		-DCMAKE_INSTALL_PREFIX:PATH=$(abspath $($@_INSTALL)) \
+		$($($@_TARGET)-oftdi-configure) . &>make-cmake.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-openocd/riscv-openocd/stamp: \
+		$(OBJDIR)/%/build/riscv-openocd/libftdi/stamp \
+		$(OBJDIR)/%/build/riscv-openocd/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-openocd/riscv-openocd/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-openocd/riscv-openocd/stamp,%/install/riscv-openocd-$(ROCD_VERSION)-$($@_TARGET),$@))
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib*
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.so*
+	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
+	find $(dir $@) -iname configure.ac | $(SED) s/configure.ac/m4/ | xargs mkdir -p
+	cd $(dir $@); ./bootstrap nosubmodule &>make-bootstrap.log
+	cd $(dir $@); $($($@_TARGET)-rocd-vars) ./configure \
+		$($($@_TARGET)-rocd-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--disable-remote-bitbang \
+		--disable-werror \
+		--enable-ftdi \
+		$($($@_TARGET)-rocd-configure) &>make-configure.log
+	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) pdf html &>$(dir $@)/make-build-doc.log
+	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	date > $@
 
 # The QEMU builds go here
 $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.zip: \
