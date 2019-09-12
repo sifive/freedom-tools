@@ -98,14 +98,14 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.3.0-2019.08.0-RC3
-RGDB_VERSION := 8.3.0-2019.08.0-RC3
-RGBU_VERSION := 2.32.0-2019.08.0-RC3
-ROCD_VERSION := 0.10.0-2019.08.0-RC5
-RQEMU_VERSION := 4.1.0-2019.08.0-RC3
-XC3SP_VERSION := 0.1.2-2019.08.0-RC2
-TDC_VERSION := 0.0.0-2019.08.0-RC3
-SDKU_VERSION := 0.0.0-2019.08.0-RC2
+RGT_VERSION := 8.3.0-2019.08.0
+RGDB_VERSION := 8.3.0-2019.08.0
+RGBU_VERSION := 2.32.0-2019.08.0
+ROCD_VERSION := 0.10.0-2019.08.0
+RQEMU_VERSION := 4.1.0-2019.08.0
+XC3SP_VERSION := 0.1.2-2019.08.0
+TDC_VERSION := 0.0.0-2019.08.0
+SDKU_VERSION := 0.0.0-2019.08.0
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
@@ -300,8 +300,9 @@ MULTILIBS_GEN := \
 	rv64ia-lp64--m \
 	rv64im-lp64--c \
 	rv64if-lp64f-rv64ifd-c \
-	rv64iaf-lp64f-rv64imaf,rv64iafc-d \
+	rv64iaf-lp64f-rv64iafc-d \
 	rv64imf-lp64f-rv64imfd-c \
+	rv64imaf-lp64f-- \
 	rv64iac-lp64-- \
 	rv64imac-lp64-- \
 	rv64imafc-lp64f-rv64imafdc- \
