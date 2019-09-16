@@ -15,8 +15,7 @@ we use to build these tools.
     * LibExpat
 * RISC-V OpenOCD (`riscv-openocd-*`)
     * OpenOCD
-    * LibFTDI
-    * LibUSB
+    * LibUSB, LibUSB-Compat, LibFTDI
 * RISC-V QEMU (`riscv-qemu-*`)
     * QEMU (riscv32-softmmu + riscv64-softmmu)
     * ZLib, LibFFI, LibIConv, GetText, GLib, LibPNG, JPEG, PixMan
