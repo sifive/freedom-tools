@@ -96,6 +96,7 @@ SRC_FE2H     := $(SRCDIR)/freedom-elf2hex
 SRC_EXPAT    := $(SRCDIR)/libexpat/expat
 SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
+SRC_RGT      := $(SRCDIR)/riscv-gnu-toolchain
 
 # The version that will be appended to the various tool builds.
 RGT_VERSION := 8.3.0-2019.08.0
@@ -198,13 +199,17 @@ darwin-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(DARWIN).tar.gz
 darwin-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(DARWIN).src.tar.gz
 
 
+common-rgt-configure := --with-bugurl='https://github.com/sifive/freedom-tools/issues'
+common-rgcc-configure := --with-pkgversion='SiFive GCC $(RGT_VERSION)' $(common-rgt-configure)
+common-rgdb-configure := --with-pkgversion='SiFive GDB $(RGDB_VERSION)' $(common-rgt-configure)
+common-rbinutils-configure := --with-pkgversion='SiFive Binutils $(RGBU_VERSION)' $(common-rgt-configure)
 # Some special riscv-gnu-toolchain configure flags for specific targets.
-$(WIN32)-rgt-host            := --host=$(WIN32)
-$(WIN32)-rgcc-configure      := --without-system-zlib
+$(WIN32)-rgt-host            := --with-host=$(WIN32)
+$(WIN32)-rgt-configure       := --without-system-zlib
 $(WIN32)-expat-configure     := --host=$(WIN32)
 $(WIN32)-xc3sp-host          := --host=$(WIN32)
-$(WIN64)-rgt-host            := --host=$(WIN64)
-$(WIN64)-rgcc-configure      := --without-system-zlib
+$(WIN64)-rgt-host            := --with-host=$(WIN64)
+$(WIN64)-rgt-configure       := --without-system-zlib
 $(WIN64)-rocd-host           := --host=$(WIN64)
 $(WIN64)-oftdi-configure     := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(OBJ_WIN64)/build/riscv-openocd/libftdi/cmake/Toolchain-x86_64-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/include/libusb-1.0)"
 $(WIN64)-odeps-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include"
@@ -227,12 +232,12 @@ $(WIN64)-tdc-cross           := x86_64-w64-mingw32-
 $(WIN64)-tdc-binext          := .exe
 $(WIN64)-dtc-configure       := CROSSPREFIX=x86_64-w64-mingw32- BINEXT=.exe CC=gcc
 $(WIN64)-fe2h-configure      := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
-$(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
-$(UBUNTU32)-rgcc-configure   := --without-system-zlib
+$(UBUNTU32)-rgt-host         := --with-host=i686-linux-gnu
+$(UBUNTU32)-rgt-configure    := --without-system-zlib
 $(UBUNTU32)-expat-configure  := --host=i686-linux-gnu
 $(UBUNTU32)-xc3sp-host       := --host=x86_64-linux-gnu
-$(UBUNTU64)-rgt-host         := --host=x86_64-linux-gnu
-$(UBUNTU64)-rgcc-configure   := --without-system-zlib
+$(UBUNTU64)-rgt-host         := --with-host=x86_64-linux-gnu
+$(UBUNTU64)-rgt-configure    := --without-system-zlib
 $(UBUNTU64)-ousb-configure   := --disable-shared
 $(UBUNTU64)-rocd-host        := --host=x86_64-linux-gnu
 $(UBUNTU64)-odeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib -pthread"
@@ -244,7 +249,7 @@ $(UBUNTU64)-glib-vars        := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/insta
 $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
-$(DARWIN)-rgcc-configure     := --with-system-zlib
+$(DARWIN)-rgt-configure      := --with-system-zlib
 $(DARWIN)-ousb-configure     := --disable-shared
 $(DARWIN)-odeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib -framework CoreFoundation -framework IOKit"
 $(DARWIN)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include -O2" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib -framework CoreFoundation -framework IOKit"
@@ -256,7 +261,7 @@ $(DARWIN)-glib-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install
 $(DARWIN)-xdeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib -framework CoreFoundation -framework IOKit"
 $(DARWIN)-xc3sp-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework IOKit"
 $(DARWIN)-xc3sp-framework    := -framework CoreFoundation -framework IOKit
-$(REDHAT)-rgcc-configure     := --with-system-zlib
+$(REDHAT)-rgt-configure      := --with-system-zlib
 $(REDHAT)-ousb-configure     := --disable-shared
 $(REDHAT)-odeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
 $(REDHAT)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -O2" CPPFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
@@ -347,8 +352,8 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz: \
 	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-gnu-toolchain expat | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp
+		$(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.doc.stamp \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build.stamp
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -358,240 +363,62 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp:
 	cp -a $(SRC_RBU) $(SRC_RGCC) $(SRC_RGDB) $(SRC_RNL) $(dir $@)
 	cd $(dir $@)/riscv-gcc; ./contrib/download_prerequisites
 	cd $(dir $@)/riscv-gcc/gcc/config/riscv; rm t-elf-multilib; ./multilib-generator $(MULTILIBS_GEN) > t-elf-multilib
-	date > $@
 
-$(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
-		$(OBJDIR)/%/stamps/expat/install.stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-binutils-newlib/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
-	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-binutils-newlib/stamp,%/build/riscv-gnu-toolchain,$@))
-	rm -rf $(dir $@)
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build.stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/stamp \
+		$(OBJDIR)/%/stamps/expat/install.stamp
 	mkdir -p $(dir $@)
-# CC_FOR_TARGET is required for the ld testsuite.
-	cd $(dir $@) && CC_FOR_TARGET=$(NEWLIB_CC_FOR_TARGET) $(abspath $($@_BUILD))/riscv-binutils/configure \
-		--target=$(NEWLIB_TUPLE) \
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build.stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build.stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
+	cd $(dir $@) && $(SRC_RGT)/configure \
 		$($($@_TARGET)-rgt-host) \
-		--prefix=$(abspath $($@_INSTALL)) \
-		--with-pkgversion="SiFive Binutils $(RGBU_VERSION)" \
-		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
-		--disable-werror \
-		$(BINUTILS_TARGET_FLAGS) \
-		--disable-gdb \
-		--disable-sim \
-		--disable-libdecnumber \
-		--disable-libreadline \
-		CFLAGS="-O2" \
-		CXXFLAGS="-O2" &>make-configure.log
-	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
-	date > $@
-
-$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
-		$(OBJDIR)/%/stamps/expat/install.stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-newlib/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
-	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-newlib/stamp,%/build/riscv-gnu-toolchain,$@))
-	rm -rf $(dir $@)
-	mkdir -p $(dir $@)
-# CC_FOR_TARGET is required for the ld testsuite.
-	cd $(dir $@) && CC_FOR_TARGET=$(NEWLIB_CC_FOR_TARGET) $(abspath $($@_BUILD))/riscv-gdb/configure \
-		--target=$(NEWLIB_TUPLE) \
-		$($($@_TARGET)-rgt-host) \
-		--prefix=$(abspath $($@_INSTALL)) \
-		--with-pkgversion="SiFive GDB $(RGDB_VERSION)" \
-		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
-		--disable-werror \
-		$(GDB_TARGET_FLAGS) \
-		--enable-gdb \
-		--disable-gas \
-		--disable-binutils \
-		--disable-ld \
-		--disable-gold \
-		--disable-gprof \
-		CFLAGS="-O2" \
-		CXXFLAGS="-O2" &>make-configure.log
-	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
-	date > $@
-
-$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp: \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
-	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp,%/build/riscv-gnu-toolchain,$@))
-	rm -rf $(dir $@)
-	mkdir -p $(dir $@)
-	cd $(dir $@) && $(abspath $($@_BUILD))/riscv-gcc/configure \
-		--target=$(NEWLIB_TUPLE) \
-		$($($@_TARGET)-rgt-host) \
-		--prefix=$(abspath $($@_INSTALL)) \
-		--with-pkgversion="SiFive GCC $(RGT_VERSION)" \
-		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
-		--disable-shared \
-		--disable-threads \
-		--disable-tls \
-		--enable-languages=c,c++ \
-		--with-newlib \
-		--with-sysroot=$(abspath $($@_INSTALL))/$(NEWLIB_TUPLE) \
-		--disable-libmudflap \
-		--disable-libssp \
-		--disable-libquadmath \
-		--disable-libgomp \
-		--disable-nls \
-		--disable-tm-clone-registry \
-		--src=../riscv-gcc \
-		$($($@_TARGET)-rgcc-configure) \
-		--enable-checking=yes \
+		$($($@_TARGET)-rgt-configure) \
 		--enable-multilib \
-		--with-abi=$(WITH_ABI) \
-		--with-arch=$(WITH_ARCH) \
-		CFLAGS="-O2" \
-		CXXFLAGS="-O2" \
-		CFLAGS_FOR_TARGET="-Os $(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="-Os $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
-	$(MAKE) -C $(dir $@) all-gcc &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install-gcc &>$(dir $@)/make-install.log
+		--with-gcc-src=$(abspath $(dir $@)/riscv-gcc) \
+		--with-gdb-src=$(abspath $(dir $@)/riscv-gdb) \
+		--with-newlib-src=$(abspath $(dir $@)/riscv-newlib) \
+		--with-binutils-src=$(abspath $(dir $@)/riscv-binutils) \
+		--prefix=$(abspath $($@_INSTALL))
+	cd $(dir $@) && \
+	$(MAKE) \
+		BINUTILS_TARGET_FLAGS="$(common-rbinutils-configure) $($($@_TARGET)-rbinutils-configure)" \
+		GCC_TARGET_FLAGS_EXTRA="$(common-rgcc-configure) $($($@_TARGET)-rgcc-configure)" \
+		GDB_TARGET_FLAGS="$(common-rgdb-configure) $($($@_TARGET)-rgdb-configure)"
 	date > $@
 
-$(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib/stamp: \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-newlib/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
-	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-newlib/stamp,%/build/riscv-gnu-toolchain,$@))
-	rm -rf $(dir $@)
-	mkdir -p $(dir $@)
-	cd $(dir $@) && $(abspath $($@_BUILD))/riscv-newlib/configure \
-		--target=$(NEWLIB_TUPLE) \
-		$($($@_TARGET)-rgt-host) \
-		--prefix=$(abspath $($@_INSTALL)) \
-		--enable-newlib-io-long-double \
-		--enable-newlib-io-long-long \
-		--enable-newlib-io-c99-formats \
-		--enable-newlib-register-fini \
-		CFLAGS_FOR_TARGET="-O2 -D_POSIX_MODE $(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="-O2 -D_POSIX_MODE $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
-	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
-# These install multiple copies of the same docs into the same destination
-# for a multilib build.  So we must not parallelize them.
-# TODO: Rewrite so that we only install one copy of the docs.
-	$(MAKE) -j1 -C $(dir $@) install-pdf install-html &>$(dir $@)/make-install-doc.log
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/install.doc.stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build.stamp
+	$(MAKE) -j1 -C $(dir $@) install-pdf install-html &> $(dir $@)/make-install.log
 	date > $@
 
-$(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano/stamp: \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-newlib-nano/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
-	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-newlib-nano/stamp,%/build/riscv-gnu-toolchain,$@))
-	rm -rf $(dir $@)
-	mkdir -p $(dir $@)
-	cd $(dir $@) && $(abspath $($@_BUILD))/riscv-newlib/configure \
-		--target=$(NEWLIB_TUPLE) \
-		$($($@_TARGET)-rgt-host) \
-		--prefix=$(abspath $($@_BUILD)/build-newlib-nano-install) \
-		--enable-newlib-reent-small \
-		--disable-newlib-fvwrite-in-streamio \
-		--disable-newlib-fseek-optimization \
-		--disable-newlib-wide-orient \
-		--enable-newlib-nano-malloc \
-		--disable-newlib-unbuf-stream-opt \
-		--enable-lite-exit \
-		--enable-newlib-global-atexit \
-		--enable-newlib-nano-formatted-io \
-		--disable-newlib-supplied-syscalls \
-		--disable-nls \
-		CFLAGS_FOR_TARGET="-Os -ffunction-sections -fdata-sections $(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="-Os -ffunction-sections -fdata-sections $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
-	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install &>$(dir $@)/make-install.log
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/install.doc.stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build.stamp
+	$(MAKE) -j1 -C $(dir $@) install-pdf install-html &> $(dir $@)/make-install.log
 	date > $@
 
-$(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp: \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
-	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp,%/build/riscv-gnu-toolchain,$@))
-# Copy nano library files into newlib install dir.
-	set -e; \
-	bnl="$(abspath $($@_BUILD))/build-newlib-nano-install/$(NEWLIB_TUPLE)/lib"; \
-	inl="$(abspath $($@_INSTALL))/$(NEWLIB_TUPLE)/lib"; \
-	for bnlc in `find $${bnl} -name libc.a`; \
-	do \
-		inlc=`echo $${bnlc} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libc\.a:libc_nano.a:g"`; \
-		cp $${bnlc} $${inl}$${inlc}; \
-	done; \
-	for bnlg in `find $${bnl} -name libg.a`; \
-	do \
-		inlg=`echo $${bnlg} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libg\.a:libg_nano.a:g"`; \
-		cp $${bnlg} $${inl}$${inlg}; \
-	done; \
-	for bnls in `find $${bnl} -name libgloss.a`; \
-	do \
-		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libgloss\.a:libgloss_nano.a:g"`; \
-		cp $${bnls} $${inl}$${inls}; \
-	done
-	for bnls in `find $${bnl} -name crt0.0`; \
-	do \
-		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::"`; \
-		cp $${bnls} $${inl}$${inls}; \
-	done
-# Copy nano header files into newlib install dir.
-	mkdir -p $(abspath $($@_INSTALL))/$(NEWLIB_TUPLE)/include/newlib-nano; \
-	cp $(abspath $($@_BUILD))/build-newlib-nano-install/$(NEWLIB_TUPLE)/include/newlib.h \
-		$(abspath $($@_INSTALL))/$(NEWLIB_TUPLE)/include/newlib-nano/newlib.h; \
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/install.doc.stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build.stamp
+	$(MAKE) -j1 -C $(dir $@) install-pdf install-html &> $(dir $@)/make-install.log
 	date > $@
 
-$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp: \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
-	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp,%/build/riscv-gnu-toolchain,$@))
-	rm -rf $(dir $@)
-	mkdir -p $(dir $@)
-	cd $(dir $@) && $(abspath $($@_BUILD))/riscv-gcc/configure \
-		--target=$(NEWLIB_TUPLE) \
-		$($($@_TARGET)-rgt-host) \
-		--prefix=$(abspath $($@_INSTALL)) \
-		--with-pkgversion="SiFive GCC $(RGT_VERSION)" \
-		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
-		--disable-shared \
-		--disable-threads \
-		--enable-languages=c,c++ \
-		--enable-tls \
-		--with-newlib \
-		--with-sysroot=$(abspath $($@_INSTALL))/$(NEWLIB_TUPLE) \
-		--with-native-system-header-dir=/include \
-		--disable-libmudflap \
-		--disable-libssp \
-		--disable-libquadmath \
-		--disable-libgomp \
-		--disable-nls \
-		--disable-tm-clone-registry \
-		--src=../riscv-gcc \
-		$($($@_TARGET)-rgcc-configure) \
-		--enable-checking=yes \
-		--enable-multilib \
-		--with-abi=$(WITH_ABI) \
-		--with-arch=$(WITH_ARCH) \
-		CFLAGS="-O2" \
-		CXXFLAGS="-O2" \
-		CFLAGS_FOR_TARGET="-Os $(CFLAGS_FOR_TARGET)" \
-		CXXFLAGS_FOR_TARGET="-Os $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
-	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/install.doc.stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build.stamp
+	$(MAKE) -j1 -C $(dir $@) install-pdf install-html &> $(dir $@)/make-install.log
 	date > $@
+
+$(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.doc.stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/install.doc.stamp \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/install.doc.stamp \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/install.doc.stamp \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/install.doc.stamp
 
 # The Windows build requires the native toolchain.  The dependency is enforced
 # here, PATH allows the tools to get access.
-$(OBJ_WIN64)/stamps/riscv-gnu-toolchain/install.stamp: \
-	$(OBJ_NATIVE)/stamps/riscv-gnu-toolchain/install.stamp
+$(OBJ_WIN64)/build/riscv-gnu-toolchain/build.stamp: \
+	$(OBJ_NATIVE)/build/riscv-gnu-toolchain/build.stamp
 
-$(OBJ_WIN32)/stamps/riscv-gnu-toolchain/install.stamp: \
-	$(OBJ_NATIVE)/stamps/riscv-gnu-toolchain/install.stamp
+$(OBJ_WIN32)/build/riscv-gnu-toolchain/build.stamp: \
+	$(OBJ_NATIVE)/build/riscv-gnu-toolchain/build.stamp
 
 # OpenOCD requires a GDB that's been build with expat support so it can read
 # the target XML files.
