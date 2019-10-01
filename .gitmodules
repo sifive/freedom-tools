@@ -31,3 +31,6 @@
 [submodule "src/riscv-qemu"]
 	path = src/riscv-qemu
 	url = git://git.qemu.org/qemu.git
+[submodule "src/riscv-gnu-toolchain"]
+	path = src/riscv-gnu-toolchain
+	url = ../riscv-gnu-toolchain/
