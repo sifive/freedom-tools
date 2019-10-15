@@ -384,7 +384,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) -j1 install install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
@@ -413,7 +413,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) -j1 install install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp: \
@@ -582,7 +582,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp: \
 		CFLAGS_FOR_TARGET="-Os $(CFLAGS_FOR_TARGET)" \
 		CXXFLAGS_FOR_TARGET="-Os $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) -j1 install install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 # The Windows build requires the native toolchain.  The dependency is enforced
@@ -741,7 +741,7 @@ $(OBJDIR)/%/build/riscv-openocd/riscv-openocd/stamp: \
 		$($($@_TARGET)-rocd-configure) &>make-configure.log
 	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) &>$(dir $@)/make-build.log
 	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) pdf html &>$(dir $@)/make-build-doc.log
-	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) -j1 install install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 # The QEMU builds go here
