@@ -49,11 +49,11 @@ Several standard packages are needed to build the tools on the different support
 
 On Ubuntu, executing the following command should suffice:
 
-    $ sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64
+    $ sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64 mingw-w64-tools texlive zip
 
-On OS X, you can use [Homebrew](http://brew.sh) to install the dependencies:
+On OS X, you can use [Homebrew](http://brew.sh) to install the dependencies [MacTex](http://www.tug.org/mactex/):
 
-    $ brew install cmake gawk gnu-sed gnu-tar gmp mpfr libmpc isl zlib expat texinfo libtool pkg-config
+    $ brew install cmake autoconf automake gawk gnu-sed gnu-tar texinfo libtool pkg-config
 
 On Fedora/CentOS/RHEL OS, executing the following command should suffice - plus see below:
 
