@@ -1464,7 +1464,13 @@ $(BINDIR)/python-$(PY_VERSION)-%.tar.gz: \
 	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/install -c python-$(PY_VERSION)-$($@_TARGET) | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/python/install.stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/stamps/python/install.stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/stamps/python/install.stamp,%/install,$@))
 	mkdir -p $(dir $@)
+	mkdir -p $(abspath $($@_INSTALL)/python-$(PY_VERSION)-$($@_TARGET))
+	cd $(abspath $($@_INSTALL)); curl -L -f -s -o $($($@_TARGET)-pyobj-tarball) https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/$($($@_TARGET)-pyobj-tarball)
+	cd $(abspath $($@_INSTALL)/python-$(PY_VERSION)-$($@_TARGET)); $(TAR) -xf ../$($($@_TARGET)-pyobj-tarball)
+	cd $(abspath $($@_INSTALL)); rm $($($@_TARGET)-pyobj-tarball)
 	date > $@
 
 # Targets that don't build anything
