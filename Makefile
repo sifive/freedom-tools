@@ -256,11 +256,11 @@ $(WIN64)-dtc-configure       := CROSSPREFIX=x86_64-w64-mingw32- BINEXT=.exe CC=g
 $(WIN64)-fe2h-configure      := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
 $(WIN64)-pyobj-tarball       := python-2.7.15-x86_64-w64-mingw32.tar.gz
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
-$(UBUNTU32)-rgcc-configure   := --without-system-zlib
+$(UBUNTU32)-rgcc-configure   := --with-system-zlib
 $(UBUNTU32)-expat-configure  := --host=i686-linux-gnu
 $(UBUNTU32)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-rgt-host         := --host=x86_64-linux-gnu
-$(UBUNTU64)-rgcc-configure   := --without-system-zlib
+$(UBUNTU64)-rgcc-configure   := --with-system-zlib
 $(UBUNTU64)-rgdb-configure   := --with-python=python2.7
 $(UBUNTU64)-ousb-configure   := --disable-shared
 $(UBUNTU64)-rocd-host        := --host=x86_64-linux-gnu
