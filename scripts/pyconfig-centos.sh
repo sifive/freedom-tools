@@ -1,16 +1,17 @@
 #!/bin/sh
 # Ignore first argument
+pydir=$(dirname $1)
 shift
 for arg in $@; do
     case $arg in
         --prefix|--exec-prefix)
-            echo "$(dirname $1)/../../../python"
+            echo "${pydir}/../../../python"
             ;;
         --includes)
-            echo "-I$(dirname $1)/../../../python/include/python2.7"
+            echo "-I${pydir}/../../../python/include/python2.7"
             ;;
         --ldflags)
-            echo "-Wl,--export-dynamic -L$(dirname $1)/../../../python/lib/python2.7/config -Wl,--whole-archive -lpython2.7 -Wl,--no-whole-archive -lpthread -ldl -lutil -lm"
+            echo "-Wl,--export-dynamic -L${pydir}/../../../python/lib/python2.7/config -Wl,--whole-archive -lpython2.7 -Wl,--no-whole-archive -lpthread -ldl -lutil -lm"
             ;;
     esac
     shift
