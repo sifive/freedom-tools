@@ -389,6 +389,10 @@ $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp:
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
+	mkdir -p $(dir $@)/python
+	cd $(dir $@); curl -L -f -s -o $($($@_TARGET)-pyobj-tarball) https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/$($($@_TARGET)-pyobj-tarball)
+	cd $(dir $@)/python; $(TAR) -xf ../$($($@_TARGET)-pyobj-tarball)
+	cd $(dir $@); rm $($($@_TARGET)-pyobj-tarball)
 	cp -a $(SRC_RBU) $(SRC_RGCC) $(SRC_RGDB) $(SRC_RNL) $(dir $@)
 	cd $(dir $@)/riscv-gcc; ./contrib/download_prerequisites
 	cd $(dir $@)/riscv-gcc/gcc/config/riscv; rm t-elf-multilib; ./multilib-generator $(MULTILIBS_GEN) > t-elf-multilib
@@ -684,9 +688,10 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp:
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp,%,$@))
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
-	cd $(dir $@); curl -L -f -s -o $($($@_TARGET)-pyobj-tarball) https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/$($($@_TARGET)-pyobj-tarball)
 	mkdir -p $(dir $@)/python
+	cd $(dir $@); curl -L -f -s -o $($($@_TARGET)-pyobj-tarball) https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/$($($@_TARGET)-pyobj-tarball)
 	cd $(dir $@)/python; $(TAR) -xf ../$($($@_TARGET)-pyobj-tarball)
+	cd $(dir $@); rm $($($@_TARGET)-pyobj-tarball)
 	cp -a $(SRC_RBU) $(SRC_RGDB) $(dir $@)
 	$(SED) -E -i -f scripts/gdb-python.sed $(dir $@)/riscv-gdb/gdb/python/python.c
 	date > $@
