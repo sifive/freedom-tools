@@ -387,6 +387,7 @@ $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp,%,$@))
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
 	mkdir -p $(dir $@)/python
