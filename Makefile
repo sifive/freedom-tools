@@ -12,6 +12,9 @@ sdk-utilities:
 python:
 combo-package:
 
+.NOTPARALLEL:
+export MAKEFLAGS=-j1
+
 # Make uses /bin/sh by default, ignoring the user's value of SHELL.
 # Some systems now ship with /bin/sh pointing at dash, and this Makefile
 # requires bash
@@ -123,6 +126,7 @@ SRC_FE2H     := $(SRCDIR)/freedom-elf2hex
 SRC_EXPAT    := $(SRCDIR)/libexpat/expat
 SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
+SRC_PICOLIBC := $(SRCDIR)/picolibc
 
 # The version that will be appended to the various tool builds.
 RGT_VERSION ?= 8.3.0-2019.11.0-preview4
@@ -413,7 +417,8 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz: \
 
 $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -713,6 +718,7 @@ $(OBJDIR)/%/build/expat/configure:
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
 	cp -a $(SRC_EXPAT)/* $(dir $@)
+	mkdir -p $(dir $@)/m4
 	cd $(dir $@); ./buildconf.sh &>make-buildconf.log
 	touch -c $@
 
@@ -1596,6 +1602,20 @@ $(OBJDIR)/%/stamps/freedom-tools/install.stamp:
 	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) trace-decoder-$(TDC_VERSION)-$($@_TARGET).tar.gz)
 	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) sdk-utilities-$(SDKU_VERSION)-$($@_TARGET).tar.gz)
 	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) python-$(PY_VERSION)-$($@_TARGET).tar.gz)
+	date > $@
+
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp: \
+	$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-picolibc/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-picolibc/stamp,%/build/riscv-gnu-toolchain,$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	meson $(dir $@) \
+	      $(SRC_PICOLIBC) \
+	      --prefix $(abspath $($@_INSTALL)) \
+	      --cross-file $(SRC_PICOLIBC)/cross-riscv64-unknown-elf.txt
+	ninja -C $(dir $@) install >& $(dir $@)/make-install.log
 	date > $@
 
 # Targets that don't build anything
