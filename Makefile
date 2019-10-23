@@ -11,6 +11,11 @@ sdk-utilities:
 python:
 non-toolchain:
 
+# Make uses /bin/sh by default, ignoring the user's value of SHELL.
+# Some systems now ship with /bin/sh pointing at dash, and this Makefile
+# requires bash
+SHELL = /bin/bash
+
 BINDIR := bin
 OBJDIR := obj
 SRCDIR := src
@@ -113,9 +118,9 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.3.0-2019.08.0
-RGDB_VERSION := 8.3.0-2019.08.1-preview1
-RGBU_VERSION := 2.32.0-2019.08.0
+RGT_VERSION := 8.3.0-2019.11.0-preview1
+RGDB_VERSION := 8.3.0-2019.11.0-preview1
+RGBU_VERSION := 2.32.0-2019.11.0-preview1
 ROCD_VERSION := 0.10.0-2019.08.2
 RQEMU_VERSION := 4.1.0-2019.08.0
 XC3SP_VERSION := 0.1.2-2019.08.0
@@ -391,7 +396,7 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz: \
 
 $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -404,6 +409,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp:
 	cd $(dir $@)/python; $(TAR) -xf ../$($($@_TARGET)-pyobj-tarball)
 	cd $(dir $@); rm $($($@_TARGET)-pyobj-tarball)
 	cp -a $(SRC_RBU) $(SRC_RGCC) $(SRC_RGDB) $(SRC_RNL) $(dir $@)
+	$(SED) -E -i -f scripts/gdb-python.sed $(dir $@)/riscv-gdb/gdb/python/python.c
 	cd $(dir $@)/riscv-gcc; ./contrib/download_prerequisites
 	cd $(dir $@)/riscv-gcc/gcc/config/riscv; rm t-elf-multilib; ./multilib-generator $(MULTILIBS_GEN) > t-elf-multilib
 	date > $@
@@ -436,8 +442,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
-		$(OBJDIR)/%/stamps/expat/install.stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/stamp
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-newlib/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
 	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-newlib/stamp,%/build/riscv-gnu-toolchain,$@))
@@ -452,7 +457,38 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
+		--with-python=no \
+		--enable-gdb \
+		--disable-gas \
+		--disable-binutils \
+		--disable-ld \
+		--disable-gold \
+		--disable-gprof \
+		CFLAGS="-O2" \
+		CXXFLAGS="-O2" &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp,%/build/riscv-gnu-toolchain,$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+# CC_FOR_TARGET is required for the ld testsuite.
+	cd $(dir $@) && CC_FOR_TARGET=$(NEWLIB_CC_FOR_TARGET) $(abspath $($@_BUILD))/riscv-gdb/configure \
+		--target=$(NEWLIB_TUPLE) \
+		$($($@_TARGET)-rgt-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GDB $(RGDB_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
+		--disable-werror \
+		$(GDB_TARGET_FLAGS) \
 		$($($@_TARGET)-rgdb-configure) \
+		--program-prefix="$(NEWLIB_TUPLE)-" \
+		--program-suffix="-py" \
 		--enable-gdb \
 		--disable-gas \
 		--disable-binutils \
@@ -689,8 +725,7 @@ $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-%.src.tar.gz: \
 	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-gnu-gdb-only expat-gdb | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp: \
-		$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-binutils-newlib/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp
+		$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -734,8 +769,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-binutils-newlib/stamp: \
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp: \
-		$(OBJDIR)/%/stamps/expat-gdb/install.stamp \
-		$(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp
+		$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-binutils-newlib/stamp
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp,%/install/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$($@_TARGET),$@))
 	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp,%/build/riscv-gnu-gdb-only,$@))
@@ -750,7 +784,38 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
+		--with-python=no \
+		--enable-gdb \
+		--disable-gas \
+		--disable-binutils \
+		--disable-ld \
+		--disable-gold \
+		--disable-gprof \
+		CFLAGS="-O2" \
+		CXXFLAGS="-O2" &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp,%/install/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp,%/build/riscv-gnu-gdb-only,$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+# CC_FOR_TARGET is required for the ld testsuite.
+	cd $(dir $@) && CC_FOR_TARGET=$(NEWLIB_CC_FOR_TARGET) $(abspath $($@_BUILD))/riscv-gdb/configure \
+		--target=$(NEWLIB_TUPLE) \
+		$($($@_TARGET)-rgt-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GDB $(RGDB_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
+		--disable-werror \
+		$(GDB_TARGET_FLAGS) \
 		$($($@_TARGET)-rgdb-configure) \
+		--program-prefix="$(NEWLIB_TUPLE)-" \
+		--program-suffix="-py" \
 		--enable-gdb \
 		--disable-gas \
 		--disable-binutils \
