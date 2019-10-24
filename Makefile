@@ -1,6 +1,7 @@
 # The default target
-.PHONY: all toolchain gdb-only openocd qemu xc3sprog trace-decoder sdk-utilities python non-toolchain
+.PHONY: all non-toolchain toolchain gdb-only openocd qemu xc3sprog trace-decoder sdk-utilities python combo-package
 all:
+non-toolchain:
 toolchain:
 gdb-only:
 openocd:
@@ -9,7 +10,7 @@ xc3sprog:
 trace-decoder:
 sdk-utilities:
 python:
-non-toolchain:
+combo-package:
 
 # Make uses /bin/sh by default, ignoring the user's value of SHELL.
 # Some systems now ship with /bin/sh pointing at dash, and this Makefile
@@ -32,6 +33,7 @@ DARWIN ?= x86_64-apple-darwin
 ifneq ($(wildcard /etc/redhat-release),)
 NATIVE ?= $(REDHAT)
 all: redhat
+non-toolchain: redhat-non-toolchain
 toolchain: redhat-toolchain
 gdb-only: redhat-gdb-only
 openocd: redhat-openocd
@@ -40,11 +42,12 @@ xc3sprog: redhat-xc3sprog
 trace-decoder: redhat-trace-decoder
 sdk-utilities: redhat-sdk-utilities
 python: redhat-python
-non-toolchain: redhat-non-toolchain
+combo-package: redhat-combo-package
 else ifeq ($(DISTRIB_ID),Ubuntu)
 ifeq ($(shell uname -m),x86_64)
 NATIVE ?= $(UBUNTU64)
 all: ubuntu64
+non-toolchain: ubuntu64-non-toolchain
 toolchain: ubuntu64-toolchain
 gdb-only: ubuntu64-gdb-only
 openocd: ubuntu64-openocd
@@ -53,7 +56,7 @@ xc3sprog: ubuntu64-xc3sprog
 trace-decoder: ubuntu64-trace-decoder
 sdk-utilities: ubuntu64-sdk-utilities
 python: ubuntu64-python
-non-toolchain: ubuntu64-non-toolchain
+combo-package: ubuntu64-combo-package
 else
 NATIVE ?= $(UBUNTU32)
 all: ubuntu32
@@ -61,6 +64,7 @@ toolchain: ubuntu32-toolchain
 openocd: ubuntu32-openocd
 endif
 all: win64
+non-toolchain: win64-non-toolchain
 toolchain: win64-toolchain
 gdb-only: win64-gdb-only
 openocd: win64-openocd
@@ -69,7 +73,7 @@ xc3sprog: win64-xc3sprog
 trace-decoder: win64-trace-decoder
 sdk-utilities: win64-sdk-utilities
 python: win64-python
-non-toolchain: win64-non-toolchain
+combo-package: win64-combo-package
 else ifeq ($(shell uname),Darwin)
 NATIVE ?= $(DARWIN)
 LIBTOOLIZE ?= glibtoolize
@@ -77,6 +81,7 @@ TAR ?= gtar
 SED ?= gsed
 AWK ?= gawk
 all: darwin
+non-toolchain: darwin-non-toolchain
 toolchain: darwin-toolchain
 gdb-only: darwin-gdb-only
 openocd: darwin-openocd
@@ -85,7 +90,7 @@ xc3sprog: darwin-xc3sprog
 trace-decoder: darwin-trace-decoder
 sdk-utilities: darwin-sdk-utilities
 python: darwin-python
-non-toolchain: darwin-non-toolchain
+combo-package: darwin-combo-package
 else
 $(error Unknown host)
 endif
@@ -127,14 +132,16 @@ XC3SP_VERSION := 0.1.2-2019.08.0
 TDC_VERSION := 0.0.0-2019.08.0
 SDKU_VERSION := 0.0.0-2019.08.0
 PY_VERSION := 2.7.0-2019.11.0-preview1
+FT_VERSION := 2019.11.0-preview1
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
 export PATH
 
 # The actual output of this repository is a set of tarballs.
-.PHONY: win64 win64-openocd win64-toolchain win64-gdb-only win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities win64-python win64-non-toolchain
-win64: win64-openocd win64-toolchain win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities win64-python
+.PHONY: win64 win64-non-toolchain win64-toolchain win64-gdb-only win64-openocd win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities win64-python win64-combo-package
+win64: win64-toolchain win64-openocd win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities win64-python win64-combo-package
+win64-non-toolchain: win64-openocd win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities win64-python
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).src.zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).tar.gz
@@ -165,7 +172,8 @@ win64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(WIN64).tar.gz
 win64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(WIN64).src.tar.gz
 win64-python: $(BINDIR)/python-$(PY_VERSION)-$(WIN64).zip
 win64-python: $(BINDIR)/python-$(PY_VERSION)-$(WIN64).tar.gz
-win64-non-toolchain: win64-openocd win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities win64-python
+win64-combo-package: $(BINDIR)/freedom-tools-$(FT_VERSION)-$(WIN64).zip
+win64-combo-package: $(BINDIR)/freedom-tools-$(FT_VERSION)-$(WIN64).tar.gz
 .PHONY: win32 win32-openocd win32-toolchain
 win32: win32-openocd win32-toolchain
 win32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN32).zip
@@ -176,8 +184,9 @@ win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).tar.gz
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.tar.gz
-.PHONY: ubuntu64 ubuntu64-toolchain ubuntu64-gdb-only ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities ubuntu64-python ubuntu64-non-toolchain
-ubuntu64: ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities ubuntu64-python
+.PHONY: ubuntu64 ubuntu64-non-toolchain ubuntu64-toolchain ubuntu64-gdb-only ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities ubuntu64-python ubuntu64-combo-package
+ubuntu64: ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities ubuntu64-python ubuntu64-combo-package
+ubuntu64-non-toolchain: ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities ubuntu64-python
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(UBUNTU64).tar.gz
@@ -193,15 +202,16 @@ ubuntu64-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(UBUNTU64).src.t
 ubuntu64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-python: $(BINDIR)/python-$(PY_VERSION)-$(UBUNTU64).tar.gz
-ubuntu64-non-toolchain: ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities ubuntu64-python
+ubuntu64-combo-package: $(BINDIR)/freedom-tools-$(FT_VERSION)-$(UBUNTU64).tar.gz
 .PHONY: ubuntu32 ubuntu32-toolchain ubuntu32-openocd
 ubuntu32: ubuntu32-toolchain ubuntu32-openocd
 ubuntu32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32).tar.gz
 ubuntu32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32).src.tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).src.tar.gz
-.PHONY: redhat redhat-toolchain redhat-gdb-only redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities redhat-python redhat-non-toolchain
-redhat: redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities redhat-python
+.PHONY: redhat redhat-non-toolchain redhat-toolchain redhat-gdb-only redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities redhat-python redhat-combo-package
+redhat: redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities redhat-python redhat-combo-package
+redhat-non-toolchain: redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities redhat-python
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).tar.gz
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).src.tar.gz
 redhat-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(REDHAT).tar.gz
@@ -217,9 +227,10 @@ redhat-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(REDHAT).src.tar.g
 redhat-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(REDHAT).tar.gz
 redhat-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(REDHAT).src.tar.gz
 redhat-python: $(BINDIR)/python-$(PY_VERSION)-$(REDHAT).tar.gz
-redhat-non-toolchain: redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities redhat-python
-.PHONY: darwin darwin-toolchain darwin-gdb-only darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities darwin-python darwin-non-toolchain
-darwin: darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities darwin-python
+redhat-combo-package: $(BINDIR)/freedom-tools-$(FT_VERSION)-$(REDHAT).tar.gz
+.PHONY: darwin darwin-non-toolchain darwin-toolchain darwin-gdb-only darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities darwin-python darwin-combo-package
+darwin: darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities darwin-python darwin-combo-package
+darwin-non-toolchain: darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities darwin-python darwin-combo-package
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).tar.gz
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).src.tar.gz
 darwin-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(DARWIN).tar.gz
@@ -235,7 +246,7 @@ darwin-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(DARWIN).src.tar.g
 darwin-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(DARWIN).tar.gz
 darwin-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(DARWIN).src.tar.gz
 darwin-python: $(BINDIR)/python-$(PY_VERSION)-$(DARWIN).tar.gz
-darwin-non-toolchain: darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities darwin-python
+darwin-combo-package: $(BINDIR)/freedom-tools-$(FT_VERSION)-$(DARWIN).tar.gz
 
 
 # Some special riscv-gnu-toolchain configure flags for specific targets.
@@ -1551,6 +1562,34 @@ $(OBJDIR)/%/stamps/python/install.stamp:
 	cd $(abspath $($@_INSTALL)); curl -L -f -s -o $($($@_TARGET)-pyobj-tarball) https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/$($($@_TARGET)-pyobj-tarball)
 	cd $(abspath $($@_INSTALL)/python-$(PY_VERSION)-$($@_TARGET)); $(TAR) -xf ../$($($@_TARGET)-pyobj-tarball)
 	cd $(abspath $($@_INSTALL)); rm $($($@_TARGET)-pyobj-tarball)
+	date > $@
+
+# The Combo Package builds go here
+$(BINDIR)/freedom-tools-$(FT_VERSION)-%.zip: \
+		$(OBJDIR)/%/stamps/freedom-tools/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/freedom-tools-$(FT_VERSION)-%.zip,%,$@))
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$($@_TARGET)/install; zip -rq $(abspath $@) freedom-tools-$(FT_VERSION)-$($@_TARGET)
+
+$(BINDIR)/freedom-tools-$(FT_VERSION)-%.tar.gz: \
+		$(OBJDIR)/%/stamps/freedom-tools/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/freedom-tools-$(FT_VERSION)-%.tar.gz,%,$@))
+	mkdir -p $(dir $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/install -c freedom-tools-$(FT_VERSION)-$($@_TARGET) | gzip > $(abspath $@)
+
+$(OBJDIR)/%/stamps/freedom-tools/install.stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/stamps/freedom-tools/install.stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/stamps/freedom-tools/install.stamp,%/install/freedom-tools-$(FT_VERSION)-$($@_TARGET),$@))
+	mkdir -p $(dir $@)
+	rm -rf $($@_INSTALL)
+	mkdir -p $($@_INSTALL)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) riscv-openocd-$(ROCD_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) xc3sprog-$(XC3SP_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) trace-decoder-$(TDC_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) sdk-utilities-$(SDKU_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) python-$(PY_VERSION)-$($@_TARGET).tar.gz)
 	date > $@
 
 # Targets that don't build anything
