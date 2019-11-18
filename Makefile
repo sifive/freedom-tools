@@ -123,16 +123,16 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.3.0-2019.11.0-preview2
-RGDB_VERSION := 8.3.0-2019.11.0-preview2
-RGBU_VERSION := 2.32.0-2019.11.0-preview2
+RGT_VERSION := 8.3.0-2019.11.0-preview3
+RGDB_VERSION := 8.3.0-2019.11.0-preview3
+RGBU_VERSION := 2.32.0-2019.11.0-preview3
 ROCD_VERSION := 0.10.0-2019.08.2
 RQEMU_VERSION := 4.1.0-2019.08.0
 XC3SP_VERSION := 0.1.2-2019.08.0
 TDC_VERSION := 0.0.0-2019.08.0
 SDKU_VERSION := 0.0.0-2019.08.0
 PY_VERSION := 2.7.0-2019.11.0-preview1
-FT_VERSION := 2019.11.0-preview2
+FT_VERSION := 2019.11.0-preview3
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
@@ -342,28 +342,28 @@ MULTILIBS_GEN := \
 	rv32em-ilp32e--c \
 	rv32eac-ilp32e-- \
 	rv32emac-ilp32e-- \
-	rv32i-ilp32--c \
-	rv32ia-ilp32--m \
-	rv32im-ilp32--c \
-	rv32iac-ilp32-- \
-	rv32imac-ilp32-- \
-	rv32if-ilp32f--d,c,dc \
-	rv32iaf-ilp32f--d,c,dc \
-	rv32imf-ilp32f--d,c,dc \
+	rv32i-ilp32--c,f,fc,fd,fdc \
+	rv32ia-ilp32-rv32ima,rv32iaf,rv32imaf,rv32iafd,rv32imafd- \
+	rv32im-ilp32--c,f,fc,fd,fdc \
+	rv32iac-ilp32--f,fd \
+	rv32imac-ilp32-rv32imafc,rv32imafdc- \
+	rv32if-ilp32f--c,d,dc \
+	rv32iaf-ilp32f--c,d,dc \
+	rv32imf-ilp32f--c,d,dc \
 	rv32imaf-ilp32f-rv32imafd- \
 	rv32imafc-ilp32f-rv32imafdc- \
 	rv32ifd-ilp32d--c \
 	rv32imfd-ilp32d--c \
 	rv32iafd-ilp32d-rv32imafd,rv32iafdc- \
 	rv32imafdc-ilp32d-- \
-	rv64i-lp64--c \
-	rv64ia-lp64--m \
-	rv64im-lp64--c \
-	rv64iac-lp64-- \
-	rv64imac-lp64-- \
-	rv64if-lp64f--d,c,dc \
-	rv64iaf-lp64f--d,c,dc \
-	rv64imf-lp64f--d,c,dc \
+	rv64i-lp64--c,f,fc,fd,fdc \
+	rv64ia-lp64-rv64ima,rv64iaf,rv64imaf,rv64iafd,rv64imafd- \
+	rv64im-lp64--c,f,fc,fd,fdc \
+	rv64iac-lp64--f,fd \
+	rv64imac-lp64-rv64imafc,rv64imafdc- \
+	rv64if-lp64f--c,d,dc \
+	rv64iaf-lp64f--c,d,dc \
+	rv64imf-lp64f--c,d,dc \
 	rv64imaf-lp64f-rv64imafd- \
 	rv64imafc-lp64f-rv64imafdc- \
 	rv64ifd-lp64d--c \
