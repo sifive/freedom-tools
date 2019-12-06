@@ -98,7 +98,7 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.3.0-2019.08.0
+RGT_VERSION := 8.3.0-2019.08.1
 RGDB_VERSION := 8.3.0-2019.08.0
 RGBU_VERSION := 2.32.0-2019.08.0
 ROCD_VERSION := 0.10.0-2019.08.2
