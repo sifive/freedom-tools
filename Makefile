@@ -8,6 +8,11 @@ xc3sprog:
 trace-decoder:
 sdk-utilities:
 
+# Make uses /bin/sh by default, ignoring the user's value of SHELL.
+# Some systems now ship with /bin/sh pointing at dash, and this Makefile
+# requires bash
+SHELL = /bin/bash
+
 BINDIR := bin
 OBJDIR := obj
 SRCDIR := src
@@ -228,11 +233,11 @@ $(WIN64)-tdc-binext          := .exe
 $(WIN64)-dtc-configure       := CROSSPREFIX=x86_64-w64-mingw32- BINEXT=.exe CC=gcc
 $(WIN64)-fe2h-configure      := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
-$(UBUNTU32)-rgcc-configure   := --without-system-zlib
+$(UBUNTU32)-rgcc-configure   := --with-system-zlib
 $(UBUNTU32)-expat-configure  := --host=i686-linux-gnu
 $(UBUNTU32)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-rgt-host         := --host=x86_64-linux-gnu
-$(UBUNTU64)-rgcc-configure   := --without-system-zlib
+$(UBUNTU64)-rgcc-configure   := --with-system-zlib
 $(UBUNTU64)-ousb-configure   := --disable-shared
 $(UBUNTU64)-rocd-host        := --host=x86_64-linux-gnu
 $(UBUNTU64)-odeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib -pthread"
