@@ -17,9 +17,11 @@ combo-package:
 # requires bash
 SHELL = /bin/bash
 
+PREFIXPATH ?=
 BINDIR := bin
 OBJDIR := obj
-SRCDIR := src
+SRCDIR := $(PREFIXPATH)src
+SCRIPTSDIR := $(PREFIXPATH)scripts
 
 UBUNTU32 ?= i686-linux-ubuntu14
 UBUNTU64 ?= x86_64-linux-ubuntu14
@@ -123,16 +125,16 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.3.0-2019.11.0-preview4
-RGDB_VERSION := 8.3.0-2019.11.0-preview4
-RGBU_VERSION := 2.32.0-2019.11.0-preview4
-ROCD_VERSION := 0.10.0-2019.08.2
-RQEMU_VERSION := 4.1.0-2019.08.0
-XC3SP_VERSION := 0.1.2-2019.08.0
-TDC_VERSION := 0.0.0-2019.08.0
-SDKU_VERSION := 0.0.0-2019.08.0
-PY_VERSION := 2.7.0-2019.11.0-preview1
-FT_VERSION := 2019.11.0-preview4
+RGT_VERSION ?= 8.3.0-2019.11.0-preview4
+RGDB_VERSION ?= 8.3.0-2019.11.0-preview4
+RGBU_VERSION ?= 2.32.0-2019.11.0-preview4
+ROCD_VERSION ?= 0.10.0-2019.08.2
+RQEMU_VERSION ?= 4.1.0-2019.08.0
+XC3SP_VERSION ?= 0.1.2-2019.08.0
+TDC_VERSION ?= 0.0.0-2019.08.0
+SDKU_VERSION ?= 0.0.0-2019.08.0
+PY_VERSION ?= 2.7.0-2019.11.0-preview1
+FT_VERSION ?= 2019.11.0-preview4
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
@@ -256,7 +258,7 @@ $(WIN32)-expat-configure     := --host=$(WIN32)
 $(WIN32)-xc3sp-host          := --host=$(WIN32)
 $(WIN64)-rgt-host            := --host=$(WIN64)
 $(WIN64)-rgcc-configure      := --without-system-zlib
-$(WIN64)-rgdb-configure      := --with-python="$(abspath scripts/pyconfig-mingw32.sh)"
+$(WIN64)-rgdb-configure      := --with-python="$(abspath $(SCRIPTSDIR)/pyconfig-mingw32.sh)"
 $(WIN64)-rocd-host           := --host=$(WIN64)
 $(WIN64)-oftdi-configure     := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(OBJ_WIN64)/build/riscv-openocd/libftdi/cmake/Toolchain-x86_64-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/include/libusb-1.0)"
 $(WIN64)-odeps-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include"
@@ -314,7 +316,7 @@ $(DARWIN)-xc3sp-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install
 $(DARWIN)-xc3sp-framework    := -framework CoreFoundation -framework IOKit
 $(DARWIN)-pyobj-tarball      := python-2.7.10-x86_64-apple-darwin.tar.gz
 $(REDHAT)-rgcc-configure     := --with-system-zlib
-$(REDHAT)-rgdb-configure     := --with-python="$(abspath scripts/pyconfig-centos.sh)"
+$(REDHAT)-rgdb-configure     := --with-python="$(abspath $(SCRIPTSDIR)/pyconfig-centos.sh)"
 $(REDHAT)-ousb-configure     := --disable-shared
 $(REDHAT)-odeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
 $(REDHAT)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -O2" CPPFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
@@ -424,7 +426,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp:
 	cd $(dir $@)/python; $(TAR) -xf ../$($($@_TARGET)-pyobj-tarball)
 	cd $(dir $@); rm $($($@_TARGET)-pyobj-tarball)
 	cp -a $(SRC_RBU) $(SRC_RGCC) $(SRC_RGDB) $(SRC_RNL) $(dir $@)
-	$(SED) -E -i -f scripts/gdb-python.sed $(dir $@)/riscv-gdb/gdb/python/python.c
+	$(SED) -E -i -f $(SCRIPTSDIR)/gdb-python.sed $(dir $@)/riscv-gdb/gdb/python/python.c
 	cd $(dir $@)/riscv-gcc; ./contrib/download_prerequisites
 	cd $(dir $@)/riscv-gcc/gcc/config/riscv; rm t-elf-multilib; ./multilib-generator $(MULTILIBS_GEN) > t-elf-multilib
 	date > $@
@@ -453,7 +455,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) install -j1 install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
@@ -482,7 +484,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) install -j1 install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp: \
@@ -513,7 +515,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp: \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) install -j1 install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage1/stamp: \
@@ -682,7 +684,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp: \
 		CFLAGS_FOR_TARGET="-Os $(CFLAGS_FOR_TARGET)" \
 		CXXFLAGS_FOR_TARGET="-Os $(CXXFLAGS_FOR_TARGET)" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) install -j1 install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 # The Windows build requires the native toolchain.  The dependency is enforced
@@ -753,7 +755,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp:
 	cd $(dir $@)/python; $(TAR) -xf ../$($($@_TARGET)-pyobj-tarball)
 	cd $(dir $@); rm $($($@_TARGET)-pyobj-tarball)
 	cp -a $(SRC_RBU) $(SRC_RGDB) $(dir $@)
-	$(SED) -E -i -f scripts/gdb-python.sed $(dir $@)/riscv-gdb/gdb/python/python.c
+	$(SED) -E -i -f $(SCRIPTSDIR)/gdb-python.sed $(dir $@)/riscv-gdb/gdb/python/python.c
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-binutils-newlib/stamp: \
@@ -780,7 +782,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-binutils-newlib/stamp: \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) install -j1 install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp: \
@@ -809,7 +811,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp: \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) install -j1 install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp: \
@@ -840,7 +842,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp: \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
-	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) -C $(dir $@) install -j1 install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 # OpenOCD requires a GDB that's been build with expat support so it can read
@@ -928,8 +930,8 @@ $(OBJDIR)/%/build/riscv-openocd/stamp:
 	cd $(dir $@); $(TAR) -xf libftdi1-1.4.tar.bz2
 	cd $(dir $@); mv libftdi1-1.4 libftdi
 	cp -a $(SRC_ROCD) $(dir $@)
-	$(SED) -i -f scripts/openocd.sed -e "s/SIFIVE_PACKAGE_VERSION/SiFive OpenOCD $(ROCD_VERSION)/" $(dir $@)/riscv-openocd/src/openocd.c
-	$(SED) -E -i -f scripts/openocd-rtos.sed $(dir $@)/riscv-openocd/src/rtos/rtos.c
+	$(SED) -i -f $(SCRIPTSDIR)/openocd.sed -e "s/SIFIVE_PACKAGE_VERSION/SiFive OpenOCD $(ROCD_VERSION)/" $(dir $@)/riscv-openocd/src/openocd.c
+	$(SED) -E -i -f $(SCRIPTSDIR)/openocd-rtos.sed $(dir $@)/riscv-openocd/src/rtos/rtos.c
 	date > $@
 
 $(OBJDIR)/%/build/riscv-openocd/libusb/stamp: \
@@ -991,7 +993,7 @@ $(OBJDIR)/%/build/riscv-openocd/riscv-openocd/stamp: \
 		$($($@_TARGET)-rocd-configure) &>make-configure.log
 	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) &>$(dir $@)/make-build.log
 	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) pdf html &>$(dir $@)/make-build-doc.log
-	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) install -j1 install-pdf install-html &>$(dir $@)/make-install.log
 	date > $@
 
 # The QEMU builds go here
@@ -1078,18 +1080,18 @@ $(OBJDIR)/%/build/riscv-qemu/stamp:
 	cd $(dir $@); mv pixman-0.38.0 pixman
 	cp -a $(SRC_RQEMU) $(dir $@)
 	rm -rf $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
-	cp -a scripts/qemu-sifive-e.c $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
+	cp -a $(SCRIPTSDIR)/qemu-sifive-e.c $(dir $@)/riscv-qemu/hw/riscv/sifive_e.c
 	rm -rf $(dir $@)/riscv-qemu/hw/riscv/sifive_test.c
-	cp -a scripts/qemu-sifive-test.c $(dir $@)/riscv-qemu/hw/riscv/sifive_test.c
+	cp -a $(SCRIPTSDIR)/qemu-sifive-test.c $(dir $@)/riscv-qemu/hw/riscv/sifive_test.c
 	rm -rf $(dir $@)/riscv-qemu/hw/riscv/sifive_u.c
-	cp -a scripts/qemu-sifive-u.c $(dir $@)/riscv-qemu/hw/riscv/sifive_u.c
+	cp -a $(SCRIPTSDIR)/qemu-sifive-u.c $(dir $@)/riscv-qemu/hw/riscv/sifive_u.c
 	rm -rf $(dir $@)/riscv-qemu/include/hw/riscv/sifive_e.h
-	cp -a scripts/qemu-sifive-e.h $(dir $@)/riscv-qemu/include/hw/riscv/sifive_e.h
+	cp -a $(SCRIPTSDIR)/qemu-sifive-e.h $(dir $@)/riscv-qemu/include/hw/riscv/sifive_e.h
 	rm -rf $(dir $@)/riscv-qemu/include/hw/riscv/sifive_u.h
-	cp -a scripts/qemu-sifive-u.h $(dir $@)/riscv-qemu/include/hw/riscv/sifive_u.h
-	$(SED) -i -f scripts/qemu-configure.sed $(dir $@)/riscv-qemu/configure
-	$(SED) -i -f scripts/qemu-common.sed $(dir $@)/riscv-qemu/include/qemu-common.h
-	$(SED) -i -f scripts/qemu-vl.sed $(dir $@)/riscv-qemu/vl.c
+	cp -a $(SCRIPTSDIR)/qemu-sifive-u.h $(dir $@)/riscv-qemu/include/hw/riscv/sifive_u.h
+	$(SED) -i -f $(SCRIPTSDIR)/qemu-configure.sed $(dir $@)/riscv-qemu/configure
+	$(SED) -i -f $(SCRIPTSDIR)/qemu-common.sed $(dir $@)/riscv-qemu/include/qemu-common.h
+	$(SED) -i -f $(SCRIPTSDIR)/qemu-vl.sed $(dir $@)/riscv-qemu/vl.c
 	date > $@
 
 $(OBJ_NATIVE)/build/riscv-qemu/zlib/stamp: \
@@ -1319,10 +1321,10 @@ $(OBJDIR)/%/build/xc3sprog/stamp:
 	cd $(dir $@); $(TAR) -xf libiconv-1.15.tar.gz
 	cd $(dir $@); mv libiconv-1.15 libiconv
 	cp -a $(SRC_XC3SP) $(dir $@)
-	$(SED) -i -f scripts/xc3sprog.sed -e "s/SIFIVE_PACKAGE_VERSION/SiFive XC3SPROG $(XC3SP_VERSION)/" $(dir $@)/xc3sprog/xc3sprog.cpp
-	$(SED) -i -f scripts/xc3sprog-cmake.sed $(dir $@)/xc3sprog/CMakeLists.txt
-	$(SED) -i -f scripts/xc3sprog-cmake.sed $(dir $@)/xc3sprog/javr/CMakeLists.txt
-	$(SED) -i -f scripts/xc3sprog-mingw32.sed $(dir $@)/xc3sprog/Toolchain-mingw32.cmake
+	$(SED) -i -f $(SCRIPTSDIR)/xc3sprog.sed -e "s/SIFIVE_PACKAGE_VERSION/SiFive XC3SPROG $(XC3SP_VERSION)/" $(dir $@)/xc3sprog/xc3sprog.cpp
+	$(SED) -i -f $(SCRIPTSDIR)/xc3sprog-cmake.sed $(dir $@)/xc3sprog/CMakeLists.txt
+	$(SED) -i -f $(SCRIPTSDIR)/xc3sprog-cmake.sed $(dir $@)/xc3sprog/javr/CMakeLists.txt
+	$(SED) -i -f $(SCRIPTSDIR)/xc3sprog-mingw32.sed $(dir $@)/xc3sprog/Toolchain-mingw32.cmake
 	date > $@
 
 $(OBJDIR)/%/build/xc3sprog/libusb/stamp: \
@@ -1523,8 +1525,8 @@ $(OBJDIR)/%/build/sdk-utilities/stamp:
 	mkdir -p $(dir $@)
 	cp -a $(SRC_DTC) $(SRC_FE2H) $(dir $@)
 	rm -rf $(dir $@)/dtc/Makefile
-	cp -a scripts/dtc.mk $(dir $@)/dtc/Makefile
-	$(SED) -i -f scripts/dtc-fstree.sed $(dir $@)/dtc/fstree.c
+	cp -a $(SCRIPTSDIR)/dtc.mk $(dir $@)/dtc/Makefile
+	$(SED) -i -f $(SCRIPTSDIR)/dtc-fstree.sed $(dir $@)/dtc/fstree.c
 	date > $@
 
 $(OBJDIR)/%/build/sdk-utilities/dtc/stamp: \
@@ -1587,13 +1589,13 @@ $(OBJDIR)/%/stamps/freedom-tools/install.stamp:
 	mkdir -p $(dir $@)
 	rm -rf $($@_INSTALL)
 	mkdir -p $($@_INSTALL)
-	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET).tar.gz)
-	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) riscv-openocd-$(ROCD_VERSION)-$($@_TARGET).tar.gz)
-	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET).tar.gz)
-	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) xc3sprog-$(XC3SP_VERSION)-$($@_TARGET).tar.gz)
-	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) trace-decoder-$(TDC_VERSION)-$($@_TARGET).tar.gz)
-	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) sdk-utilities-$(SDKU_VERSION)-$($@_TARGET).tar.gz)
-	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath scripts/find-package.sh) python-$(PY_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) riscv-openocd-$(ROCD_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) riscv-qemu-$(RQEMU_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) xc3sprog-$(XC3SP_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) trace-decoder-$(TDC_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) sdk-utilities-$(SDKU_VERSION)-$($@_TARGET).tar.gz)
+	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) python-$(PY_VERSION)-$($@_TARGET).tar.gz)
 	date > $@
 
 # Targets that don't build anything
