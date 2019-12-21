@@ -37,6 +37,7 @@ DARWIN ?= x86_64-apple-darwin
 -include /etc/lsb-release
 ifneq ($(wildcard /etc/redhat-release),)
 NATIVE ?= $(REDHAT)
+NINJA ?= ninja-build
 all: redhat
 non-toolchain: redhat-non-toolchain
 toolchain: redhat-toolchain
@@ -104,6 +105,7 @@ LIBTOOLIZE ?= libtoolize
 TAR ?= tar
 SED ?= sed
 AWK ?= awk
+NINJA ?= ninja
 
 OBJ_NATIVE   := $(OBJDIR)/$(NATIVE)
 OBJ_UBUNTU32 := $(OBJDIR)/$(UBUNTU32)
@@ -1615,7 +1617,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp: \
 	      $(SRC_PICOLIBC) \
 	      --prefix $(abspath $($@_INSTALL)) \
 	      --cross-file $(SRC_PICOLIBC)/cross-riscv64-unknown-elf.txt
-	ninja -C $(dir $@) install >& $(dir $@)/make-install.log
+	$(NINJA) -C $(dir $@) install >& $(dir $@)/make-install.log
 	date > $@
 
 # Targets that don't build anything
