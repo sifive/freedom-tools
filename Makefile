@@ -119,6 +119,7 @@ SRC_RBU      := $(SRCDIR)/riscv-binutils
 SRC_RGCC     := $(SRCDIR)/riscv-gcc
 SRC_RGDB     := $(SRCDIR)/riscv-gdb
 SRC_RNL      := $(SRCDIR)/riscv-newlib
+SRC_RIS      := $(SRCDIR)/riscv-isa-sim
 SRC_ROCD     := $(SRCDIR)/riscv-openocd
 SRC_RQEMU    := $(SRCDIR)/riscv-qemu
 SRC_XC3SP    := $(SRCDIR)/xc3sprog
@@ -273,6 +274,7 @@ $(WIN64)-rqemu-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/
 $(WIN64)-rqemu-host          := --host=$(WIN64)
 $(WIN64)-rqemu-cross         := --cross-prefix=x86_64-w64-mingw32-
 $(WIN64)-rqemu-bindir        := /bin
+$(WIN64)-sdasm-configure     := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
 $(WIN64)-expat-configure     := --host=$(WIN64)
 $(WIN64)-gettext-configure   := --enable-threads=windows
 $(WIN64)-glib-vars           := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include"
@@ -420,7 +422,8 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz: \
 $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-spike-dasm/stamp
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -1618,6 +1621,20 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp: \
 	      --prefix $(abspath $($@_INSTALL)) \
 	      --cross-file $(SRC_PICOLIBC)/cross-riscv64-unknown-elf.txt
 	$(NINJA) -C $(dir $@) install >& $(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build-spike-dasm/stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-spike-dasm/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-spike-dasm/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	cp $(SCRIPTSDIR)/spike-dasm.mk $(dir $@)/Makefile
+	cp $(SCRIPTSDIR)/spike-dasm-config.h $(dir $@)/config.h
+	$(MAKE) -C $(dir $@) install \
+			EXEC_PREFIX=$(NEWLIB_TUPLE)- \
+			SOURCE_PATH=$(abspath $(SRC_RIS)) \
+			INSTALL_PATH=$(abspath $($@_INSTALL)) \
+			$($($@_TARGET)-sdasm-configure) &>$(dir $@)/make-install.log
 	date > $@
 
 # Targets that don't build anything
