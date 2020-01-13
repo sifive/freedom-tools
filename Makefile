@@ -139,7 +139,7 @@ ROCD_VERSION ?= 0.10.0-2019.08.2
 RQEMU_VERSION ?= 4.1.0-2019.08.0
 XC3SP_VERSION ?= 0.1.2-2019.08.0
 TDC_VERSION ?= 0.0.0-2019.08.0
-SDKU_VERSION ?= 0.0.0-2019.08.0
+SDKU_VERSION ?= 0.0.0-2019.11.0-dasm1
 PY_VERSION ?= 2.7.0-2019.11.0-preview1
 FT_VERSION ?= 2019.11.0-preview4
 
@@ -274,7 +274,6 @@ $(WIN64)-rqemu-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/
 $(WIN64)-rqemu-host          := --host=$(WIN64)
 $(WIN64)-rqemu-cross         := --cross-prefix=x86_64-w64-mingw32-
 $(WIN64)-rqemu-bindir        := /bin
-$(WIN64)-sdasm-configure     := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
 $(WIN64)-expat-configure     := --host=$(WIN64)
 $(WIN64)-gettext-configure   := --enable-threads=windows
 $(WIN64)-glib-vars           := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-qemu-$(RQEMU_VERSION)-$(WIN64))/include"
@@ -289,6 +288,7 @@ $(WIN64)-tdc-cross           := x86_64-w64-mingw32-
 $(WIN64)-tdc-binext          := .exe
 $(WIN64)-dtc-configure       := CROSSPREFIX=x86_64-w64-mingw32- BINEXT=.exe CC=gcc
 $(WIN64)-fe2h-configure      := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
+$(WIN64)-sdasm-configure     := HOST_PREFIX=x86_64-w64-mingw32- EXEC_SUFFIX=.exe
 $(WIN64)-pyobj-tarball       := python-2.7.15-x86_64-w64-mingw32.tar.gz
 $(UBUNTU32)-rgt-host         := --host=i686-linux-gnu
 $(UBUNTU32)-rgcc-configure   := --with-system-zlib
@@ -422,8 +422,7 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz: \
 $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-spike-dasm/stamp
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -1506,7 +1505,8 @@ $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.tar.gz: \
 
 $(OBJDIR)/%/stamps/sdk-utilities/install.stamp: \
 		$(OBJDIR)/%/build/sdk-utilities/dtc/stamp \
-		$(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp
+		$(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp \
+		$(OBJDIR)/%/build/sdk-utilities/riscv-isa-sim/stamp
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -1534,10 +1534,18 @@ $(OBJDIR)/%/build/sdk-utilities/stamp:
 	mkdir -p $($@_INSTALL)
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
-	cp -a $(SRC_DTC) $(SRC_FE2H) $(dir $@)
+	cp -a $(SRC_DTC) $(SRC_FE2H) $(SRC_RIS) $(dir $@)
 	rm -rf $(dir $@)/dtc/Makefile
 	cp -a $(SCRIPTSDIR)/dtc.mk $(dir $@)/dtc/Makefile
 	$(SED) -i -f $(SCRIPTSDIR)/dtc-fstree.sed $(dir $@)/dtc/fstree.c
+	rm -rf $(dir $@)/riscv-isa-sim/Makefile
+	cp $(SCRIPTSDIR)/spike-dasm.mk $(dir $@)/riscv-isa-sim/Makefile
+	rm -rf $(dir $@)/riscv-isa-sim/config.h
+	cp $(SCRIPTSDIR)/spike-dasm-config.h $(dir $@)/riscv-isa-sim/config.h
+	rm -rf $(dir $@)/riscv-isa-sim/riscv/extension.h
+	cp $(SCRIPTSDIR)/spike-dasm-extension.h $(dir $@)/riscv-isa-sim/riscv/extension.h
+	rm -rf $(dir $@)/riscv-isa-sim/riscv/extensions.cc
+	cp $(SCRIPTSDIR)/spike-dasm-extensions.cc $(dir $@)/riscv-isa-sim/riscv/extensions.cc
 	date > $@
 
 $(OBJDIR)/%/build/sdk-utilities/dtc/stamp: \
@@ -1556,6 +1564,16 @@ $(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp: \
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/sdk-utilities/freedom-elf2hex/stamp,%/install/sdk-utilities-$(SDKU_VERSION)-$($@_TARGET),$@))
 	$(MAKE) -C $(dir $@) install INSTALL_PATH=$(abspath $($@_INSTALL)) $($($@_TARGET)-fe2h-configure) &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/sdk-utilities/riscv-isa-sim/stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/sdk-utilities/riscv-isa-sim/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/sdk-utilities/riscv-isa-sim/stamp,%/install/sdk-utilities-$(SDKU_VERSION)-$($@_TARGET),$@))
+	$(MAKE) -C $(dir $@) install \
+			EXEC_PREFIX=z \
+			SOURCE_PATH=$(abspath $(dir $@)) \
+			INSTALL_PATH=$(abspath $($@_INSTALL)) \
+			$($($@_TARGET)-sdasm-configure) &>$(dir $@)/make-install.log
 	date > $@
 
 # The Python builds go here
@@ -1621,20 +1639,6 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp: \
 	      --prefix $(abspath $($@_INSTALL)) \
 	      --cross-file $(SRC_PICOLIBC)/cross-riscv64-unknown-elf.txt
 	$(NINJA) -C $(dir $@) install >& $(dir $@)/make-install.log
-	date > $@
-
-$(OBJDIR)/%/build/riscv-gnu-toolchain/build-spike-dasm/stamp:
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-spike-dasm/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-spike-dasm/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
-	rm -rf $(dir $@)
-	mkdir -p $(dir $@)
-	cp $(SCRIPTSDIR)/spike-dasm.mk $(dir $@)/Makefile
-	cp $(SCRIPTSDIR)/spike-dasm-config.h $(dir $@)/config.h
-	$(MAKE) -C $(dir $@) install \
-			EXEC_PREFIX=$(NEWLIB_TUPLE)- \
-			SOURCE_PATH=$(abspath $(SRC_RIS)) \
-			INSTALL_PATH=$(abspath $($@_INSTALL)) \
-			$($($@_TARGET)-sdasm-configure) &>$(dir $@)/make-install.log
 	date > $@
 
 # Targets that don't build anything

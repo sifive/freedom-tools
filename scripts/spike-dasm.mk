@@ -9,10 +9,10 @@ EXEC_PREFIX ?=
 EXEC_SUFFIX ?=
 
 # where to find the source files for a spike-dasm build
-SOURCE_PATH ?=
+SOURCE_PATH ?=.
 
 # where to install all the artifacts of a spike-dasm build
-INSTALL_PATH ?=
+INSTALL_PATH ?=./install
 
 # which source files to use for compiling spike-dasm
 SOURCE_FILES = \
