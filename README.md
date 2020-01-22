@@ -12,6 +12,7 @@ we use to build these tools.
     * GCC
     * GDB
     * Newlib (and nano)
+    * Picolibc
     * LibExpat
 * RISC-V OpenOCD (`riscv-openocd-*`)
     * OpenOCD
@@ -22,6 +23,7 @@ we use to build these tools.
 * SDK Utilities (`sdk-utilities-*`)
     * DTC (Device Tree Compiler)
     * Freedom Elf2Hex
+    * Spike DASM (Disassembler)
 * Trace Decoder (`trace-decoder-*`)
     * Trace Decoder
 * XC3SPROG (`xc3sprog-*`)
@@ -44,20 +46,22 @@ which is build using the MinGW toolchain.
 
 ### Prerequisites
 
-Several standard packages are needed to build the tools on the different supported platforms.  
+Several standard packages are needed to build the tools on the different supported platforms.
 
 
 On Ubuntu, executing the following command should suffice:
 
-    $ sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64 mingw-w64-tools texlive zip python-dev gettext libglib2.0-dev libpixman-1-dev
+    $ sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64 mingw-w64-tools texlive zip python-dev gettext libglib2.0-dev libpixman-1-dev ninja-build python3
+    $ sudo pip3 install meson
 
 On OS X, you can use [Homebrew](http://brew.sh) to install most of the dependencies and then you also need [MacTex](http://www.tug.org/mactex/):
 
-    $ brew install cmake autoconf automake gawk gnu-sed gnu-tar texinfo libtool pkg-config wget xz
+    $ brew install cmake autoconf automake gawk gnu-sed gnu-tar texinfo libtool pkg-config wget xz python3 ninja meson
 
 On Fedora/CentOS/RHEL OS, executing the following command should suffice - plus see below:
 
-    $ sudo yum install cmake libmpc-devel mpfr-devel gmp-devel gawk bison flex texinfo patchutils gcc gcc-c++ zlib-devel expat-devel
+    $ sudo yum install cmake libmpc-devel mpfr-devel gmp-devel gawk bison flex texinfo patchutils gcc gcc-c++ zlib-devel expat-devel rh-python35 ninja-build
+    $ sudo pip3 install meson
 
 On CentOS/RHEL 7 and Fedora you can use yum install for the rest:
 
@@ -81,13 +85,13 @@ On CentOS/RHEL 6 you need to download a compile some tools manually to get the c
     $ make install
 
     $ wget http://ftp.gnu.org/gnu/libtool/libtool-2.4.6.tar.gz
-    $ tar -xzvf libtool-2.4.6.tar.gz 
+    $ tar -xzvf libtool-2.4.6.tar.gz
     $ cd libtool-2.4.6
     $ ./configure && make
     $ make install
 
     $ wget https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
-    $ tar -xzvf pkg-config-0.29.2.tar.gz 
+    $ tar -xzvf pkg-config-0.29.2.tar.gz
     $ cd pkg-config-0.29.2
     $ ./configure --with-internal-glib
     $ make
