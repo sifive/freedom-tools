@@ -1,0 +1,2 @@
+
+#define DEFAULT_ISA "RV64IMAFDC"
