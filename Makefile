@@ -309,6 +309,7 @@ $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-pyobj-tarball    := python-2.7.12-x86_64-linux-ubuntu14.tar.gz
+$(UBUNTU64)-trace-configure  := --enable-shared --enable-static
 $(DARWIN)-rgcc-configure     := --with-system-zlib
 $(DARWIN)-rgdb-configure     := --with-python=python2.7
 $(DARWIN)-ousb-configure     := --disable-shared
@@ -461,6 +462,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
 		--disable-sim \
 		--disable-libdecnumber \
 		--disable-libreadline \
+		$($($@_TARGET)-trace-configure) \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
@@ -1470,7 +1472,8 @@ $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp: \
 		$(OBJDIR)/%/build/trace-decoder/stamp
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/trace-decoder/trace-decoder/stamp,%/install/trace-decoder-$(TDC_VERSION)-$($@_TARGET),$@))
-	$(MAKE) -C $(dir $@) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
+	$(eval NEWLIBPATH := $(abspath $(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))/build/riscv-gnu-toolchain/build-binutils-newlib)
+	$(MAKE) -C $(dir $@) NEWLIBPATH=$(NEWLIBPATH) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
 	cp $(dir $@)/Debug/dqr$($($@_TARGET)-tdc-binext) $(abspath $($@_INSTALL))
 	cp $(dir $@)/scripts/trace.tcl $(abspath $($@_INSTALL))
 	cp -R $(dir $@)/examples $(abspath $($@_INSTALL))
