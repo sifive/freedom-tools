@@ -1472,7 +1472,7 @@ $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp: \
 		$(OBJDIR)/%/build/trace-decoder/stamp
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/trace-decoder/trace-decoder/stamp,%/install/trace-decoder-$(TDC_VERSION)-$($@_TARGET),$@))
-	$(eval NEWLIBPATH := $(abspath $(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))/build/riscv-gnu-toolchain/build-binutils-newlib)
+	$(eval NEWLIBPATH := $(abspath $(OBJDIR)/$(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))/build/riscv-gnu-toolchain/build-binutils-newlib)
 	$(MAKE) -C $(dir $@) NEWLIBPATH=$(NEWLIBPATH) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
 	cp $(dir $@)/Debug/dqr$($($@_TARGET)-tdc-binext) $(abspath $($@_INSTALL))
 	cp $(dir $@)/scripts/trace.tcl $(abspath $($@_INSTALL))
