@@ -791,6 +791,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-binutils-newlib/stamp: \
 		--disable-sim \
 		--disable-libdecnumber \
 		--disable-libreadline \
+		$($($@_TARGET)-trace-configure) \
 		CFLAGS="-O2" \
 		CXXFLAGS="-O2" &>make-configure.log
 	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
@@ -1474,9 +1475,7 @@ $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp: \
 	$(eval $@_INSTALL := $(patsubst %/build/trace-decoder/trace-decoder/stamp,%/install/trace-decoder-$(TDC_VERSION)-$($@_TARGET),$@))
 	$(eval NEWLIBPATH := $(abspath $(OBJDIR)/$(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))/build/riscv-gnu-toolchain/build-binutils-newlib)
 	$(MAKE) -C $(dir $@) NEWLIBPATH=$(NEWLIBPATH) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
-	cp $(dir $@)/Debug/dqr$($($@_TARGET)-tdc-binext) $(abspath $($@_INSTALL))
-	cp $(dir $@)/scripts/trace.tcl $(abspath $($@_INSTALL))
-	cp -R $(dir $@)/examples $(abspath $($@_INSTALL))
+	$(MAKE) -C $(dir $@) INSTALLPATH=$(abspath $($@_INSTALL)) install &>$(dir $@)/make-install.log
 	date > $@
 
 # The SDK Utilities builds go here
