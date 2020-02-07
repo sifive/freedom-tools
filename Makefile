@@ -1481,7 +1481,7 @@ $(OBJDIR)/%/build/trace-decoder/build-binutils-newlib/stamp: \
 		--with-pkgversion="SiFive Binutils $(RGBU_VERSION)" \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
-		$(BINUTILS_TARGET_FLAGS) \
+		--with-expat=no --with-mpc=no --with-mpfr=no --with-gmp=no \
 		--disable-gdb \
 		--disable-sim \
 		--disable-libdecnumber \
