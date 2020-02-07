@@ -1496,8 +1496,8 @@ $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp: \
 		$(OBJDIR)/%/build/trace-decoder/build-binutils-newlib/stamp
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/trace-decoder/trace-decoder/stamp,%/install/trace-decoder-$(TDC_VERSION)-$($@_TARGET),$@))
-	$(eval NEWLIBPATH := $(abspath $(OBJDIR)/$(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))/build/trace-decoder/build-binutils-newlib)
-	$(MAKE) -C $(dir $@) NEWLIBPATH=$(NEWLIBPATH) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
+	$(eval $@_BINUTILS := $(patsubst %/build/trace-decoder/trace-decoder/stamp,%/build/trace-decoder/build-binutils-newlib,$@))
+	$(MAKE) -C $(dir $@) BINUTILSPATH=$(abspath $($@_BINUTILS)) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
 	$(MAKE) -C $(dir $@) INSTALLPATH=$(abspath $($@_INSTALL)) CROSSPREFIX=$($($@_TARGET)-tdc-cross) install &>$(dir $@)/make-install.log
 	date > $@
 
