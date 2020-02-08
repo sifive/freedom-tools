@@ -138,7 +138,7 @@ RGBU_VERSION ?= 2.32.0-2019.11.0-preview4
 ROCD_VERSION ?= 0.10.0-2019.08.2
 RQEMU_VERSION ?= 4.1.0-2019.08.0
 XC3SP_VERSION ?= 0.1.2-2019.08.0
-TDC_VERSION ?= 0.0.0-2019.08.0
+TDC_VERSION ?= 0.0.1-2019.11.0-preview1
 SDKU_VERSION ?= 0.0.0-2019.11.0-dasm1
 PY_VERSION ?= 2.7.0-2019.11.0-preview1
 FT_VERSION ?= 2019.11.0-preview4
@@ -341,6 +341,7 @@ $(REDHAT)-xdeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install
 $(REDHAT)-xc3sp-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" CPPFLAGS="-I$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib64 -lrt"
 $(REDHAT)-xc3sp-configure    := -DLIBRT_LIBRARIES="rt"
 $(REDHAT)-pyobj-tarball      := python-2.7.16-x86_64-linux-centos6.tar.gz
+$(REDHAT)-trace-configure    := --enable-shared --enable-static
 
 # Some general riscv-gnu-toolchain flags and list of multilibs for the multilibs generator script
 WITH_ABI := lp64d
