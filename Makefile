@@ -138,7 +138,7 @@ RGBU_VERSION ?= 2.32.0-2019.11.0-preview4
 ROCD_VERSION ?= 0.10.0-2019.08.2
 RQEMU_VERSION ?= 4.1.0-2019.08.0
 XC3SP_VERSION ?= 0.1.2-2019.08.0
-TDC_VERSION ?= 0.0.0-2019.08.0
+TDC_VERSION ?= 0.0.1-2019.11.0-preview1
 SDKU_VERSION ?= 0.0.0-2019.11.0-dasm1
 PY_VERSION ?= 2.7.0-2019.11.0-preview1
 FT_VERSION ?= 2019.11.0-preview4
@@ -309,6 +309,7 @@ $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-pyobj-tarball    := python-2.7.12-x86_64-linux-ubuntu14.tar.gz
+$(UBUNTU64)-trace-configure  := --enable-shared --enable-static
 $(DARWIN)-rgcc-configure     := --with-system-zlib
 $(DARWIN)-rgdb-configure     := --with-python=python2.7
 $(DARWIN)-ousb-configure     := --disable-shared
@@ -340,6 +341,7 @@ $(REDHAT)-xdeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install
 $(REDHAT)-xc3sp-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" CPPFLAGS="-I$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/xc3sprog-$(XC3SP_VERSION)-$(REDHAT))/lib64 -lrt"
 $(REDHAT)-xc3sp-configure    := -DLIBRT_LIBRARIES="rt"
 $(REDHAT)-pyobj-tarball      := python-2.7.16-x86_64-linux-centos6.tar.gz
+$(REDHAT)-trace-configure    := --enable-shared --enable-static
 
 # Some general riscv-gnu-toolchain flags and list of multilibs for the multilibs generator script
 WITH_ABI := lp64d
@@ -1463,17 +1465,41 @@ $(OBJDIR)/%/build/trace-decoder/stamp:
 	mkdir -p $($@_INSTALL)
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
-	cp -a $(SRC_TDC) $(dir $@)
+	cp -a $(SRC_RBU) $(SRC_TDC) $(dir $@)
+	date > $@
+
+$(OBJDIR)/%/build/trace-decoder/build-binutils-newlib/stamp: \
+		$(OBJDIR)/%/build/trace-decoder/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/trace-decoder/build-binutils-newlib/stamp,%,$@))
+	$(eval $@_BUILD := $(patsubst %/build/trace-decoder/build-binutils-newlib/stamp,%/build/trace-decoder,$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+# CC_FOR_TARGET is required for the ld testsuite.
+	cd $(dir $@) && CC_FOR_TARGET=$(NEWLIB_CC_FOR_TARGET) $(abspath $($@_BUILD))/riscv-binutils/configure \
+		--target=$(NEWLIB_TUPLE) \
+		$($($@_TARGET)-rgt-host) \
+		--prefix=$(abspath $($@_BUILD))/riscv-binutils/install \
+		--with-pkgversion="SiFive Binutils $(RGBU_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
+		--disable-werror \
+		--with-expat=no --with-mpc=no --with-mpfr=no --with-gmp=no \
+		--disable-gdb \
+		--disable-sim \
+		--disable-libdecnumber \
+		--disable-libreadline \
+		$($($@_TARGET)-trace-configure) \
+		CFLAGS="-O2" \
+		CXXFLAGS="-O2" &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
 	date > $@
 
 $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp: \
-		$(OBJDIR)/%/build/trace-decoder/stamp
+		$(OBJDIR)/%/build/trace-decoder/build-binutils-newlib/stamp
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/trace-decoder/trace-decoder/stamp,%/install/trace-decoder-$(TDC_VERSION)-$($@_TARGET),$@))
-	$(MAKE) -C $(dir $@) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
-	cp $(dir $@)/Debug/dqr$($($@_TARGET)-tdc-binext) $(abspath $($@_INSTALL))
-	cp $(dir $@)/scripts/trace.tcl $(abspath $($@_INSTALL))
-	cp -R $(dir $@)/examples $(abspath $($@_INSTALL))
+	$(eval $@_BINUTILS := $(patsubst %/build/trace-decoder/trace-decoder/stamp,%/build/trace-decoder/build-binutils-newlib,$@))
+	$(MAKE) -C $(dir $@) BINUTILSPATH=$(abspath $($@_BINUTILS)) CROSSPREFIX=$($($@_TARGET)-tdc-cross) all &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) INSTALLPATH=$(abspath $($@_INSTALL)) CROSSPREFIX=$($($@_TARGET)-tdc-cross) install &>$(dir $@)/make-install.log
 	date > $@
 
 # The SDK Utilities builds go here
