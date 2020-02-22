@@ -26,6 +26,7 @@ we use to build these tools.
     * Spike DASM (Disassembler)
 * Trace Decoder (`trace-decoder-*`)
     * Trace Decoder
+    * SWIG, Binutils (bfd, opcodes, liberty, ZLib
 * XC3SPROG (`xc3sprog-*`)
     * XC3SPROG
     * LibUSB, LibUSB-Compat, LibFTDI, LibIConv
@@ -51,16 +52,16 @@ Several standard packages are needed to build the tools on the different support
 
 On Ubuntu, executing the following command should suffice:
 
-    $ sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64 mingw-w64-tools texlive zip python-dev gettext libglib2.0-dev libpixman-1-dev ninja-build python3
+    $ sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64 mingw-w64-tools texlive zip python-dev gettext libglib2.0-dev libpixman-1-dev swig ninja-build python3
     $ sudo pip3 install meson
 
 On OS X, you can use [Homebrew](http://brew.sh) to install most of the dependencies and then you also need [MacTex](http://www.tug.org/mactex/):
 
-    $ brew install cmake autoconf automake gawk gnu-sed gnu-tar texinfo libtool pkg-config wget xz python3 ninja meson
+    $ brew install cmake autoconf automake gawk gnu-sed gnu-tar texinfo libtool pkg-config wget xz swig python3 ninja meson
 
 On Fedora/CentOS/RHEL OS, executing the following command should suffice - plus see below:
 
-    $ sudo yum install cmake libmpc-devel mpfr-devel gmp-devel gawk bison flex texinfo patchutils gcc gcc-c++ zlib-devel expat-devel rh-python35 ninja-build
+    $ sudo yum install cmake libmpc-devel mpfr-devel gmp-devel gawk bison flex texinfo patchutils gcc gcc-c++ zlib-devel expat-devel swig rh-python35 ninja-build
     $ sudo pip3 install meson
 
 On CentOS/RHEL 7 and Fedora you can use yum install for the rest:
