@@ -8,6 +8,9 @@ xc3sprog:
 trace-decoder:
 sdk-utilities:
 
+.NOTPARALLEL:
+export MAKEFLAGS=-j1
+
 # Make uses /bin/sh by default, ignoring the user's value of SHELL.
 # Some systems now ship with /bin/sh pointing at dash, and this Makefile
 # requires bash
@@ -103,9 +106,9 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.3.0-2019.08.1
-RGDB_VERSION := 8.3.0-2019.08.0
-RGBU_VERSION := 2.32.0-2019.08.0
+RGT_VERSION := 8.3.0-2020.04.0
+RGDB_VERSION := 8.3.0-2020.04.0
+RGBU_VERSION := 2.32.0-2020.04.0
 ROCD_VERSION := 0.10.0-2019.08.2
 RQEMU_VERSION := 4.1.0-2019.08.0
 XC3SP_VERSION := 0.1.2-2019.08.0
