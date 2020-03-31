@@ -132,9 +132,9 @@ SRC_LIBFTDI  := $(SRCDIR)/libftdi
 SRC_PICOLIBC := $(SRCDIR)/picolibc
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION ?= 9.2.0-2019.11.0-preview6
-RGDB_VERSION ?= 8.3.0-2019.11.0-preview4
-RGBU_VERSION ?= 2.32.0-2019.11.0-preview4
+RGT_VERSION ?= 9.2.0-2020.04.0
+RGDB_VERSION ?= 8.3.0-2020.04.0
+RGBU_VERSION ?= 2.32.0-2020.04.0
 ROCD_VERSION ?= 0.10.0-2020.04.0
 RQEMU_VERSION ?= 4.2.0-2020.04.0
 XC3SP_VERSION ?= 0.1.2-2019.08.0
