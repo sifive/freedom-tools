@@ -999,9 +999,10 @@ $(OBJDIR)/%/build/riscv-openocd/riscv-openocd/stamp: \
 	cd $(dir $@); $($($@_TARGET)-rocd-vars) ./configure \
 		$($($@_TARGET)-rocd-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
-		--disable-remote-bitbang \
+		--enable-remote-bitbang \
 		--disable-werror \
 		--enable-ftdi \
+		--enable-jtag_vpi \
 		$($($@_TARGET)-rocd-configure) &>make-configure.log
 	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) &>$(dir $@)/make-build.log
 	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) pdf html &>$(dir $@)/make-build-doc.log
