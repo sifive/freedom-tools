@@ -68,7 +68,7 @@ On CentOS/RHEL 7 and Fedora you can use yum install for the rest:
 
     $ sudo yum install autoconf automake libtool pkg-config
 
-On CentOS/RHEL 6 you need to download a compile some tools manually to get the correct versions:
+On CentOS/RHEL 6 you need to download and compile some tools manually to get the correct versions:
 
     $ wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz
     $ gunzip autoconf-2.69.tar.gz
