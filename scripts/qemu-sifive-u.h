@@ -34,10 +34,7 @@ typedef struct SiFiveUSoCState {
     SysBusDevice parent_obj;
 
     /*< public >*/
-    CPUClusterState e_cluster;
-    CPUClusterState u_cluster;
-    RISCVHartArrayState e_cpus;
-    RISCVHartArrayState u_cpus;
+    RISCVHartArrayState cpus;
     DeviceState *plic;
     SiFiveUPRCIState prci;
     SiFiveUOTPState otp;
@@ -54,7 +51,6 @@ typedef struct SiFiveUState {
 
     /*< public >*/
     SiFiveUSoCState soc;
-
     void *fdt;
     int fdt_size;
 
@@ -79,18 +75,17 @@ enum {
 };
 
 enum {
-    SIFIVE_U_UART0_IRQ = 4,
-    SIFIVE_U_UART1_IRQ = 5,
+    SIFIVE_U_UART0_IRQ = 3,
+    SIFIVE_U_UART1_IRQ = 4,
     SIFIVE_U_GEM_IRQ = 0x35
 };
 
 enum {
+    SIFIVE_U_CLOCK_FREQ = 1000000000,
+    SIFIVE_U_GEM_CLOCK_FREQ = 125000000,
     SIFIVE_U_HFCLK_FREQ = 33333333,
     SIFIVE_U_RTCCLK_FREQ = 1000000
 };
-
-#define SIFIVE_U_MANAGEMENT_CPU_COUNT   1
-#define SIFIVE_U_COMPUTE_CPU_COUNT      4
 
 #define SIFIVE_U_PLIC_HART_CONFIG "MS"
 #define SIFIVE_U_PLIC_NUM_SOURCES 54
