@@ -132,16 +132,16 @@ SRC_LIBFTDI  := $(SRCDIR)/libftdi
 SRC_PICOLIBC := $(SRCDIR)/picolibc
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION ?= 9.2.0-2019.11.0-preview6
-RGDB_VERSION ?= 8.3.0-2019.11.0-preview4
-RGBU_VERSION ?= 2.32.0-2019.11.0-preview4
-ROCD_VERSION ?= 0.10.0-2019.08.2
-RQEMU_VERSION ?= 4.1.0-2019.08.0
-XC3SP_VERSION ?= 0.1.2-2019.08.0
-TDC_VERSION ?= 0.0.1-2019.11.0-preview2
-SDKU_VERSION ?= 0.0.0-2019.11.0-dasm1
-PY_VERSION ?= 2.7.0-2019.11.0-preview1
-FT_VERSION ?= 2019.11.0-preview4
+RGT_VERSION ?= 9.2.0-2020.04.0
+RGDB_VERSION ?= 8.3.0-2020.04.0
+RGBU_VERSION ?= 2.32.0-2020.04.0
+ROCD_VERSION ?= 0.10.0-2020.04.0
+RQEMU_VERSION ?= 4.2.0-2020.04.0
+XC3SP_VERSION ?= 0.1.2-2020.04.0
+TDC_VERSION ?= 0.1.0-2020.04.0
+SDKU_VERSION ?= 0.1.0-2020.04.0
+PY_VERSION ?= 2.7.0-2020.04.0-preview1
+FT_VERSION ?= 2020.04.0
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
@@ -999,9 +999,10 @@ $(OBJDIR)/%/build/riscv-openocd/riscv-openocd/stamp: \
 	cd $(dir $@); $($($@_TARGET)-rocd-vars) ./configure \
 		$($($@_TARGET)-rocd-host) \
 		--prefix=$(abspath $($@_INSTALL)) \
-		--disable-remote-bitbang \
+		--enable-remote-bitbang \
 		--disable-werror \
 		--enable-ftdi \
+		--enable-jtag_vpi \
 		$($($@_TARGET)-rocd-configure) &>make-configure.log
 	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) &>$(dir $@)/make-build.log
 	$(MAKE) $($($@_TARGET)-rocd-vars) -C $(dir $@) pdf html &>$(dir $@)/make-build-doc.log
