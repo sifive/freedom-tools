@@ -71,29 +71,36 @@ On CentOS/RHEL 7 and Fedora you can use yum install for the rest:
 On CentOS/RHEL 6 you need to download and compile some tools manually to get the correct versions:
 
     $ wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz
-    $ gunzip autoconf-2.69.tar.gz
-    $ tar xvf autoconf-2.69.tar
+    $ tar xzvf autoconf-2.69.tar
     $ cd autoconf-2.69
     $ ./configure
     $ make
     $ make install
 
     $ wget http://ftp.gnu.org/gnu/automake/automake-1.15.tar.gz
-    $ tar xvzf automake-1.15.tar.gz
+    $ tar xzvf automake-1.15.tar.gz
     $ cd automake-1.15
     $ ./configure
     $ make
     $ make install
 
     $ wget http://ftp.gnu.org/gnu/libtool/libtool-2.4.6.tar.gz
-    $ tar -xzvf libtool-2.4.6.tar.gz
+    $ tar xzvf libtool-2.4.6.tar.gz
     $ cd libtool-2.4.6
-    $ ./configure && make
+    $ ./configure
+    $ make
     $ make install
 
     $ wget https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
-    $ tar -xzvf pkg-config-0.29.2.tar.gz
+    $ tar xzvf pkg-config-0.29.2.tar.gz
     $ cd pkg-config-0.29.2
     $ ./configure --with-internal-glib
+    $ make
+    $ make install
+
+    $ wget https://ftp.gnu.org/gnu/texinfo/texinfo-6.4.tar.gz
+    $ tar xzvf texinfo-6.4.tar.gz
+    $ cd texinfo-6.4
+    $ ./configure
     $ make
     $ make install
