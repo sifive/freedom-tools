@@ -28,9 +28,6 @@
 [submodule "src/freedom-elf2hex"]
 	path = src/freedom-elf2hex
 	url = git://github.com/sifive/freedom-elf2hex.git
-[submodule "src/riscv-qemu"]
-	path = src/riscv-qemu
-	url = git://git.qemu.org/qemu.git
 [submodule "src/picolibc"]
 	path = src/picolibc
 	url = https://github.com/keith-packard/picolibc.git
