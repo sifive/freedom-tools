@@ -12,9 +12,6 @@ sdk-utilities:
 python:
 combo-package:
 
-.NOTPARALLEL:
-export MAKEFLAGS=-j1
-
 # Make uses /bin/sh by default, ignoring the user's value of SHELL.
 # Some systems now ship with /bin/sh pointing at dash, and this Makefile
 # requires bash
