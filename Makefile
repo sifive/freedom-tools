@@ -1665,7 +1665,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp: \
 	      -Dsysroot-install=true \
 	      --prefix $(abspath $($@_INSTALL))/$(NEWLIB_TUPLE) \
 	      --cross-file $(SRC_PICOLIBC)/cross-riscv64-unknown-elf.txt
-	$(NINJA) -C $(dir $@) -j1 install >& $(dir $@)/make-install.log
+	$(NINJA) -C $(dir $@) install >& $(dir $@)/make-install.log
 	date > $@
 
 # Targets that don't build anything
