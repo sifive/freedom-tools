@@ -636,6 +636,11 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp: \
 		inlc=`echo $${bnlc} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libc\.a:libc_nano.a:g"`; \
 		cp $${bnlc} $${inl}$${inlc}; \
 	done; \
+	for bnlm in `find $${bnl} -name libm.a`; \
+	do \
+		inlm=`echo $${bnlm} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libm\.a:libm_nano.a:g"`; \
+		cp $${bnlm} $${inl}$${inlm}; \
+	done; \
 	for bnlg in `find $${bnl} -name libg.a`; \
 	do \
 		inlg=`echo $${bnlg} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libg\.a:libg_nano.a:g"`; \
