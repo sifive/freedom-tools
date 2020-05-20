@@ -1070,7 +1070,7 @@ $(OBJDIR)/%/build/riscv-qemu/stamp:
 	cd $(dir $@); curl -L -f -s -o zlib-1.2.11.tar.gz http://zlib.net/fossils/zlib-1.2.11.tar.gz
 	cd $(dir $@); $(TAR) -xf zlib-1.2.11.tar.gz
 	cd $(dir $@); mv zlib-1.2.11 zlib
-	cd $(dir $@); curl -L -f -s -o libffi-3.2.1.tar.gz ftp://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz
+	cd $(dir $@); curl -L -f -s -o libffi-3.2.1.tar.gz http://mirrors.kernel.org/sourceware/libffi/libffi-3.2.1.tar.gz
 	cd $(dir $@); $(TAR) -xf libffi-3.2.1.tar.gz
 	cd $(dir $@); mv libffi-3.2.1 libffi
 	cd $(dir $@); curl -L -f -s -o libiconv-1.15.tar.gz https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.15.tar.gz
