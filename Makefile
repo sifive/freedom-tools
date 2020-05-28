@@ -126,7 +126,6 @@ SRC_FE2H     := $(SRCDIR)/freedom-elf2hex
 SRC_EXPAT    := $(SRCDIR)/libexpat/expat
 SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
-SRC_PICOLIBC := $(SRCDIR)/picolibc
 
 # The version that will be appended to the various tool builds.
 RGT_VERSION ?= 10.1.0-2020.04.0
@@ -420,8 +419,7 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz: \
 
 $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -1654,23 +1652,6 @@ $(OBJDIR)/%/stamps/freedom-tools/install.stamp:
 	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) trace-decoder-$(TDC_VERSION)-$($@_TARGET).tar.gz)
 	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) sdk-utilities-$(SDKU_VERSION)-$($@_TARGET).tar.gz)
 	$(TAR) -C $($@_INSTALL) -xf $(shell $(abspath $(SCRIPTSDIR)/find-package.sh) python-$(PY_VERSION)-$($@_TARGET).tar.gz)
-	date > $@
-
-$(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp: \
-	$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp
-	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-picolibc/stamp,%,$@))
-	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-picolibc/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
-	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-picolibc/stamp,%/build/riscv-gnu-toolchain,$@))
-	rm -rf $(dir $@)
-	mkdir -p $(dir $@)
-	meson $(dir $@) \
-	      $(SRC_PICOLIBC) \
-	      -Dincludedir=picolibc/include \
-	      -Dlibdir=picolibc/lib \
-	      -Dsysroot-install=true \
-	      --prefix $(abspath $($@_INSTALL))/$(NEWLIB_TUPLE) \
-	      --cross-file $(SRC_PICOLIBC)/cross-riscv64-unknown-elf.txt
-	$(NINJA) -C $(dir $@) install >& $(dir $@)/make-install.log
 	date > $@
 
 # Targets that don't build anything
