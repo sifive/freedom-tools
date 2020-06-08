@@ -2,6 +2,47 @@
 include scripts/Freedom.mk
 include scripts/Package.mk
 
+# The default target
+.PHONY: all
+all:
+	@echo " Makefile targets: *-package *-cleanup clean help all"
+
+.PHONY: help
+help:
+	@echo ""
+	@echo " SiFive Freedom Tools - Makefile targets:"
+	@echo ""
+	@echo " *-package"
+	@echo "   Build the binary packages for * repo."
+	@echo ""
+	@echo " *-cleanup"
+	@echo "   Clean the build artifacts for * repo."
+	@echo ""
+	@echo " clean"
+	@echo "   Remove the src, obj and bin directories."
+	@echo ""
+	@echo " help"
+	@echo "   Show this help."
+	@echo ""
+	@echo " all"
+	@echo "   Show Makefile targets."
+	@echo ""
+	@echo " * refers to an item from the package list"
+	@echo "   binutils-metal  \\"
+	@echo "   gcc-metal        > (aka toolchain)"
+	@echo "   gdb-metal       /"
+	@echo "   openocd"
+	@echo "   qemu-system        (aka qemu)"
+	@echo "   spike-dasm         (aka sdk-utilities)"
+	@echo "   trace-decoder"
+	@echo "   xc3sprog"
+	@echo "   custom"
+	@echo "     Requires that CUSTOM_GITURL is set."
+	@echo ""
+	@echo " CUSTOM_COMMIT can be set for a package to"
+	@echo " override the one in freedom-*.mk files."
+	@echo ""
+
 # Include Makefiles for all modules (alphabetically)
 include modules/freedom-binutils-metal.mk
 include modules/freedom-gcc-metal.mk

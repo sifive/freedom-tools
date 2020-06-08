@@ -1,12 +1,17 @@
 
-FREEDOM_GDB_METAL_GITURL=https://github.com/sifive/freedom-gdb-metal.git
-FREEDOM_GDB_METAL_COMMIT=d494866ffcc764a6edda58b801e5e9e55901a900
+FREEDOM_GDB_METAL_GITURL := https://github.com/sifive/freedom-gdb-metal.git
+FREEDOM_GDB_METAL_COMMIT := 32827ad2ba3789784ecfa54ce1df06b6559f809f
+
+ifneq ($(CUSTOM_COMMIT),)
+FREEDOM_GDB_METAL_COMMIT := $(CUSTOM_COMMIT)
+endif
 
 SRCNAME_FREEDOM_GDB_METAL := freedom-gdb-metal
 SRCPATH_FREEDOM_GDB_METAL := $(SRCDIR)/$(SRCNAME_FREEDOM_GDB_METAL)
 
 .PHONY: gdb-metal gdb-metal-package gdb-metal-cleanup
 gdb-metal: gdb-metal-package
+gdb-only: gdb-metal-package
 
 $(SRCPATH_FREEDOM_GDB_METAL).$(FREEDOM_GDB_METAL_COMMIT):
 	mkdir -p $(dir $@)

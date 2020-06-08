@@ -1,7 +1,9 @@
-# The default target
-.PHONY: all package
-all:
-package:
+# Reuse the default target
+.PHONY: package
+package: all
+
+.PHONY: cleanup
+cleanup: all
 
 # Make uses /bin/sh by default, ignoring the user's value of SHELL.
 # Some systems now ship with /bin/sh pointing at dash, and this Makefile
@@ -25,22 +27,18 @@ DARWIN ?= x86_64-apple-darwin
 ifneq ($(wildcard /etc/redhat-release),)
 NATIVE ?= $(REDHAT)
 NINJA ?= ninja-build
-all: redhat
-package: redhat-package
+#all: redhat
 else ifeq ($(DISTRIB_ID),Ubuntu)
 NATIVE ?= $(UBUNTU64)
-all: ubuntu64
-package: ubuntu64-package
-all: win64
-package: win64-package
+#all: ubuntu64
+#all: win64
 else ifeq ($(shell uname),Darwin)
 NATIVE ?= $(DARWIN)
 LIBTOOLIZE ?= glibtoolize
 TAR ?= gtar
 SED ?= gsed
 AWK ?= gawk
-all: darwin
-package: darwin-package
+#all: darwin
 else
 $(error Unknown host)
 endif
