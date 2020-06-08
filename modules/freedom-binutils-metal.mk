@@ -11,6 +11,7 @@ SRCPATH_FREEDOM_BINUTILS_METAL := $(SRCDIR)/$(SRCNAME_FREEDOM_BINUTILS_METAL)
 
 .PHONY: binutils-metal binutils-metal-package binutils-metal-cleanup
 binutils-metal: binutils-metal-package
+binutils-only: binutils-metal-package
 
 $(SRCPATH_FREEDOM_BINUTILS_METAL).$(FREEDOM_BINUTILS_METAL_COMMIT):
 	mkdir -p $(dir $@)
