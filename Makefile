@@ -647,8 +647,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-newlib-nano-install/stamp: \
 	do \
 		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::" | $(SED) -e "s:libgloss\.a:libgloss_nano.a:g"`; \
 		cp $${bnls} $${inl}$${inls}; \
-	done
-	for bnls in `find $${bnl} -name crt0.0`; \
+	done; \
+	for bnls in `find $${bnl} -name crt0.o`; \
 	do \
 		inls=`echo $${bnls} | $(SED) -e "s:$${bnl}::"`; \
 		cp $${bnls} $${inl}$${inls}; \
