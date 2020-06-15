@@ -35,7 +35,7 @@ help:
 	@echo "   gcc-metal        > (aka toolchain)"
 	@echo "   gdb-metal       /"
 	@echo "   openocd"
-	@echo "   qemu-system        (aka qemu)"
+	@echo "   qemu-target        (aka qemu)"
 	@echo "   spike-dasm         (aka sdk-utilities)"
 	@echo "   trace-decoder"
 	@echo "   xc3sprog"
@@ -51,7 +51,7 @@ include modules/freedom-binutils-metal.mk
 include modules/freedom-gcc-metal.mk
 include modules/freedom-gdb-metal.mk
 include modules/freedom-openocd.mk
-include modules/freedom-qemu-system.mk
+include modules/freedom-qemu-target.mk
 include modules/freedom-spike-dasm.mk
 include modules/freedom-trace-decoder.mk
 include modules/freedom-xc3sprog.mk
@@ -69,8 +69,8 @@ toolchain-cleanup: gdb-metal-cleanup
 non-toolchain: non-toolchain-package
 non-toolchain-package: openocd-package
 non-toolchain-cleanup: openocd-cleanup
-non-toolchain-package: qemu-system-package
-non-toolchain-cleanup: qemu-system-cleanup
+non-toolchain-package: qemu-target-package
+non-toolchain-cleanup: qemu-target-cleanup
 non-toolchain-package: spike-dasm-package
 non-toolchain-cleanup: spike-dasm-cleanup
 non-toolchain-package: trace-decoder-package

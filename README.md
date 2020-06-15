@@ -11,7 +11,7 @@ contains the scripts we use to build these tools.
 * https://github.com/sifive/freedom-gcc-metal
 * https://github.com/sifive/freedom-gdb-metal
 * https://github.com/sifive/freedom-openocd
-* https://github.com/sifive/freedom-qemu-system
+* https://github.com/sifive/freedom-qemu-target
 * https://github.com/sifive/freedom-spike-dasm
 * https://github.com/sifive/freedom-trace-decoder
 * https://github.com/sifive/freedom-xc3sprog
