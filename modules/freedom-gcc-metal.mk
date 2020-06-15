@@ -1,6 +1,6 @@
 
 FREEDOM_GCC_METAL_GITURL := https://github.com/sifive/freedom-gcc-metal.git
-FREEDOM_GCC_METAL_COMMIT := f367201c787730a7a60db3bd04d7daa6db404c17
+FREEDOM_GCC_METAL_COMMIT := 964832ada04b304691c91df3b646403373abe2a1
 
 ifneq ($(CUSTOM_COMMIT),)
 FREEDOM_GCC_METAL_COMMIT := $(CUSTOM_COMMIT)
@@ -9,9 +9,13 @@ endif
 SRCNAME_FREEDOM_GCC_METAL := freedom-gcc-metal
 SRCPATH_FREEDOM_GCC_METAL := $(SRCDIR)/$(SRCNAME_FREEDOM_GCC_METAL)
 
-.PHONY: gcc-metal gcc-metal-package gcc-metal-cleanup
+.PHONY: gcc-metal gcc-metal-package gcc-metal-regress gcc-metal-cleanup
 gcc-metal: gcc-metal-package
-gcc-only: gcc-metal-package
+
+.PHONY: gcc-only gcc-only-package gcc-only-regress
+gcc-only-package: gcc-metal-package
+gcc-only-regress: gcc-metal-regress
+gcc-only: gcc-metal
 
 $(SRCPATH_FREEDOM_GCC_METAL).$(FREEDOM_GCC_METAL_COMMIT):
 	mkdir -p $(dir $@)
@@ -24,7 +28,11 @@ $(SRCPATH_FREEDOM_GCC_METAL).$(FREEDOM_GCC_METAL_COMMIT):
 
 gcc-metal-package: \
 		$(SRCPATH_FREEDOM_GCC_METAL).$(FREEDOM_GCC_METAL_COMMIT)
-	$(MAKE) -C $(SRCPATH_FREEDOM_GCC_METAL) package POSTFIXPATH=$(abspath .)/
+	$(MAKE) -C $(SRCPATH_FREEDOM_GCC_METAL) package POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
+
+gcc-metal-regress: \
+		$(SRCPATH_FREEDOM_GCC_METAL).$(FREEDOM_GCC_METAL_COMMIT)
+	$(MAKE) -C $(SRCPATH_FREEDOM_GCC_METAL) regress POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
 
 gcc-metal-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_GCC_METAL) cleanup POSTFIXPATH=$(abspath .)/

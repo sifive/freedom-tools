@@ -2,6 +2,9 @@
 .PHONY: package
 package: all
 
+.PHONY: regress
+regress: all
+
 .PHONY: cleanup
 cleanup: all
 

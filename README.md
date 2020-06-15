@@ -1,20 +1,20 @@
-SiFive Freedom RISC-V Tools for Embedded Development
+SiFive Freedom RISC-V Tools
 --------
 
-At SiFive we've been distributing binary release packages of the embedded development
-tools that target our Freedom RISC-V platforms.  This repository contains the scripts
-we use to build these tools.
+At SiFive we've been distributing binary release packages of the
+tools that target our Freedom RISC-V platforms. This repository
+contains the scripts we use to build these tools.
 
-### Packages and their contents
+### The packages:
 
-* freedom-binutils-metal
-* freedom-gcc-metal
-* freedom-gdb-metal
-* freedom-openocd
-* freedom-qemu-system
-* freedom-spike-dasm
-* freedom-trace-decoder
-* freedom-xc3sprog
+* https://github.com/sifive/freedom-binutils-metal
+* https://github.com/sifive/freedom-gcc-metal
+* https://github.com/sifive/freedom-gdb-metal
+* https://github.com/sifive/freedom-openocd
+* https://github.com/sifive/freedom-qemu-system
+* https://github.com/sifive/freedom-spike-dasm
+* https://github.com/sifive/freedom-trace-decoder
+* https://github.com/sifive/freedom-xc3sprog
 
 All the packages has a uniquely named root folder, making it easy to untar/unzip'ing
 multiple versions next to each other.

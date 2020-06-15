@@ -1,6 +1,6 @@
 
 FREEDOM_CUSTOM_GITURL := https://github.com/sifive/freedom-spike-dasm.git
-FREEDOM_CUSTOM_COMMIT := a6f253ed1386b72239ef1321aa5f96865229dc05
+FREEDOM_CUSTOM_COMMIT := 2ef2c24fe30454682b927be13d6da7c48a824f15
 
 ifneq ($(CUSTOM_GITURL),)
 FREEDOM_CUSTOM_GITURL := $(CUSTOM_GITURL)
@@ -12,7 +12,7 @@ endif
 SRCNAME_FREEDOM_CUSTOM := freedom-custom
 SRCPATH_FREEDOM_CUSTOM := $(SRCDIR)/$(SRCNAME_FREEDOM_CUSTOM)
 
-.PHONY: custom custom-package custom-cleanup
+.PHONY: custom custom-package custom-regress custom-regress custom-cleanup
 custom: custom-package
 
 $(SRCPATH_FREEDOM_CUSTOM).$(FREEDOM_CUSTOM_COMMIT):
@@ -26,7 +26,11 @@ $(SRCPATH_FREEDOM_CUSTOM).$(FREEDOM_CUSTOM_COMMIT):
 
 custom-package: \
 		$(SRCPATH_FREEDOM_CUSTOM).$(FREEDOM_CUSTOM_COMMIT)
-	$(MAKE) -C $(SRCPATH_FREEDOM_CUSTOM) package POSTFIXPATH=$(abspath .)/
+	$(MAKE) -C $(SRCPATH_FREEDOM_CUSTOM) package POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
+
+custom-regress: \
+		$(SRCPATH_FREEDOM_CUSTOM).$(FREEDOM_CUSTOM_COMMIT)
+	$(MAKE) -C $(SRCPATH_FREEDOM_CUSTOM) regress POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
 
 custom-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_CUSTOM) cleanup POSTFIXPATH=$(abspath .)/

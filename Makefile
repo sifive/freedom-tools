@@ -5,7 +5,7 @@ include scripts/Package.mk
 # The default target
 .PHONY: all
 all:
-	@echo " Makefile targets: *-package *-cleanup clean help all"
+	@echo " Makefile targets: *-package *-regress *-cleanup clean help all"
 
 .PHONY: help
 help:
@@ -14,6 +14,9 @@ help:
 	@echo ""
 	@echo " *-package"
 	@echo "   Build the binary packages for * repo."
+	@echo ""
+	@echo " *-regress"
+	@echo "   Test the prebuilt packages for * repo."
 	@echo ""
 	@echo " *-cleanup"
 	@echo "   Clean the build artifacts for * repo."

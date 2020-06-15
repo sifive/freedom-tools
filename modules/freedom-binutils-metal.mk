@@ -1,6 +1,6 @@
 
 FREEDOM_BINUTILS_METAL_GITURL := https://github.com/sifive/freedom-binutils-metal.git
-FREEDOM_BINUTILS_METAL_COMMIT := 06104120025f13a4bd42ed78ebb36aa07469af4d
+FREEDOM_BINUTILS_METAL_COMMIT := 470bdb6fcb54edb0645764e8de3613efb5343443
 
 ifneq ($(CUSTOM_COMMIT),)
 FREEDOM_BINUTILS_METAL_COMMIT := $(CUSTOM_COMMIT)
@@ -9,9 +9,13 @@ endif
 SRCNAME_FREEDOM_BINUTILS_METAL := freedom-binutils-metal
 SRCPATH_FREEDOM_BINUTILS_METAL := $(SRCDIR)/$(SRCNAME_FREEDOM_BINUTILS_METAL)
 
-.PHONY: binutils-metal binutils-metal-package binutils-metal-cleanup
+.PHONY: binutils-metal binutils-metal-package binutils-metal-regress binutils-metal-cleanup
 binutils-metal: binutils-metal-package
-binutils-only: binutils-metal-package
+
+.PHONY: binutils-only binutils-only-package binutils-only-regress
+binutils-only-package: binutils-metal-package
+binutils-only-regress: binutils-metal-regress
+binutils-only: binutils-metal
 
 $(SRCPATH_FREEDOM_BINUTILS_METAL).$(FREEDOM_BINUTILS_METAL_COMMIT):
 	mkdir -p $(dir $@)
@@ -24,7 +28,11 @@ $(SRCPATH_FREEDOM_BINUTILS_METAL).$(FREEDOM_BINUTILS_METAL_COMMIT):
 
 binutils-metal-package: \
 		$(SRCPATH_FREEDOM_BINUTILS_METAL).$(FREEDOM_BINUTILS_METAL_COMMIT)
-	$(MAKE) -C $(SRCPATH_FREEDOM_BINUTILS_METAL) package POSTFIXPATH=$(abspath .)/
+	$(MAKE) -C $(SRCPATH_FREEDOM_BINUTILS_METAL) package POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
+
+binutils-metal-regress: \
+		$(SRCPATH_FREEDOM_BINUTILS_METAL).$(FREEDOM_BINUTILS_METAL_COMMIT)
+	$(MAKE) -C $(SRCPATH_FREEDOM_BINUTILS_METAL) regress POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
 
 binutils-metal-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_BINUTILS_METAL) cleanup POSTFIXPATH=$(abspath .)/

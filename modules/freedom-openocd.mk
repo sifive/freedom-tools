@@ -1,6 +1,6 @@
 
 FREEDOM_OPENOCD_GITURL := https://github.com/sifive/freedom-openocd.git
-FREEDOM_OPENOCD_COMMIT := 2d443c07e26607c00fee8dab63f06b1a51de1fdd
+FREEDOM_OPENOCD_COMMIT := 27cdc3ced3e179da9cce8293ff39cfd7b1afa895
 
 ifneq ($(CUSTOM_COMMIT),)
 FREEDOM_OPENOCD_COMMIT := $(CUSTOM_COMMIT)
@@ -9,7 +9,7 @@ endif
 SRCNAME_FREEDOM_OPENOCD := freedom-openocd
 SRCPATH_FREEDOM_OPENOCD := $(SRCDIR)/$(SRCNAME_FREEDOM_OPENOCD)
 
-.PHONY: openocd openocd-package openocd-cleanup
+.PHONY: openocd openocd-package openocd-regress openocd-cleanup
 openocd: openocd-package
 
 $(SRCPATH_FREEDOM_OPENOCD).$(FREEDOM_OPENOCD_COMMIT):
@@ -23,7 +23,11 @@ $(SRCPATH_FREEDOM_OPENOCD).$(FREEDOM_OPENOCD_COMMIT):
 
 openocd-package: \
 		$(SRCPATH_FREEDOM_OPENOCD).$(FREEDOM_OPENOCD_COMMIT)
-	$(MAKE) -C $(SRCPATH_FREEDOM_OPENOCD) package POSTFIXPATH=$(abspath .)/
+	$(MAKE) -C $(SRCPATH_FREEDOM_OPENOCD) package POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
+
+openocd-regress: \
+		$(SRCPATH_FREEDOM_OPENOCD).$(FREEDOM_OPENOCD_COMMIT)
+	$(MAKE) -C $(SRCPATH_FREEDOM_OPENOCD) regress POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
 
 openocd-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_OPENOCD) cleanup POSTFIXPATH=$(abspath .)/

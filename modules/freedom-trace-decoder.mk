@@ -1,6 +1,6 @@
 
 FREEDOM_TRACE_DECODER_GITURL := https://github.com/sifive/freedom-trace-decoder.git
-FREEDOM_TRACE_DECODER_COMMIT := 23cb0e5fb7d256eaaf2778f7659cade73f2906c0
+FREEDOM_TRACE_DECODER_COMMIT := 48cb9754035fb38e7e0b3f94da73f73945bdc828
 
 ifneq ($(CUSTOM_COMMIT),)
 FREEDOM_TRACE_DECODER_COMMIT := $(CUSTOM_COMMIT)
@@ -9,7 +9,7 @@ endif
 SRCNAME_FREEDOM_TRACE_DECODER := freedom-trace-decoder
 SRCPATH_FREEDOM_TRACE_DECODER := $(SRCDIR)/$(SRCNAME_FREEDOM_TRACE_DECODER)
 
-.PHONY: trace-decoder trace-decoder-package trace-decoder-cleanup
+.PHONY: trace-decoder trace-decoder-package trace-decoder-regress trace-decoder-cleanup
 trace-decoder: trace-decoder-package
 
 $(SRCPATH_FREEDOM_TRACE_DECODER).$(FREEDOM_TRACE_DECODER_COMMIT):
@@ -23,7 +23,11 @@ $(SRCPATH_FREEDOM_TRACE_DECODER).$(FREEDOM_TRACE_DECODER_COMMIT):
 
 trace-decoder-package: \
 		$(SRCPATH_FREEDOM_TRACE_DECODER).$(FREEDOM_TRACE_DECODER_COMMIT)
-	$(MAKE) -C $(SRCPATH_FREEDOM_TRACE_DECODER) package POSTFIXPATH=$(abspath .)/
+	$(MAKE) -C $(SRCPATH_FREEDOM_TRACE_DECODER) package POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
+
+trace-decoder-regress: \
+		$(SRCPATH_FREEDOM_TRACE_DECODER).$(FREEDOM_TRACE_DECODER_COMMIT)
+	$(MAKE) -C $(SRCPATH_FREEDOM_TRACE_DECODER) regress POSTFIXPATH=$(abspath .)/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
 
 trace-decoder-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_TRACE_DECODER) cleanup POSTFIXPATH=$(abspath .)/
