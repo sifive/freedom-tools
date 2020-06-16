@@ -8,6 +8,9 @@ regress: all
 .PHONY: cleanup
 cleanup: all
 
+.PHONY: flushup
+flushup: all
+
 # Make uses /bin/sh by default, ignoring the user's value of SHELL.
 # Some systems now ship with /bin/sh pointing at dash, and this Makefile
 # requires bash
@@ -62,3 +65,7 @@ OBJ_REDHAT   := $(OBJDIR)/$(REDHAT)
 .PHONY: clean
 clean::
 	rm -rf $(SRCDIR) $(OBJDIR) $(BINDIR)
+
+.PHONY: flush
+flush::
+	rm -rf $(OBJDIR)

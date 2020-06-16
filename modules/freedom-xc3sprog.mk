@@ -1,6 +1,6 @@
 
 FREEDOM_XC3SPROG_GITURL := https://github.com/sifive/freedom-xc3sprog.git
-FREEDOM_XC3SPROG_COMMIT := dbd8196f3491eacb0bb8eb4c4028dc91acb8e9de
+FREEDOM_XC3SPROG_COMMIT := fe5b2e972840480c236d8ec6a5c8fa8285bf3f6d
 
 ifneq ($(CUSTOM_COMMIT),)
 FREEDOM_XC3SPROG_COMMIT := $(CUSTOM_COMMIT)
@@ -9,7 +9,7 @@ endif
 SRCNAME_FREEDOM_XC3SPROG := freedom-xc3sprog
 SRCPATH_FREEDOM_XC3SPROG := $(SRCDIR)/$(SRCNAME_FREEDOM_XC3SPROG)
 
-.PHONY: xc3sprog xc3sprog-package xc3sprog-regress xc3sprog-cleanup
+.PHONY: xc3sprog xc3sprog-package xc3sprog-regress xc3sprog-cleanup xc3sprog-flushup
 xc3sprog: xc3sprog-package
 
 $(SRCPATH_FREEDOM_XC3SPROG).$(FREEDOM_XC3SPROG_COMMIT):
@@ -33,3 +33,6 @@ xc3sprog-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_XC3SPROG) cleanup POSTFIXPATH=$(abspath .)/
 	rm -rf $(SRCPATH_FREEDOM_XC3SPROG).*
 	rm -rf $(SRCPATH_FREEDOM_XC3SPROG)
+
+xc3sprog-flushup:
+	$(MAKE) -C $(SRCPATH_FREEDOM_XC3SPROG) flushup POSTFIXPATH=$(abspath .)/

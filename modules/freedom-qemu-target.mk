@@ -1,6 +1,6 @@
 
 FREEDOM_QEMU_TARGET_GITURL := https://github.com/sifive/freedom-qemu-target.git
-FREEDOM_QEMU_TARGET_COMMIT := 30cd763486fd39c7fd58b18b6a7b5bee0b516335
+FREEDOM_QEMU_TARGET_COMMIT := e52ee7791ecf902c37462c406561c374a801ceaa
 
 ifneq ($(CUSTOM_COMMIT),)
 FREEDOM_QEMU_TARGET_COMMIT := $(CUSTOM_COMMIT)
@@ -9,7 +9,7 @@ endif
 SRCNAME_FREEDOM_QEMU_TARGET := freedom-qemu-target
 SRCPATH_FREEDOM_QEMU_TARGET := $(SRCDIR)/$(SRCNAME_FREEDOM_QEMU_TARGET)
 
-.PHONY: qemu-target qemu-target-package qemu-target-regress qemu-target-cleanup
+.PHONY: qemu-target qemu-target-package qemu-target-regress qemu-target-cleanup qemu-target-flushup
 qemu-target: qemu-target-package
 
 .PHONY: qemu qemu-package qemu-package
@@ -38,3 +38,6 @@ qemu-target-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_QEMU_TARGET) cleanup POSTFIXPATH=$(abspath .)/
 	rm -rf $(SRCPATH_FREEDOM_QEMU_TARGET).*
 	rm -rf $(SRCPATH_FREEDOM_QEMU_TARGET)
+
+qemu-target-flushup:
+	$(MAKE) -C $(SRCPATH_FREEDOM_QEMU_TARGET) flushup POSTFIXPATH=$(abspath .)/

@@ -1,6 +1,6 @@
 
 FREEDOM_GDB_METAL_GITURL := https://github.com/sifive/freedom-gdb-metal.git
-FREEDOM_GDB_METAL_COMMIT := 4850c8dfa41bbfe205ebf91d0959575962410573
+FREEDOM_GDB_METAL_COMMIT := b7d3b6130682ecc099f3d49fe623f443d3ffc241
 
 ifneq ($(CUSTOM_COMMIT),)
 FREEDOM_GDB_METAL_COMMIT := $(CUSTOM_COMMIT)
@@ -9,7 +9,7 @@ endif
 SRCNAME_FREEDOM_GDB_METAL := freedom-gdb-metal
 SRCPATH_FREEDOM_GDB_METAL := $(SRCDIR)/$(SRCNAME_FREEDOM_GDB_METAL)
 
-.PHONY: gdb-metal gdb-metal-package gdb-metal-regress gdb-metal-cleanup
+.PHONY: gdb-metal gdb-metal-package gdb-metal-regress gdb-metal-cleanup gdb-metal-flushup
 gdb-metal: gdb-metal-package
 
 .PHONY: gdb-only gdb-only-package gdb-only-regress
@@ -38,3 +38,6 @@ gdb-metal-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_GDB_METAL) cleanup POSTFIXPATH=$(abspath .)/
 	rm -rf $(SRCPATH_FREEDOM_GDB_METAL).*
 	rm -rf $(SRCPATH_FREEDOM_GDB_METAL)
+
+gdb-metal-flushup:
+	$(MAKE) -C $(SRCPATH_FREEDOM_GDB_METAL) flushup POSTFIXPATH=$(abspath .)/

@@ -5,7 +5,7 @@ include scripts/Package.mk
 # The default target
 .PHONY: all
 all:
-	@echo " Makefile targets: *-package *-regress *-cleanup clean help all"
+	@echo " Makefile targets: *-package *-regress *-cleanup *-flushup clean flush help all"
 
 .PHONY: help
 help:
@@ -21,8 +21,14 @@ help:
 	@echo " *-cleanup"
 	@echo "   Clean the build artifacts for * repo."
 	@echo ""
+	@echo " *-flushup"
+	@echo "   Flush the build artifacts for * repo."
+	@echo ""
 	@echo " clean"
 	@echo "   Remove the src, obj and bin directories."
+	@echo ""
+	@echo " flush"
+	@echo "   Remove the obj directory."
 	@echo ""
 	@echo " help"
 	@echo "   Show this help."
@@ -56,24 +62,40 @@ include modules/freedom-spike-dasm.mk
 include modules/freedom-trace-decoder.mk
 include modules/freedom-xc3sprog.mk
 
-.PHONY: toolchain toolchain-package toolchain-cleanup
+.PHONY: toolchain toolchain-package toolchain-regress toolchain-cleanup toolchain-flushup
 toolchain: toolchain-package
 toolchain-package: binutils-metal-package
+toolchain-regress: binutils-metal-regress
 toolchain-cleanup: binutils-metal-cleanup
+toolchain-flushup: binutils-metal-flushup
 toolchain-package: gcc-metal-package
+toolchain-regress: gcc-metal-regress
 toolchain-cleanup: gcc-metal-cleanup
+toolchain-flushup: gcc-metal-flushup
 toolchain-package: gdb-metal-package
+toolchain-regress: gdb-metal-regress
 toolchain-cleanup: gdb-metal-cleanup
+toolchain-flushup: gdb-metal-flushup
 
-.PHONY: non-toolchain non-toolchain-package non-toolchain-cleanup
+.PHONY: non-toolchain non-toolchain-package non-toolchain-regress non-toolchain-cleanup non-toolchain-flushup
 non-toolchain: non-toolchain-package
 non-toolchain-package: openocd-package
+non-toolchain-regress: openocd-regress
 non-toolchain-cleanup: openocd-cleanup
+non-toolchain-flushup: openocd-flushup
 non-toolchain-package: qemu-target-package
+non-toolchain-regress: qemu-target-regress
 non-toolchain-cleanup: qemu-target-cleanup
+non-toolchain-flushup: qemu-target-flushup
 non-toolchain-package: spike-dasm-package
+non-toolchain-regress: spike-dasm-regress
 non-toolchain-cleanup: spike-dasm-cleanup
+non-toolchain-flushup: spike-dasm-flushup
 non-toolchain-package: trace-decoder-package
+non-toolchain-regress: trace-decoder-regress
 non-toolchain-cleanup: trace-decoder-cleanup
+non-toolchain-flushup: trace-decoder-flushup
 non-toolchain-package: xc3sprog-package
+non-toolchain-regress: xc3sprog-regress
 non-toolchain-cleanup: xc3sprog-cleanup
+non-toolchain-flushup: xc3sprog-flushup

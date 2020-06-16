@@ -1,6 +1,6 @@
 
 FREEDOM_BINUTILS_METAL_GITURL := https://github.com/sifive/freedom-binutils-metal.git
-FREEDOM_BINUTILS_METAL_COMMIT := 470bdb6fcb54edb0645764e8de3613efb5343443
+FREEDOM_BINUTILS_METAL_COMMIT := 8738be0d9d7d99d7c0803acde49a6b93c5dc88c5
 
 ifneq ($(CUSTOM_COMMIT),)
 FREEDOM_BINUTILS_METAL_COMMIT := $(CUSTOM_COMMIT)
@@ -9,7 +9,7 @@ endif
 SRCNAME_FREEDOM_BINUTILS_METAL := freedom-binutils-metal
 SRCPATH_FREEDOM_BINUTILS_METAL := $(SRCDIR)/$(SRCNAME_FREEDOM_BINUTILS_METAL)
 
-.PHONY: binutils-metal binutils-metal-package binutils-metal-regress binutils-metal-cleanup
+.PHONY: binutils-metal binutils-metal-package binutils-metal-regress binutils-metal-cleanup binutils-metal-flushup
 binutils-metal: binutils-metal-package
 
 .PHONY: binutils-only binutils-only-package binutils-only-regress
@@ -38,3 +38,6 @@ binutils-metal-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_BINUTILS_METAL) cleanup POSTFIXPATH=$(abspath .)/
 	rm -rf $(SRCPATH_FREEDOM_BINUTILS_METAL).*
 	rm -rf $(SRCPATH_FREEDOM_BINUTILS_METAL)
+
+binutils-metal-flushup:
+	$(MAKE) -C $(SRCPATH_FREEDOM_BINUTILS_METAL) flushup POSTFIXPATH=$(abspath .)/

@@ -12,7 +12,7 @@ endif
 SRCNAME_FREEDOM_CUSTOM := freedom-custom
 SRCPATH_FREEDOM_CUSTOM := $(SRCDIR)/$(SRCNAME_FREEDOM_CUSTOM)
 
-.PHONY: custom custom-package custom-regress custom-regress custom-cleanup
+.PHONY: custom custom-package custom-regress custom-cleanup custom-flushup
 custom: custom-package
 
 $(SRCPATH_FREEDOM_CUSTOM).$(FREEDOM_CUSTOM_COMMIT):
@@ -36,3 +36,6 @@ custom-cleanup:
 	$(MAKE) -C $(SRCPATH_FREEDOM_CUSTOM) cleanup POSTFIXPATH=$(abspath .)/
 	rm -rf $(SRCPATH_FREEDOM_CUSTOM).*
 	rm -rf $(SRCPATH_FREEDOM_CUSTOM)
+
+custom-flushup:
+	$(MAKE) -C $(SRCPATH_FREEDOM_CUSTOM) flushup POSTFIXPATH=$(abspath .)/
