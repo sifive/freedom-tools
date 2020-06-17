@@ -45,6 +45,9 @@ TAR ?= gtar
 SED ?= gsed
 AWK ?= gawk
 #all: darwin
+else ifneq ($(wildcard /mingw64/etc),)
+NATIVE ?= $(WIN64)
+#all: win64
 else
 $(error Unknown host)
 endif
