@@ -351,36 +351,36 @@ MULTILIBS_GEN := \
 	rv32em-ilp32e--c \
 	rv32eac-ilp32e-- \
 	rv32emac-ilp32e-- \
-	rv32i-ilp32--c,f,fc,fd,fdc \
-	rv32ia-ilp32-rv32ima,rv32iaf,rv32imaf,rv32iafd,rv32imafd- \
-	rv32im-ilp32--c,f,fc,fd,fdc \
-	rv32iac-ilp32--f,fd \
-	rv32imac-ilp32-rv32imafc,rv32imafdc- \
-	rv32if-ilp32f--c,d,dc \
-	rv32iaf-ilp32f--c,d,dc \
-	rv32imf-ilp32f--d \
-	rv32imaf-ilp32f-rv32imafd- \
-	rv32imfc-ilp32f--d \
-	rv32imafc-ilp32f-rv32imafdc- \
-	rv32ifd-ilp32d--c \
-	rv32imfd-ilp32d--c \
-	rv32iafd-ilp32d-rv32imafd,rv32iafdc- \
-	rv32imafdc-ilp32d-- \
-	rv64i-lp64--c,f,fc,fd,fdc \
-	rv64ia-lp64-rv64ima,rv64iaf,rv64imaf,rv64iafd,rv64imafd- \
-	rv64im-lp64--c,f,fc,fd,fdc \
-	rv64iac-lp64--f,fd \
-	rv64imac-lp64-rv64imafc,rv64imafdc- \
-	rv64if-lp64f--c,d,dc \
-	rv64iaf-lp64f--c,d,dc \
-	rv64imf-lp64f--d \
-	rv64imaf-lp64f-rv64imafd- \
-	rv64imfc-lp64f--d \
-	rv64imafc-lp64f-rv64imafdc- \
-	rv64ifd-lp64d--c \
-	rv64imfd-lp64d--c \
-	rv64iafd-lp64d-rv64imafd,rv64iafdc- \
-	rv64imafdc-lp64d--
+	rv32i-ilp32--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh \
+	rv32ia-ilp32-rv32ima,rv32iaf,rv32imaf,rv32iafd,rv32imafd,rv32iafzfh,rv32imafzfh,rv32iafdzfh,rv32imafdzfh- \
+	rv32im-ilp32--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczf \
+	rv32iac-ilp32--f,fd,fzfh,fdzfh \
+	rv32imac-ilp32-rv32imafc,rv32imafdc,rv32imafczfh,rv32imafdczfh- \
+	rv32if-ilp32f--c,d,dc,zfh,czfh,dzfh,dczfh \
+	rv32iaf-ilp32f--c,d,dc,zfh,czfh,dzfh,dczfh \
+	rv32imf-ilp32f--d,zfh,dzfh \
+	rv32imaf-ilp32f-rv32imafd-zfh \
+	rv32imfc-ilp32f--d,zfh,dzfh \
+	rv32imafc-ilp32f-rv32imafdc-zfh \
+	rv32ifd-ilp32d--c,zfh,czfh \
+	rv32imfd-ilp32d--c,zfh,czfh \
+	rv32iafd-ilp32d-rv32imafd,rv32iafdc-zfh \
+	rv32imafdc-ilp32d--zfh \
+	rv64i-lp64--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh \
+	rv64ia-lp64-rv64ima,rv64iaf,rv64imaf,rv64iafd,rv64imafd,rv64iafzfh,rv64imafzfh,rv64iafdzfh,rv64imafdzfh- \
+	rv64im-lp64--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh \
+	rv64iac-lp64--f,fd,fzfh,fdzfh \
+	rv64imac-lp64-rv64imafc,rv64imafdc,rv64imafczfh,rv64imafdczfh- \
+	rv64if-lp64f--c,d,dc,czfh,dzfh,dczfh \
+	rv64iaf-lp64f--c,d,dc,czfh,dzfh,dczfh \
+	rv64imf-lp64f--d,zfh,dzfh \
+	rv64imaf-lp64f-rv64imafd-zfh \
+	rv64imfc-lp64f--d,zfh,dzfh \
+	rv64imafc-lp64f-rv64imafdc-zfh \
+	rv64ifd-lp64d--c,zfh \
+	rv64imfd-lp64d--c,zfh \
+	rv64iafd-lp64d-rv64imafd,rv64iafdc-zfh \
+	rv64imafdc-lp64d--zfh
 
 CFLAGS_FOR_TARGET := $(CFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
 CXXFLAGS_FOR_TARGET := $(CXXFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
