@@ -45,6 +45,7 @@ help:
 	@echo "   spike-dasm         (aka sdk-utilities)"
 	@echo "   trace-decoder"
 	@echo "   xc3sprog"
+	@echo "   devtool-image"
 	@echo "   custom"
 	@echo "     Requires that CUSTOM_GITURL is set."
 	@echo ""
@@ -61,6 +62,7 @@ include modules/freedom-qemu-target.mk
 include modules/freedom-spike-dasm.mk
 include modules/freedom-trace-decoder.mk
 include modules/freedom-xc3sprog.mk
+include modules/freedom-devtool-image.mk
 
 .PHONY: toolchain toolchain-package toolchain-regress toolchain-cleanup toolchain-flushup
 toolchain: toolchain-package
