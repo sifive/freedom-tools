@@ -759,6 +759,9 @@ $(OBJDIR)/%/stamps/expat-gdb/install.stamp: \
 	cd $($@_BUILD); ./configure --prefix=$(abspath $($@_INSTALL)) $($($@_TARGET)-expat-configure) &>make-configure.log
 	$(MAKE) -C $($@_BUILD) buildlib &>$($@_BUILD)/make-buildlib.log
 	$(MAKE) -C $($@_BUILD) -j1 installlib &>$($@_BUILD)/make-installlib.log
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib*
+	rm -f $(abspath $($@_INSTALL))/lib/lib*.so*
+	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
 	mkdir -p $(dir $@)
 	date > $@
 
