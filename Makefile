@@ -229,8 +229,8 @@ $(WIN32)-expat-configure     := --host=$(WIN32)
 $(WIN32)-xc3sp-host          := --host=$(WIN32)
 $(WIN64)-rgt-host            := --host=$(WIN64)
 $(WIN64)-rgcc-configure      := --without-system-zlib
-#$(WIN64)-rgdb-configure      := --with-python="$(abspath scripts/pyconfig-mingw32.sh)"
-$(WIN64)-rgdb-configure      := --with-python=no
+#$(WIN64)-rgdb-python         := --with-python="$(abspath scripts/pyconfig-mingw32.sh)"
+$(WIN64)-rgdb-python         := --with-python=no
 $(WIN64)-rocd-host           := --host=$(WIN64)
 $(WIN64)-oftdi-configure     := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(OBJ_WIN64)/build/riscv-openocd/libftdi/cmake/Toolchain-x86_64-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/include/libusb-1.0)"
 $(WIN64)-odeps-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include"
@@ -259,7 +259,7 @@ $(UBUNTU32)-expat-configure  := --host=i686-linux-gnu
 $(UBUNTU32)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-rgt-host         := --host=x86_64-linux-gnu
 $(UBUNTU64)-rgcc-configure   := --with-system-zlib
-$(UBUNTU64)-rgdb-configure   := --with-python=/scratch/carsteng/git/py3/install/bin/python3
+$(UBUNTU64)-rgdb-python      := --with-python=/scratch/carsteng/git/py3/install/bin/python3
 $(UBUNTU64)-ousb-configure   := --disable-shared
 $(UBUNTU64)-rocd-host        := --host=x86_64-linux-gnu
 $(UBUNTU64)-odeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib -pthread"
@@ -272,7 +272,8 @@ $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(DARWIN)-rgcc-configure     := --with-system-zlib
-$(DARWIN)-rgdb-configure     := --with-python=/scratch/carsteng/git/py3/install/bin/python3
+$(DARWIN)-rgdb-configure     := --with-included-gettext
+$(DARWIN)-rgdb-python        := --with-python=/scratch/carsteng/git/py3/install/bin/python3
 $(DARWIN)-ousb-configure     := --disable-shared
 $(DARWIN)-odeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib -framework CoreFoundation -framework IOKit"
 $(DARWIN)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include -O2" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib -framework CoreFoundation -framework IOKit"
@@ -285,7 +286,7 @@ $(DARWIN)-xdeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install
 $(DARWIN)-xc3sp-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework IOKit"
 $(DARWIN)-xc3sp-framework    := -framework CoreFoundation -framework IOKit
 $(REDHAT)-rgcc-configure     := --with-system-zlib
-$(REDHAT)-rgdb-configure     := --with-python=/scratch/carsteng/git/py3/install/bin/python3
+$(REDHAT)-rgdb-python        := --with-python=/scratch/carsteng/git/py3/install/bin/python3
 $(REDHAT)-ousb-configure     := --disable-shared
 $(REDHAT)-odeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
 $(REDHAT)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -O2" CPPFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
@@ -704,7 +705,9 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
+		$($($@_TARGET)-rgdb-configure) \
 		--with-python=no \
+		--with-lzma=no \
 		--enable-gdb \
 		--disable-gas \
 		--disable-binutils \
@@ -734,8 +737,10 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp: \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
 		$($($@_TARGET)-rgdb-configure) \
+		$($($@_TARGET)-rgdb-python) \
 		--program-prefix="$(NEWLIB_TUPLE)-" \
 		--program-suffix="-py" \
+		--with-lzma=no \
 		--enable-gdb \
 		--disable-gas \
 		--disable-binutils \
