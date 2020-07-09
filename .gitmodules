@@ -6,7 +6,7 @@
 	url = git://github.com/sifive/riscv-binutils-gdb.git
 [submodule "src/riscv-gcc"]
 	path = src/riscv-gcc
-	url = git://github.com/sifive/riscv-gcc.git
+	url = git://github.com/sifive/riscv-gcc-internal.git
 [submodule "src/riscv-gdb"]
 	path = src/riscv-gdb
 	url = git://github.com/sifive/riscv-binutils-gdb.git
