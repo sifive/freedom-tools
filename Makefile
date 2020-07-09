@@ -689,7 +689,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp:
 	mkdir -p $(dir $@)
 	mkdir -p $($@_INSTALL)/python
 	cd $(dir $@); curl -L -f -s -o python-3.7.7-$($@_TARGET).tar.gz https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/python-3.7.7-$($@_TARGET).tar.gz
-	$($@_INSTALL)/python; $(TAR) -xf $(abspath $(dir $@))/python-3.7.7-$($@_TARGET).tar.gz
+	cd $($@_INSTALL)/python; $(TAR) -xf $(abspath $(dir $@))/python-3.7.7-$($@_TARGET).tar.gz
 	cd $(dir $@); rm python-3.7.7-$($@_TARGET).tar.gz
 	cp -a $(SRC_RGDB) $(dir $@)
 	date > $@
