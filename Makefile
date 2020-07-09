@@ -133,10 +133,10 @@ win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).src.zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).tar.gz
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).src.tar.gz
-win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(WIN64).zip
-win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(WIN64).src.zip
-win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(WIN64).tar.gz
-win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(WIN64).src.tar.gz
+win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64).zip
+win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64).src.zip
+win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64).tar.gz
+win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64).src.tar.gz
 win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).zip
 win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).src.zip
 win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).tar.gz
@@ -171,8 +171,8 @@ win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.tar.gz
 ubuntu64: ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).src.tar.gz
-ubuntu64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(UBUNTU64).tar.gz
-ubuntu64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(UBUNTU64).src.tar.gz
+ubuntu64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(UBUNTU64).tar.gz
+ubuntu64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64).tar.gz
@@ -193,8 +193,8 @@ ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).src.tar.gz
 redhat: redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).tar.gz
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).src.tar.gz
-redhat-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(REDHAT).tar.gz
-redhat-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(REDHAT).src.tar.gz
+redhat-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(REDHAT).tar.gz
+redhat-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(REDHAT).src.tar.gz
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).tar.gz
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).src.tar.gz
 redhat-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT).tar.gz
@@ -209,8 +209,8 @@ redhat-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(REDHAT).src.tar.
 darwin: darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).tar.gz
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).src.tar.gz
-darwin-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(DARWIN).tar.gz
-darwin-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDB_VERSION)-$(DARWIN).src.tar.gz
+darwin-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(DARWIN).tar.gz
+darwin-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(DARWIN).src.tar.gz
 darwin-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(DARWIN).tar.gz
 darwin-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(DARWIN).src.tar.gz
 darwin-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN).tar.gz
