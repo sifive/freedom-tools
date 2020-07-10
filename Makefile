@@ -692,7 +692,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp:
 	cd $(dir $@); rm python-3.7.7-$($@_TARGET).tar.gz
 	cp scripts/pyconfig-mingw32.sh $($@_INSTALL)/python
 	cp -a $(SRC_RGDB) $(dir $@)
-	$(SED) -E -i -f $(SCRIPTSDIR)/python-c-gdb.sed $(dir $@)/riscv-gdb/gdb/python/python.c
+	$(SED) -E -i -f scripts/python-c-gdb.sed $(dir $@)/riscv-gdb/gdb/python/python.c
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp: \
