@@ -41,10 +41,11 @@ help:
 	@echo "   gcc-metal        > (aka toolchain)"
 	@echo "   gdb-metal       /"
 	@echo "   openocd"
-	@echo "   qemu-target        (aka qemu)"
+	@echo "   qemu-target        (aka riscv-qemu)"
 	@echo "   spike-dasm         (aka sdk-utilities)"
 	@echo "   trace-decoder"
 	@echo "   xc3sprog"
+	@echo "   qemu-host"
 	@echo "   devtool-image"
 	@echo "   custom"
 	@echo "     Requires that CUSTOM_GITURL is set."
@@ -62,6 +63,7 @@ include modules/freedom-qemu-target.mk
 include modules/freedom-spike-dasm.mk
 include modules/freedom-trace-decoder.mk
 include modules/freedom-xc3sprog.mk
+include modules/freedom-qemu-host.mk
 include modules/freedom-devtool-image.mk
 
 .PHONY: toolchain toolchain-package toolchain-regress toolchain-cleanup toolchain-flushup

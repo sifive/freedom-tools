@@ -15,6 +15,8 @@ contains the scripts we use to build these tools.
 * https://github.com/sifive/freedom-spike-dasm
 * https://github.com/sifive/freedom-trace-decoder
 * https://github.com/sifive/freedom-xc3sprog
+* https://github.com/sifive/freedom-qemu-host
+* https://github.com/sifive/freedom-devtool-image
 
 All the packages has a uniquely named root folder, making it easy to untar/unzip'ing
 multiple versions next to each other.
