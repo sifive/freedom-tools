@@ -1,17 +1,17 @@
 #!/bin/sh
 # Ignore first argument
-pydir=$(dirname $1)
+pydir=$(dirname $0)
 shift
 for arg in $@; do
     case $arg in
         --prefix|--exec-prefix)
-            echo "${pydir}/../../../python"
+            echo "${pydir}"
             ;;
         --includes)
-            echo "-I${pydir}/../../../python/include"
+            echo "-I${pydir}/include"
             ;;
         --ldflags)
-            echo "-L${pydir}/../../../python/libs -lpython27"
+            echo "-L${pydir}/libs -lpython37"
             ;;
     esac
     shift

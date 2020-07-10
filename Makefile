@@ -230,8 +230,7 @@ $(WIN32)-expat-configure     := --host=$(WIN32)
 $(WIN32)-xc3sp-host          := --host=$(WIN32)
 $(WIN64)-rgt-host            := --host=$(WIN64)
 $(WIN64)-rgcc-configure      := --without-system-zlib
-#$(WIN64)-rgdb-python         := --with-python="$(abspath scripts/pyconfig-mingw32.sh)"
-$(WIN64)-rgdb-python         := --with-python=no
+$(WIN64)-rgdb-python         := --with-python="$(abspath $(OBJ_WIN64)/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64))/python/pyconfig-mingw32.sh"
 $(WIN64)-rocd-host           := --host=$(WIN64)
 $(WIN64)-oftdi-configure     := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(OBJ_WIN64)/build/riscv-openocd/libftdi/cmake/Toolchain-x86_64-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/include/libusb-1.0)"
 $(WIN64)-odeps-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include"
@@ -691,7 +690,9 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp:
 	cd $(dir $@); curl -L -f -s -o python-3.7.7-$($@_TARGET).tar.gz https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/python-3.7.7-$($@_TARGET).tar.gz
 	cd $($@_INSTALL)/python; $(TAR) -xf $(abspath $(dir $@))/python-3.7.7-$($@_TARGET).tar.gz
 	cd $(dir $@); rm python-3.7.7-$($@_TARGET).tar.gz
+	cp scripts/pyconfig-mingw32.sh $($@_INSTALL)/python
 	cp -a $(SRC_RGDB) $(dir $@)
+	$(SED) -E -i -f $(SCRIPTSDIR)/python-c-gdb.sed $(dir $@)/riscv-gdb/gdb/python/python.c
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp: \
