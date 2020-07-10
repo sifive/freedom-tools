@@ -129,9 +129,9 @@ SRC_LIBFTDI  := $(SRCDIR)/libftdi
 SRC_PICOLIBC := $(SRCDIR)/picolibc
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION ?= 9.2.0-2020.04.0
-RGDB_VERSION ?= 9.1.0-2020.04.0
-RGBU_VERSION ?= 2.34.0-2020.04.0
+RGT_VERSION ?= 10.1.0-2020.07.0
+RGDB_VERSION ?= 9.1.0-2020.07.0
+RGBU_VERSION ?= 2.34.0-2020.07.0
 ROCD_VERSION ?= 0.10.0-2020.04.6
 RQEMU_VERSION ?= 4.2.0-2020.04.0
 XC3SP_VERSION ?= 0.1.2-2020.04.0
@@ -346,41 +346,41 @@ WITH_ARCH := rv64imafdc
 WITH_CMODEL := medany
 NEWLIB_TUPLE := riscv64-unknown-elf
 MULTILIBS_GEN := \
-	rv32e-ilp32e--c \
-	rv32ea-ilp32e--m \
-	rv32em-ilp32e--c \
-	rv32eac-ilp32e-- \
-	rv32emac-ilp32e-- \
-	rv32i-ilp32--c,f,fc,fd,fdc \
-	rv32ia-ilp32-rv32ima,rv32iaf,rv32imaf,rv32iafd,rv32imafd- \
-	rv32im-ilp32--c,f,fc,fd,fdc \
-	rv32iac-ilp32--f,fd \
-	rv32imac-ilp32-rv32imafc,rv32imafdc- \
-	rv32if-ilp32f--c,d,dc \
-	rv32iaf-ilp32f--c,d,dc \
-	rv32imf-ilp32f--d \
-	rv32imaf-ilp32f-rv32imafd- \
-	rv32imfc-ilp32f--d \
-	rv32imafc-ilp32f-rv32imafdc- \
-	rv32ifd-ilp32d--c \
-	rv32imfd-ilp32d--c \
-	rv32iafd-ilp32d-rv32imafd,rv32iafdc- \
-	rv32imafdc-ilp32d-- \
-	rv64i-lp64--c,f,fc,fd,fdc \
-	rv64ia-lp64-rv64ima,rv64iaf,rv64imaf,rv64iafd,rv64imafd- \
-	rv64im-lp64--c,f,fc,fd,fdc \
-	rv64iac-lp64--f,fd \
-	rv64imac-lp64-rv64imafc,rv64imafdc- \
-	rv64if-lp64f--c,d,dc \
-	rv64iaf-lp64f--c,d,dc \
-	rv64imf-lp64f--d \
-	rv64imaf-lp64f-rv64imafd- \
-	rv64imfc-lp64f--d \
-	rv64imafc-lp64f-rv64imafdc- \
-	rv64ifd-lp64d--c \
-	rv64imfd-lp64d--c \
-	rv64iafd-lp64d-rv64imafd,rv64iafdc- \
-	rv64imafdc-lp64d--
+	rv32e-ilp32e--c,v \
+	rv32ea-ilp32e--m,v,mv \
+	rv32em-ilp32e--c,v,cv \
+	rv32eac-ilp32e--v \
+	rv32emac-ilp32e--v \
+	rv32i-ilp32--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh,v,cv,fv,fcv,fdv,fdcv,fvzfh,fcvzfh,fdvzfh,fdcvzfh \
+	rv32ia-ilp32-rv32ima,rv32iaf,rv32imaf,rv32iafd,rv32imafd,rv32iafzfh,rv32imafzfh,rv32iafdzfh,rv32imafdzfh-v \
+	rv32im-ilp32--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh,v,cv,fv,fcv,fdv,fdcv,fzfhv,fcvzfh,fdvzfh,fdcvzfh \
+	rv32iac-ilp32--f,fd,fzfh,fdzfh,v,fv,fdv,fvzfh,fdvzfh \
+	rv32imac-ilp32-rv32imafc,rv32imafdc,rv32imafczfh,rv32imafdczfh-v \
+	rv32if-ilp32f--c,d,dc,zfh,czfh,dzfh,dczfh,v,cv,dv,dcv,vzfh,cvzfh,dvzfh,dcvzfh \
+	rv32iaf-ilp32f--c,d,dc,zfh,czfh,dzfh,dczfh,v,cv,dv,dvc,vzfh,cvzfh,dvzfh,dcvzfh \
+	rv32imf-ilp32f--d,zfh,dzfh,dv,vzfh,dvzfh \
+	rv32imaf-ilp32f-rv32imafd-zfh,v,vzfh \
+	rv32imfc-ilp32f--d,zfh,dzfh,dv,vzfh,dvzfh \
+	rv32imafc-ilp32f-rv32imafdc-zfh,v,vzfh \
+	rv32ifd-ilp32d--c,zfh,czfh,v,cv,vzfh,cvzfh \
+	rv32imfd-ilp32d--c,zfh,czfh,v,cv,vzfh,cvzfh \
+	rv32iafd-ilp32d-rv32imafd,rv32iafdc-zfh,v,vzfh \
+	rv32imafdc-ilp32d--zfh,v,vzfh \
+	rv64i-lp64--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh,v,cv,fv,fcv,fdv,fdcv,fvzfh,fcvzfh,fdvzfh,fdcvzfh \
+	rv64ia-lp64-rv64ima,rv64iaf,rv64imaf,rv64iafd,rv64imafd,rv64iafzfh,rv64imafzfh,rv64iafdzfh,rv64imafdzfh-v \
+	rv64im-lp64--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh,v,cv,fv,fcv,fdv,fdcv,fvzfh,fcvzfh,fdvzfh,fdcvzfh \
+	rv64iac-lp64--f,fd,fzfh,fdzfh,v,fv,fdv,fvzfh,fdvzfh, \
+	rv64imac-lp64-rv64imafc,rv64imafdc,rv64imafczfh,rv64imafdczfh-v \
+	rv64if-lp64f--c,d,dc,czfh,dzfh,dczfh,v,cv,dv,dcv,cvzfh,dvzfh,dcvzfh \
+	rv64iaf-lp64f--c,d,dc,czfh,dzfh,dczfh,v,cv,dv,dcv,cvzfh,dvzfh,dcvzfh \
+	rv64imf-lp64f--d,zfh,dzfh,v,dv,vzfh,dvzfh \
+	rv64imaf-lp64f-rv64imafd-zfh,v,vzfh \
+	rv64imfc-lp64f--d,zfh,dzfh,v,dv,vzfh,dvzfh \
+	rv64imafc-lp64f-rv64imafdc-zfh,v,vzfh \
+	rv64ifd-lp64d--c,zfh,v,cv,vzfh \
+	rv64imfd-lp64d--c,zfh,v,cv,vzfh \
+	rv64iafd-lp64d-rv64imafd,rv64iafdc-zfh,v,vzfh \
+	rv64imafdc-lp64d--zfh,v,vzfh
 
 CFLAGS_FOR_TARGET := $(CFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
 CXXFLAGS_FOR_TARGET := $(CXXFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
