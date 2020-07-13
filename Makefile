@@ -112,10 +112,10 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.3.0-2020.04.0
-RGDB_VERSION := 8.3.0-2020.04.0
+RGT_VERSION := 8.3.0-2020.04.1
+RGDB_VERSION := 8.3.0-2020.04.1
 RGDBP_VERSION := 8.3.0-2020.04.1
-RGBU_VERSION := 2.32.0-2020.04.0
+RGBU_VERSION := 2.32.0-2020.04.1
 ROCD_VERSION := 0.10.0-2019.08.2
 RQEMU_VERSION := 4.1.0-2019.08.0
 XC3SP_VERSION := 0.1.2-2019.08.0
@@ -382,16 +382,23 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz: \
 
 $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp
 	mkdir -p $(dir $@)
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp:
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
+	mkdir -p $($@_INSTALL)/python
+	cd $(dir $@); curl -L -f -s -o python-3.7.7-$($@_TARGET).tar.gz https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/python-3.7.7-$($@_TARGET).tar.gz
+	cd $($@_INSTALL)/python; $(TAR) -xf $(abspath $(dir $@))/python-3.7.7-$($@_TARGET).tar.gz
+	cd $(dir $@); rm python-3.7.7-$($@_TARGET).tar.gz
+	cp scripts/pyconfig-centos6.sh $($@_INSTALL)/python
+	cp scripts/pyconfig-mingw32.sh $($@_INSTALL)/python
 	cp -a $(SRC_RBU) $(SRC_RGCC) $(SRC_RGDB) $(SRC_RNL) $(dir $@)
 	cd $(dir $@)/riscv-gcc; ./contrib/download_prerequisites
 	cd $(dir $@)/riscv-gcc/gcc/config/riscv; rm t-elf-multilib; ./multilib-generator $(MULTILIBS_GEN) > t-elf-multilib
+	$(SED) -E -i -f scripts/python-c-gdb.sed $(dir $@)/riscv-gdb/gdb/python/python.c
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
@@ -439,7 +446,42 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
+		$($($@_TARGET)-rgdb-configure) \
 		--with-python=no \
+		--with-lzma=no \
+		--enable-gdb \
+		--disable-gas \
+		--disable-binutils \
+		--disable-ld \
+		--disable-gold \
+		--disable-gprof \
+		CFLAGS="-O2" \
+		CXXFLAGS="-O2" &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp,%/build/riscv-gnu-toolchain,$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+# CC_FOR_TARGET is required for the ld testsuite.
+	cd $(dir $@) && CC_FOR_TARGET=$(NEWLIB_CC_FOR_TARGET) $(abspath $($@_BUILD))/riscv-gdb/configure \
+		--target=$(NEWLIB_TUPLE) \
+		$($($@_TARGET)-rgt-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GDB $(RGDB_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
+		--disable-werror \
+		$(GDB_TARGET_FLAGS) \
+		$($($@_TARGET)-rgdb-configure) \
+		$($($@_TARGET)-rgdb-python) \
+		--program-prefix="$(NEWLIB_TUPLE)-" \
+		--program-suffix="-py" \
+		--with-lzma=no \
 		--enable-gdb \
 		--disable-gas \
 		--disable-binutils \
@@ -640,6 +682,9 @@ $(OBJDIR)/%/stamps/expat/install.stamp: \
 	cd $($@_BUILD); ./configure --prefix=$(abspath $($@_INSTALL)) $($($@_TARGET)-expat-configure) &>make-configure.log
 	$(MAKE) -C $($@_BUILD) buildlib &>$($@_BUILD)/make-buildlib.log
 	$(MAKE) -C $($@_BUILD) installlib &>$($@_BUILD)/make-installlib.log
+	rm -f $(abspath $($@_INSTALL))/lib/libexpat*.dylib*
+	rm -f $(abspath $($@_INSTALL))/lib/libexpat*.so*
+	rm -f $(abspath $($@_INSTALL))/lib64/libexpat*.so*
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -772,9 +817,9 @@ $(OBJDIR)/%/stamps/expat-gdb/install.stamp: \
 	cd $($@_BUILD); ./configure --prefix=$(abspath $($@_INSTALL)) $($($@_TARGET)-expat-configure) &>make-configure.log
 	$(MAKE) -C $($@_BUILD) buildlib &>$($@_BUILD)/make-buildlib.log
 	$(MAKE) -C $($@_BUILD) -j1 installlib &>$($@_BUILD)/make-installlib.log
-	rm -f $(abspath $($@_INSTALL))/lib/lib*.dylib*
-	rm -f $(abspath $($@_INSTALL))/lib/lib*.so*
-	rm -f $(abspath $($@_INSTALL))/lib64/lib*.so*
+	rm -f $(abspath $($@_INSTALL))/lib/libexpat*.dylib*
+	rm -f $(abspath $($@_INSTALL))/lib/libexpat*.so*
+	rm -f $(abspath $($@_INSTALL))/lib64/libexpat*.so*
 	mkdir -p $(dir $@)
 	date > $@
 
