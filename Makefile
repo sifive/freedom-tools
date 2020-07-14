@@ -321,6 +321,7 @@ $(DARWIN)-xdeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install
 $(DARWIN)-xc3sp-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework IOKit"
 $(DARWIN)-xc3sp-framework    := -framework CoreFoundation -framework IOKit
 $(DARWIN)-pyobj-tarball      := python-2.7.10-x86_64-apple-darwin.tar.gz
+$(DARWIN)-trace-configure    := --with-included-gettext
 $(REDHAT)-rgcc-configure     := --with-system-zlib
 $(REDHAT)-rgdb-configure     := --with-python="$(abspath $(SCRIPTSDIR)/pyconfig-centos.sh)"
 $(REDHAT)-ousb-configure     := --disable-shared
