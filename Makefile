@@ -274,7 +274,7 @@ $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(DARWIN)-rgcc-configure     := --with-system-zlib
-$(DARWIN)-rgdb-configure     := --with-included-gettext
+$(DARWIN)-rgbu-configure     := --with-included-gettext
 $(DARWIN)-rgdb-python        := --with-python="$(abspath $(OBJ_DARWIN)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN))/python/bin/python3"
 $(DARWIN)-rgdb-only-python   := --with-python="$(abspath $(OBJ_DARWIN)/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(DARWIN))/python/bin/python3"
 $(DARWIN)-ousb-configure     := --disable-shared
@@ -424,6 +424,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(BINUTILS_TARGET_FLAGS) \
+		$($($@_TARGET)-rgbu-configure) \
 		--with-python=no \
 		--disable-gdb \
 		--disable-sim \
@@ -452,7 +453,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
-		$($($@_TARGET)-rgdb-configure) \
+		$($($@_TARGET)-rgbu-configure) \
 		--with-python=no \
 		--with-lzma=no \
 		--enable-gdb \
@@ -483,7 +484,7 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
-		$($($@_TARGET)-rgdb-configure) \
+		$($($@_TARGET)-rgbu-configure) \
 		$($($@_TARGET)-rgdb-python) \
 		--program-prefix="$(NEWLIB_TUPLE)-" \
 		--program-suffix="-py" \
@@ -764,7 +765,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
-		$($($@_TARGET)-rgdb-configure) \
+		$($($@_TARGET)-rgbu-configure) \
 		--with-python=no \
 		--with-lzma=no \
 		--enable-gdb \
@@ -795,7 +796,7 @@ $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
-		$($($@_TARGET)-rgdb-configure) \
+		$($($@_TARGET)-rgbu-configure) \
 		$($($@_TARGET)-rgdb-only-python) \
 		--program-prefix="$(NEWLIB_TUPLE)-" \
 		--program-suffix="-py" \
