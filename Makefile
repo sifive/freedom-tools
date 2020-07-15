@@ -1,7 +1,9 @@
 # The default target
-.PHONY: all toolchain openocd qemu xc3sprog trace-decoder sdk-utilities
+.PHONY: all toolchain gdb-only openocd qemu xc3sprog trace-decoder sdk-utilities
 all:
+non-toolchain:
 toolchain:
+gdb-only:
 openocd:
 qemu:
 xc3sprog:
@@ -33,6 +35,7 @@ ifneq ($(wildcard /etc/redhat-release),)
 NATIVE ?= $(REDHAT)
 all: redhat
 toolchain: redhat-toolchain
+gdb-only: redhat-gdb-only
 openocd: redhat-openocd
 qemu: redhat-qemu
 xc3sprog: redhat-xc3sprog
@@ -43,6 +46,7 @@ ifeq ($(shell uname -m),x86_64)
 NATIVE ?= $(UBUNTU64)
 all: ubuntu64
 toolchain: ubuntu64-toolchain
+gdb-only: ubuntu64-gdb-only
 openocd: ubuntu64-openocd
 qemu: ubuntu64-qemu
 xc3sprog: ubuntu64-xc3sprog
@@ -56,6 +60,7 @@ openocd: ubuntu32-openocd
 endif
 all: win64
 toolchain: win64-toolchain
+gdb-only: win64-gdb-only
 openocd: win64-openocd
 qemu: win64-qemu
 xc3sprog: win64-xc3sprog
@@ -69,6 +74,7 @@ SED ?= gsed
 AWK ?= gawk
 all: darwin
 toolchain: darwin-toolchain
+gdb-only: darwin-gdb-only
 openocd: darwin-openocd
 qemu: darwin-qemu
 xc3sprog: darwin-xc3sprog
@@ -106,9 +112,10 @@ SRC_LIBUSB   := $(SRCDIR)/libusb
 SRC_LIBFTDI  := $(SRCDIR)/libftdi
 
 # The version that will be appended to the various tool builds.
-RGT_VERSION := 8.3.0-2020.04.0
-RGDB_VERSION := 8.3.0-2020.04.0
-RGBU_VERSION := 2.32.0-2020.04.0
+RGT_VERSION := 8.3.0-2020.04.1
+RGDB_VERSION := 8.3.0-2020.04.1
+RGDBP_VERSION := 8.3.0-2020.04.1
+RGBU_VERSION := 2.32.0-2020.04.1
 ROCD_VERSION := 0.10.0-2019.08.2
 RQEMU_VERSION := 4.1.0-2019.08.0
 XC3SP_VERSION := 0.1.2-2019.08.0
@@ -120,12 +127,16 @@ PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$
 export PATH
 
 # The actual output of this repository is a set of tarballs.
-.PHONY: win64 win64-openocd win64-toolchain win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities
-win64: win64-openocd win64-toolchain win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities
+.PHONY: win64 win64-toolchain win64-gdb-only win64-openocd win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities
+win64: win64-toolchain win64-openocd win64-qemu win64-xc3sprog win64-trace-decoder win64-sdk-utilities
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).src.zip
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).tar.gz
 win64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64).src.tar.gz
+win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64).zip
+win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64).src.zip
+win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64).tar.gz
+win64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64).src.tar.gz
 win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).zip
 win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).src.zip
 win64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN64).tar.gz
@@ -156,10 +167,12 @@ win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.zip
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).tar.gz
 win32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(WIN32).src.tar.gz
-.PHONY: ubuntu64 ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities
+.PHONY: ubuntu64 ubuntu64-toolchain ubuntu64-gdb-only ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities
 ubuntu64: ubuntu64-toolchain ubuntu64-openocd ubuntu64-qemu ubuntu64-xc3sprog ubuntu64-trace-decoder ubuntu64-sdk-utilities
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64).src.tar.gz
+ubuntu64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(UBUNTU64).tar.gz
+ubuntu64-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64).tar.gz
 ubuntu64-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64).src.tar.gz
 ubuntu64-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(UBUNTU64).tar.gz
@@ -176,10 +189,12 @@ ubuntu32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32)
 ubuntu32-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU32).src.tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).tar.gz
 ubuntu32-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU32).src.tar.gz
-.PHONY: redhat redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities
+.PHONY: redhat redhat-toolchain redhat-gdb-only redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities
 redhat: redhat-toolchain redhat-openocd redhat-qemu redhat-xc3sprog redhat-trace-decoder redhat-sdk-utilities
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).tar.gz
 redhat-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT).src.tar.gz
+redhat-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(REDHAT).tar.gz
+redhat-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(REDHAT).src.tar.gz
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).tar.gz
 redhat-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(REDHAT).src.tar.gz
 redhat-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(REDHAT).tar.gz
@@ -190,10 +205,12 @@ redhat-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(REDHAT).tar.gz
 redhat-trace-decoder: $(BINDIR)/trace-decoder-$(TDC_VERSION)-$(REDHAT).src.tar.gz
 redhat-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(REDHAT).tar.gz
 redhat-sdk-utilities: $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-$(REDHAT).src.tar.gz
-.PHONY: darwin darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities
+.PHONY: darwin darwin-toolchain darwin-gdb-only darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities
 darwin: darwin-toolchain darwin-openocd darwin-qemu darwin-xc3sprog darwin-trace-decoder darwin-sdk-utilities
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).tar.gz
 darwin-toolchain: $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN).src.tar.gz
+darwin-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(DARWIN).tar.gz
+darwin-gdb-only: $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(DARWIN).src.tar.gz
 darwin-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(DARWIN).tar.gz
 darwin-openocd: $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-$(DARWIN).src.tar.gz
 darwin-qemu: $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-$(DARWIN).tar.gz
@@ -213,6 +230,8 @@ $(WIN32)-expat-configure     := --host=$(WIN32)
 $(WIN32)-xc3sp-host          := --host=$(WIN32)
 $(WIN64)-rgt-host            := --host=$(WIN64)
 $(WIN64)-rgcc-configure      := --without-system-zlib
+$(WIN64)-rgdb-python         := --with-python="$(abspath $(OBJ_WIN64)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(WIN64))/python/pyconfig-mingw32.sh"
+$(WIN64)-rgdb-only-python    := --with-python="$(abspath $(OBJ_WIN64)/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(WIN64))/python/pyconfig-mingw32.sh"
 $(WIN64)-rocd-host           := --host=$(WIN64)
 $(WIN64)-oftdi-configure     := -DCMAKE_TOOLCHAIN_FILE="$(abspath $(OBJ_WIN64)/build/riscv-openocd/libftdi/cmake/Toolchain-x86_64-w64-mingw32.cmake)" -DLIBUSB_LIBRARIES="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/bin/libusb-1.0.dll)" -DLIBUSB_INCLUDE_DIR="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64)/include/libusb-1.0)"
 $(WIN64)-odeps-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib/pkgconfig" CFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include" CPPFLAGS="-L$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/lib -I$(abspath $(OBJ_WIN64)/install/riscv-openocd-$(ROCD_VERSION)-$(WIN64))/include"
@@ -241,6 +260,8 @@ $(UBUNTU32)-expat-configure  := --host=i686-linux-gnu
 $(UBUNTU32)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-rgt-host         := --host=x86_64-linux-gnu
 $(UBUNTU64)-rgcc-configure   := --with-system-zlib
+$(UBUNTU64)-rgdb-python      := --with-python="$(abspath $(OBJ_UBUNTU64)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(UBUNTU64))/python/bin/python3"
+$(UBUNTU64)-rgdb-only-python := --with-python="$(abspath $(OBJ_UBUNTU64)/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(UBUNTU64))/python/bin/python3"
 $(UBUNTU64)-ousb-configure   := --disable-shared
 $(UBUNTU64)-rocd-host        := --host=x86_64-linux-gnu
 $(UBUNTU64)-odeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/riscv-openocd-$(ROCD_VERSION)-$(UBUNTU64))/lib -pthread"
@@ -253,6 +274,9 @@ $(UBUNTU64)-xc3sp-host       := --host=x86_64-linux-gnu
 $(UBUNTU64)-xdeps-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(UBUNTU64)-xc3sp-vars       := PKG_CONFIG_PATH="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" CPPFLAGS="-I$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/include" LDFLAGS="-L$(abspath $(OBJ_UBUNTU64)/install/xc3sprog-$(XC3SP_VERSION)-$(UBUNTU64))/lib"
 $(DARWIN)-rgcc-configure     := --with-system-zlib
+$(DARWIN)-rgbu-configure     := --with-included-gettext
+$(DARWIN)-rgdb-python        := --with-python="$(abspath $(OBJ_DARWIN)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(DARWIN))/python/bin/python3"
+$(DARWIN)-rgdb-only-python   := --with-python="$(abspath $(OBJ_DARWIN)/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(DARWIN))/python/bin/python3"
 $(DARWIN)-ousb-configure     := --disable-shared
 $(DARWIN)-odeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib -framework CoreFoundation -framework IOKit"
 $(DARWIN)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include -O2" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/riscv-openocd-$(ROCD_VERSION)-$(DARWIN))/lib -framework CoreFoundation -framework IOKit"
@@ -265,6 +289,8 @@ $(DARWIN)-xdeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install
 $(DARWIN)-xc3sp-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib/pkgconfig" CFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" CPPFLAGS="-I$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/include" LDFLAGS="-L$(abspath $(OBJ_DARWIN)/install/xc3sprog-$(XC3SP_VERSION)-$(DARWIN))/lib -liconv -framework CoreFoundation -framework IOKit"
 $(DARWIN)-xc3sp-framework    := -framework CoreFoundation -framework IOKit
 $(REDHAT)-rgcc-configure     := --with-system-zlib
+$(REDHAT)-rgdb-python        := --with-python="$(abspath $(OBJ_REDHAT)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(REDHAT))/python/pyconfig-centos6.sh"
+$(REDHAT)-rgdb-only-python   := --with-python="$(abspath $(OBJ_REDHAT)/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$(REDHAT))/python/pyconfig-centos6.sh"
 $(REDHAT)-ousb-configure     := --disable-shared
 $(REDHAT)-odeps-vars         := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -fPIC" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
 $(REDHAT)-rocd-vars          := PKG_CONFIG_PATH="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib/pkgconfig:$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64/pkgconfig" CFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include -O2" CPPFLAGS="-I$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LIBUSB_INCLUDE_DIRS="$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/include" LDFLAGS="-L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib -L$(abspath $(OBJ_REDHAT)/install/riscv-openocd-$(ROCD_VERSION)-$(REDHAT))/lib64 -lrt"
@@ -325,8 +351,8 @@ MULTILIBS_GEN := \
 CFLAGS_FOR_TARGET := $(CFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
 CXXFLAGS_FOR_TARGET := $(CXXFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
 # --with-expat is required to enable XML support used by OpenOCD.
-BINUTILS_TARGET_FLAGS := --with-expat=yes $(BINUTILS_TARGET_FLAGS_EXTRA) --with-mpc=no --with-mpfr=no --with-gmp=no --with-python=no
-GDB_TARGET_FLAGS := --with-expat=yes $(GDB_TARGET_FLAGS_EXTRA) --with-mpc=no --with-mpfr=no --with-gmp=no --with-python=no
+BINUTILS_TARGET_FLAGS := --with-expat=yes $(BINUTILS_TARGET_FLAGS_EXTRA) --with-mpc=no --with-mpfr=no --with-gmp=no
+GDB_TARGET_FLAGS := --with-expat=yes $(GDB_TARGET_FLAGS_EXTRA) --with-mpc=no --with-mpfr=no --with-gmp=no
 NEWLIB_CC_FOR_TARGET ?= $(NEWLIB_TUPLE)-gcc
 NEWLIB_CXX_FOR_TARGET ?= $(NEWLIB_TUPLE)-g++
 
@@ -360,16 +386,25 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz: \
 
 $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp \
-		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp
 	mkdir -p $(dir $@)
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
+	mkdir -p $($@_INSTALL)/python
+	cd $(dir $@); curl -L -f -s -o python-3.7.7-$($@_TARGET).tar.gz https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/python-3.7.7-$($@_TARGET).tar.gz
+	cd $($@_INSTALL)/python; $(TAR) -xf $(abspath $(dir $@))/python-3.7.7-$($@_TARGET).tar.gz
+	cd $(dir $@); rm python-3.7.7-$($@_TARGET).tar.gz
+	cp scripts/pyconfig-centos6.sh $($@_INSTALL)/python
+	cp scripts/pyconfig-mingw32.sh $($@_INSTALL)/python
 	cp -a $(SRC_RBU) $(SRC_RGCC) $(SRC_RGDB) $(SRC_RNL) $(dir $@)
 	cd $(dir $@)/riscv-gcc; ./contrib/download_prerequisites
 	cd $(dir $@)/riscv-gcc/gcc/config/riscv; rm t-elf-multilib; ./multilib-generator $(MULTILIBS_GEN) > t-elf-multilib
+	$(SED) -E -i -f scripts/python-c-gdb.sed $(dir $@)/riscv-gdb/gdb/python/python.c
 	date > $@
 
 $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
@@ -389,6 +424,8 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-binutils-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(BINUTILS_TARGET_FLAGS) \
+		$($($@_TARGET)-rgbu-configure) \
+		--with-python=no \
 		--disable-gdb \
 		--disable-sim \
 		--disable-libdecnumber \
@@ -416,6 +453,42 @@ $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp: \
 		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
 		--disable-werror \
 		$(GDB_TARGET_FLAGS) \
+		$($($@_TARGET)-rgbu-configure) \
+		--with-python=no \
+		--with-lzma=no \
+		--enable-gdb \
+		--disable-gas \
+		--disable-binutils \
+		--disable-ld \
+		--disable-gold \
+		--disable-gprof \
+		CFLAGS="-O2" \
+		CXXFLAGS="-O2" &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) install install-pdf install-html &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-newlib/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp,%/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-toolchain/build-gdb-py-newlib/stamp,%/build/riscv-gnu-toolchain,$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+# CC_FOR_TARGET is required for the ld testsuite.
+	cd $(dir $@) && CC_FOR_TARGET=$(NEWLIB_CC_FOR_TARGET) $(abspath $($@_BUILD))/riscv-gdb/configure \
+		--target=$(NEWLIB_TUPLE) \
+		$($($@_TARGET)-rgt-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GDB $(RGDB_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
+		--disable-werror \
+		$(GDB_TARGET_FLAGS) \
+		$($($@_TARGET)-rgbu-configure) \
+		$($($@_TARGET)-rgdb-python) \
+		--program-prefix="$(NEWLIB_TUPLE)-" \
+		--program-suffix="-py" \
+		--with-lzma=no \
 		--enable-gdb \
 		--disable-gas \
 		--disable-binutils \
@@ -616,10 +689,148 @@ $(OBJDIR)/%/stamps/expat/install.stamp: \
 	cd $($@_BUILD); ./configure --prefix=$(abspath $($@_INSTALL)) $($($@_TARGET)-expat-configure) &>make-configure.log
 	$(MAKE) -C $($@_BUILD) buildlib &>$($@_BUILD)/make-buildlib.log
 	$(MAKE) -C $($@_BUILD) installlib &>$($@_BUILD)/make-installlib.log
+	rm -f $(abspath $($@_INSTALL))/lib/libexpat*.dylib*
+	rm -f $(abspath $($@_INSTALL))/lib/libexpat*.so*
+	rm -f $(abspath $($@_INSTALL))/lib64/libexpat*.so*
 	mkdir -p $(dir $@)
 	date > $@
 
 $(OBJDIR)/%/build/expat/configure:
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	cp -a $(SRC_EXPAT)/* $(dir $@)
+	mkdir -p $(dir $@)/m4
+	cd $(dir $@); ./buildconf.sh &>make-buildconf.log
+	touch -c $@
+
+# Builds riscv-gdb-only for various targets.
+$(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.zip: \
+		$(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.zip,%,$@))
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$($@_TARGET)/install; zip -rq $(abspath $@) riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$($@_TARGET)
+
+$(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.src.zip: \
+		$(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.src.zip,%,$@))
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-gnu-gdb-only expat-gdb
+
+$(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.tar.gz: \
+		$(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.tar.gz,%,$@))
+	mkdir -p $(dir $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/install -c riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$($@_TARGET) | gzip > $(abspath $@)
+
+$(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.src.tar.gz: \
+		$(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp
+	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.src.tar.gz,%,$@))
+	mkdir -p $(dir $@)
+	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-gnu-gdb-only expat-gdb | gzip > $(abspath $@)
+
+$(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp
+	mkdir -p $(dir $@)
+	date > $@
+
+$(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp:
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-gdb-only/stamp,%/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$($@_TARGET),$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+	mkdir -p $($@_INSTALL)/python
+	cd $(dir $@); curl -L -f -s -o python-3.7.7-$($@_TARGET).tar.gz https://github.com/sifive/freedom-tools-resources/releases/download/v0-test1/python-3.7.7-$($@_TARGET).tar.gz
+	cd $($@_INSTALL)/python; $(TAR) -xf $(abspath $(dir $@))/python-3.7.7-$($@_TARGET).tar.gz
+	cd $(dir $@); rm python-3.7.7-$($@_TARGET).tar.gz
+	cp scripts/pyconfig-centos6.sh $($@_INSTALL)/python
+	cp scripts/pyconfig-mingw32.sh $($@_INSTALL)/python
+	cp -a $(SRC_RGDB) $(dir $@)
+	$(SED) -E -i -f scripts/python-c-gdb.sed $(dir $@)/riscv-gdb/gdb/python/python.c
+	date > $@
+
+$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp: \
+		$(OBJDIR)/%/stamps/expat-gdb/install.stamp \
+		$(OBJDIR)/%/build/riscv-gnu-gdb-only/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp,%/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp,%/build/riscv-gnu-gdb-only,$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+# CC_FOR_TARGET is required for the ld testsuite.
+	cd $(dir $@) && CC_FOR_TARGET=$(NEWLIB_CC_FOR_TARGET) $(abspath $($@_BUILD))/riscv-gdb/configure \
+		--target=$(NEWLIB_TUPLE) \
+		$($($@_TARGET)-rgt-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GDB Solo $(RGDBP_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
+		--disable-werror \
+		$(GDB_TARGET_FLAGS) \
+		$($($@_TARGET)-rgbu-configure) \
+		--with-python=no \
+		--with-lzma=no \
+		--enable-gdb \
+		--disable-gas \
+		--disable-binutils \
+		--disable-ld \
+		--disable-gold \
+		--disable-gprof \
+		CFLAGS="-O2" \
+		CXXFLAGS="-O2" &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) -j1 install install-pdf install-html &>$(dir $@)/make-install.log
+	date > $@
+
+$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp: \
+		$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-newlib/stamp
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp,%,$@))
+	$(eval $@_INSTALL := $(patsubst %/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp,%/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$($@_TARGET),$@))
+	$(eval $@_BUILD := $(patsubst %/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp,%/build/riscv-gnu-gdb-only,$@))
+	rm -rf $(dir $@)
+	mkdir -p $(dir $@)
+# CC_FOR_TARGET is required for the ld testsuite.
+	cd $(dir $@) && CC_FOR_TARGET=$(NEWLIB_CC_FOR_TARGET) $(abspath $($@_BUILD))/riscv-gdb/configure \
+		--target=$(NEWLIB_TUPLE) \
+		$($($@_TARGET)-rgt-host) \
+		--prefix=$(abspath $($@_INSTALL)) \
+		--with-pkgversion="SiFive GDB Solo $(RGDBP_VERSION)" \
+		--with-bugurl="https://github.com/sifive/freedom-tools/issues" \
+		--disable-werror \
+		$(GDB_TARGET_FLAGS) \
+		$($($@_TARGET)-rgbu-configure) \
+		$($($@_TARGET)-rgdb-only-python) \
+		--program-prefix="$(NEWLIB_TUPLE)-" \
+		--program-suffix="-py" \
+		--with-lzma=no \
+		--enable-gdb \
+		--disable-gas \
+		--disable-binutils \
+		--disable-ld \
+		--disable-gold \
+		--disable-gprof \
+		CFLAGS="-O2" \
+		CXXFLAGS="-O2" &>make-configure.log
+	$(MAKE) -C $(dir $@) &>$(dir $@)/make-build.log
+	$(MAKE) -C $(dir $@) -j1 install install-pdf install-html &>$(dir $@)/make-install.log
+	date > $@
+
+# OpenOCD requires a GDB that's been build with expat support so it can read
+# the target XML files.
+$(OBJDIR)/%/stamps/expat-gdb/install.stamp: \
+		$(OBJDIR)/%/build/expat-gdb/configure
+	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/stamps/expat-gdb/install.stamp,%,$@))
+	$(eval $@_BUILD := $(patsubst %/stamps/expat-gdb/install.stamp,%/build/expat-gdb,$@))
+	$(eval $@_INSTALL := $(patsubst %/stamps/expat-gdb/install.stamp,%/install/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-$($@_TARGET),$@))
+	mkdir -p $($@_BUILD)
+	cd $($@_BUILD); ./configure --prefix=$(abspath $($@_INSTALL)) $($($@_TARGET)-expat-configure) &>make-configure.log
+	$(MAKE) -C $($@_BUILD) buildlib &>$($@_BUILD)/make-buildlib.log
+	$(MAKE) -C $($@_BUILD) -j1 installlib &>$($@_BUILD)/make-installlib.log
+	rm -f $(abspath $($@_INSTALL))/lib/libexpat*.dylib*
+	rm -f $(abspath $($@_INSTALL))/lib/libexpat*.so*
+	rm -f $(abspath $($@_INSTALL))/lib64/libexpat*.so*
+	mkdir -p $(dir $@)
+	date > $@
+
+$(OBJDIR)/%/build/expat-gdb/configure:
 	rm -rf $(dir $@)
 	mkdir -p $(dir $@)
 	cp -a $(SRC_EXPAT)/* $(dir $@)
