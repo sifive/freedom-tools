@@ -8,10 +8,10 @@ for arg in $@; do
             echo "${pydir}"
             ;;
         --includes)
-            echo "-I${pydir}/include"
+            echo "-I${pydir}/include/python3.7m"
             ;;
         --libs|--ldflags)
-            echo "-L${pydir}/libs -lpython37"
+            echo "-L${pydir}/lib/python3.7/config-3.7m-x86_64-linux-gnu -L${pydir}/lib -lpython3.7m -lcrypt -lpthread -ldl  -lutil -lrt -lm"
             ;;
     esac
     shift
