@@ -123,10 +123,10 @@ RGDB_VERSION ?= 9.1.0-2020.08.0-rvv-1p0-asap
 RGDBP_VERSION ?= 9.1.0-2020.08.0-rvv-1p0-asap
 RGBU_VERSION ?= 2.34.0-2020.08.0-rvv-1p0-asap
 ROCD_VERSION ?= 0.10.0-2020.04.6
-RQEMU_VERSION ?= 4.2.0-2020.04.0
+RQEMU_VERSION ?= 4.2.0-2020.08.0-rvv-1p0-asap
 XC3SP_VERSION ?= 0.1.2-2020.04.0
-TDC_VERSION ?= 0.9.0-2020.07.0-rvv-0p9-asap
-SDKU_VERSION ?= 0.1.0-2020.04.0
+TDC_VERSION ?= 0.9.0-2020.08.0-rvv-1p0-asap
+SDKU_VERSION ?= 0.1.0-2020.08.0-rvv-1p0-asap
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
 PATH := $(abspath $(OBJ_NATIVE)/install/riscv64-unknown-elf-gcc-$(RGT_VERSION)-$(NATIVE)/bin):$(PATH)
