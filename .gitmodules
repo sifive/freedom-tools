@@ -31,3 +31,9 @@
 [submodule "src/picolibc"]
 	path = src/picolibc
 	url = https://github.com/keith-packard/picolibc.git
+[submodule "src/riscv-qemu"]
+	path = src/riscv-qemu
+	url = git@github.com:sifive/qemu-private.git
+[submodule "src/riscv-isa-sim"]
+	path = src/riscv-isa-sim
+	url = git@github.com:sifive/riscv-isa-sim.git
