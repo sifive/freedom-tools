@@ -329,41 +329,41 @@ WITH_ARCH := rv64imafdc
 WITH_CMODEL := medany
 NEWLIB_TUPLE := riscv64-unknown-elf
 MULTILIBS_GEN := \
-	rv32e-ilp32e--c,v \
-	rv32ea-ilp32e--m,v,mv \
-	rv32em-ilp32e--c,v,cv \
+	rv32e-ilp32e--c*v \
+	rv32ea-ilp32e--m*v \
+	rv32em-ilp32e--c*v \
 	rv32eac-ilp32e--v \
 	rv32emac-ilp32e--v \
-	rv32i-ilp32--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh,v,cv,fv,fcv,fdv,fdcv,fvzfh,fcvzfh,fdvzfh,fdcvzfh \
-	rv32ia-ilp32-rv32ima,rv32iaf,rv32imaf,rv32iafd,rv32imafd,rv32iafzfh,rv32imafzfh,rv32iafdzfh,rv32imafdzfh-v \
-	rv32im-ilp32--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh,v,cv,fv,fcv,fdv,fdcv,fzfhv,fcvzfh,fdvzfh,fdcvzfh \
-	rv32iac-ilp32--f,fd,fzfh,fdzfh,v,fv,fdv,fvzfh,fdvzfh \
+	rv32i-ilp32--c*f*d*zfh*v \
+	rv32ia-ilp32--m*f*d*v*zfh \
+	rv32im-ilp32--c*f*d*zfh*v \
+	rv32iac-ilp32--f*d*v*zfh \
 	rv32imac-ilp32-rv32imafc,rv32imafdc,rv32imafczfh,rv32imafdczfh-v \
-	rv32if-ilp32f--c,d,dc,zfh,czfh,dzfh,dczfh,v,cv,dv,dcv,vzfh,cvzfh,dvzfh,dcvzfh \
-	rv32iaf-ilp32f--c,d,dc,zfh,czfh,dzfh,dczfh,v,cv,dv,dvc,vzfh,cvzfh,dvzfh,dcvzfh \
-	rv32imf-ilp32f--d,zfh,dzfh,dv,vzfh,dvzfh \
-	rv32imaf-ilp32f-rv32imafd-zfh,v,vzfh \
-	rv32imfc-ilp32f--d,zfh,dzfh,dv,vzfh,dvzfh \
-	rv32imafc-ilp32f-rv32imafdc-zfh,v,vzfh \
-	rv32ifd-ilp32d--c,zfh,czfh,v,cv,vzfh,cvzfh \
-	rv32imfd-ilp32d--c,zfh,czfh,v,cv,vzfh,cvzfh \
-	rv32iafd-ilp32d-rv32imafd,rv32iafdc-zfh,v,vzfh \
-	rv32imafdc-ilp32d--zfh,v,vzfh \
-	rv64i-lp64--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh,v,cv,fv,fcv,fdv,fdcv,fvzfh,fcvzfh,fdvzfh,fdcvzfh \
-	rv64ia-lp64-rv64ima,rv64iaf,rv64imaf,rv64iafd,rv64imafd,rv64iafzfh,rv64imafzfh,rv64iafdzfh,rv64imafdzfh-v \
-	rv64im-lp64--c,f,fc,fd,fdc,fzfh,fczfh,fdzfh,fdczfh,v,cv,fv,fcv,fdv,fdcv,fvzfh,fcvzfh,fdvzfh,fdcvzfh \
-	rv64iac-lp64--f,fd,fzfh,fdzfh,v,fv,fdv,fvzfh,fdvzfh, \
+	rv32if-ilp32f--d*c*v*zfh \
+	rv32iaf-ilp32f--d*c*v*zfh \
+	rv32imf-ilp32f--d*v*zfh \
+	rv32imaf-ilp32f-rv32imafd-zfh*v \
+	rv32imfc-ilp32f--d*v*zfh \
+	rv32imafc-ilp32f-rv32imafdc-v*zfh \
+	rv32ifd-ilp32d--c*v*zfh \
+	rv32imfd-ilp32d--c*v*zfh \
+	rv32iafd-ilp32d-rv32imafd,rv32iafdc-v*zfh \
+	rv32imafdc-ilp32d--v*zfh \
+	rv64i-lp64--f*d*c*v*zfh \
+	rv64ia-lp64--m*f*d*v*zfh \
+	rv64im-lp64--f*d*c*v*zfh \
+	rv64iac-lp64--f*d*v*zfh, \
 	rv64imac-lp64-rv64imafc,rv64imafdc,rv64imafczfh,rv64imafdczfh-v \
-	rv64if-lp64f--c,d,dc,czfh,dzfh,dczfh,v,cv,dv,dcv,cvzfh,dvzfh,dcvzfh \
-	rv64iaf-lp64f--c,d,dc,czfh,dzfh,dczfh,v,cv,dv,dcv,cvzfh,dvzfh,dcvzfh \
-	rv64imf-lp64f--d,zfh,dzfh,v,dv,vzfh,dvzfh \
-	rv64imaf-lp64f-rv64imafd-zfh,v,vzfh \
-	rv64imfc-lp64f--d,zfh,dzfh,v,dv,vzfh,dvzfh \
-	rv64imafc-lp64f-rv64imafdc-zfh,v,vzfh \
-	rv64ifd-lp64d--c,zfh,v,cv,vzfh \
-	rv64imfd-lp64d--c,zfh,v,cv,vzfh \
-	rv64iafd-lp64d-rv64imafd,rv64iafdc-zfh,v,vzfh \
-	rv64imafdc-lp64d--zfh,v,vzfh
+	rv64if-lp64f--d*c*v*zfh \
+	rv64iaf-lp64f--d*c*v*zfh \
+	rv64imf-lp64f--d*v*zfh \
+	rv64imaf-lp64f-rv64imafd-v*zfh \
+	rv64imfc-lp64f--d*v*zfh \
+	rv64imafc-lp64f-rv64imafdc-v*zfh \
+	rv64ifd-lp64d--c*v*zfh \
+	rv64imfd-lp64d--c*v*zfh \
+	rv64iafd-lp64d-rv64imafd,rv64iafdc-v*zfh \
+	rv64imafdc-lp64d--v*zfh
 
 CFLAGS_FOR_TARGET := $(CFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
 CXXFLAGS_FOR_TARGET := $(CXXFLAGS_FOR_TARGET_EXTRA) -mcmodel=$(WITH_CMODEL)
