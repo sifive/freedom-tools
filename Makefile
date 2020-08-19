@@ -125,7 +125,7 @@ RGBU_VERSION ?= 2.34.0-2020.08.0-rvv-1p0-asap
 ROCD_VERSION ?= 0.10.0-2020.08.1-rvv-1p0-asap
 RQEMU_VERSION ?= 5.0.50-2020.08.0-rvv-1p0-asap
 XC3SP_VERSION ?= 0.1.2-2020.04.0
-TDC_VERSION ?= 0.9.2-2020.08.0-simtrace
+TDC_VERSION ?= 0.9.2-2020.08.3-simtrace
 SDKU_VERSION ?= 0.1.0-2020.08.0-rvv-1p0-asap
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
