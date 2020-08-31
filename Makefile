@@ -1575,7 +1575,8 @@ $(OBJDIR)/%/build/sdk-utilities/freedom-elf2hex/stamp: \
 	$(MAKE) -C $(dir $@) -j1 install INSTALL_PATH=$(abspath $($@_INSTALL)) $($($@_TARGET)-fe2h-configure) &>$(dir $@)/make-install.log
 	date > $@
 
-$(OBJDIR)/%/build/sdk-utilities/riscv-isa-sim/stamp:
+$(OBJDIR)/%/build/sdk-utilities/riscv-isa-sim/stamp: \
+		$(OBJDIR)/%/build/sdk-utilities/stamp
 	$(eval $@_TARGET := $(patsubst $(OBJDIR)/%/build/sdk-utilities/riscv-isa-sim/stamp,%,$@))
 	$(eval $@_INSTALL := $(patsubst %/build/sdk-utilities/riscv-isa-sim/stamp,%/install/sdk-utilities-$(SDKU_VERSION)-$($@_TARGET),$@))
 	$(MAKE) -C $(dir $@) -j1 install \
