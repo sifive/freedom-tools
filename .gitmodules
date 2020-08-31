@@ -34,3 +34,6 @@
 [submodule "src/riscv-isa-sim"]
 	path = src/riscv-isa-sim
 	url = git@github.com:sifive/riscv-isa-sim.git
+[submodule "src/riscv-qemu"]
+	path = src/riscv-qemu
+	url = git@github.com:sifive/qemu.git
