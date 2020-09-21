@@ -125,7 +125,7 @@ RGBU_VERSION ?= 2.35.0-2020.08.2
 ROCD_VERSION ?= 0.10.0-2020.08.1
 RQEMU_VERSION ?= 5.1.0-2020.08.1
 XC3SP_VERSION ?= 0.1.2-2020.04.0
-TDC_VERSION ?= 0.9.2-2020.08.2
+TDC_VERSION ?= 0.9.2-2020.08.5-CA
 SDKU_VERSION ?= 1.0.0-2020.08.1
 
 # The toolchain build needs the tools in the PATH, and the windows build uses the ubuntu (native)
