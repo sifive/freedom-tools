@@ -1,5 +1,5 @@
 
-FREEDOM_CUSTOM_GITURL := https://github.com/sifive/freedom-spike-dasm.git
+FREEDOM_CUSTOM_GITURL := https://github.com/sifive/freedom-sdk-utilities.git
 FREEDOM_CUSTOM_COMMIT := 2ef2c24fe30454682b927be13d6da7c48a824f15
 
 ifneq ($(CUSTOM_GITURL),)

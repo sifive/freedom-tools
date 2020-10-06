@@ -41,6 +41,7 @@ help:
 	@echo "   binutils-metal"
 	@echo "   gcc-metal"
 	@echo "   gdb-metal"
+	@echo "   llvm-linux"
 	@echo "   qemu"
 	@echo "   sdk-utilities"
 	@echo "   openocd"
@@ -61,6 +62,7 @@ include modules/freedom-binutils-metal.mk
 include modules/freedom-gcc-metal.mk
 include modules/freedom-gdb-metal.mk
 include modules/freedom-qemu.mk
+include modules/freedom-llvm-linux.mk
 include modules/freedom-sdk-utilities.mk
 include modules/freedom-openocd.mk
 include modules/freedom-trace-decoder.mk
