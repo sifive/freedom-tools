@@ -7,15 +7,16 @@ contains the scripts we use to build these tools.
 
 ### The packages:
 
+* https://github.com/sifive/freedom-toolchain-metal
 * https://github.com/sifive/freedom-binutils-metal
 * https://github.com/sifive/freedom-gcc-metal
 * https://github.com/sifive/freedom-gdb-metal
 * https://github.com/sifive/freedom-openocd
-* https://github.com/sifive/freedom-qemu-target
-* https://github.com/sifive/freedom-spike-dasm
+* https://github.com/sifive/freedom-qemu
+* https://github.com/sifive/freedom-sdk-utilities
 * https://github.com/sifive/freedom-trace-decoder
 * https://github.com/sifive/freedom-xc3sprog
-* https://github.com/sifive/freedom-qemu-host
+* https://github.com/sifive/freedom-devtool-machine
 * https://github.com/sifive/freedom-devtool-image
 
 All the packages has a uniquely named root folder, making it easy to untar/unzip'ing
