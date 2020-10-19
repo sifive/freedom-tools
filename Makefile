@@ -369,8 +369,8 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.zip: \
 $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.zip: \
 		$(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.zip,%,$@))
-	mkdir -p $(dir $@)
-	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-gnu-toolchain expat
+#	mkdir -p $(dir $@)
+#	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-gnu-toolchain expat
 
 $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp
@@ -381,8 +381,8 @@ $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.tar.gz: \
 $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv64-unknown-elf-gcc-$(RGT_VERSION)-%.src.tar.gz,%,$@))
-	mkdir -p $(dir $@)
-	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-gnu-toolchain expat | gzip > $(abspath $@)
+#	mkdir -p $(dir $@)
+#	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-gnu-toolchain expat | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/riscv-gnu-toolchain/install.stamp: \
 		$(OBJDIR)/%/build/riscv-gnu-toolchain/build-gcc-newlib-stage2/stamp \
@@ -713,8 +713,8 @@ $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.zip: \
 $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.src.zip: \
 		$(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.src.zip,%,$@))
-	mkdir -p $(dir $@)
-	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-gnu-gdb-only expat-gdb
+#	mkdir -p $(dir $@)
+#	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-gnu-gdb-only expat-gdb
 
 $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp
@@ -725,8 +725,8 @@ $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.tar.gz: \
 $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.src.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv64-unknown-elf-gdb-$(RGDBP_VERSION)-%.src.tar.gz,%,$@))
-	mkdir -p $(dir $@)
-	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-gnu-gdb-only expat-gdb | gzip > $(abspath $@)
+#	mkdir -p $(dir $@)
+#	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-gnu-gdb-only expat-gdb | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/riscv-gnu-gdb-only/install.stamp: \
 		$(OBJDIR)/%/build/riscv-gnu-gdb-only/build-gdb-py-newlib/stamp
@@ -849,8 +849,8 @@ $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.src.zip: \
 		$(OBJDIR)/%/stamps/riscv-openocd/install.stamp \
 		$(OBJDIR)/%/stamps/riscv-openocd/libs.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.src.zip,%,$@))
-	mkdir -p $(dir $@)
-	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-openocd
+#	mkdir -p $(dir $@)
+#	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-openocd
 
 $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-openocd/install.stamp
@@ -861,8 +861,8 @@ $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.tar.gz: \
 $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.src.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-openocd/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-openocd-$(ROCD_VERSION)-%.src.tar.gz,%,$@))
-	mkdir -p $(dir $@)
-	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-openocd | gzip > $(abspath $@)
+#	mkdir -p $(dir $@)
+#	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-openocd | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/riscv-openocd/install.stamp: \
 		$(OBJDIR)/%/build/riscv-openocd/riscv-openocd/stamp
@@ -979,8 +979,8 @@ $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.src.zip: \
 		$(OBJDIR)/%/stamps/riscv-qemu/install.stamp \
 		$(OBJDIR)/%/stamps/riscv-qemu/libs.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.src.zip,%,$@))
-	mkdir -p $(dir $@)
-	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-qemu
+#	mkdir -p $(dir $@)
+#	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) riscv-qemu
 
 $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-qemu/install.stamp
@@ -991,8 +991,8 @@ $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.tar.gz: \
 $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.src.tar.gz: \
 		$(OBJDIR)/%/stamps/riscv-qemu/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/riscv-qemu-$(RQEMU_VERSION)-%.src.tar.gz,%,$@))
-	mkdir -p $(dir $@)
-	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-qemu | gzip > $(abspath $@)
+#	mkdir -p $(dir $@)
+#	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c riscv-qemu | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/riscv-qemu/install.stamp: \
 		$(OBJDIR)/%/build/riscv-qemu/riscv-qemu/stamp
@@ -1233,8 +1233,8 @@ $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-%.src.zip: \
 		$(OBJDIR)/%/stamps/xc3sprog/install.stamp \
 		$(OBJDIR)/%/stamps/xc3sprog/libs.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-%.src.zip,%,$@))
-	mkdir -p $(dir $@)
-	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) xc3sprog
+#	mkdir -p $(dir $@)
+#	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) xc3sprog
 
 $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-%.tar.gz: \
 		$(OBJDIR)/%/stamps/xc3sprog/install.stamp
@@ -1245,8 +1245,8 @@ $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-%.tar.gz: \
 $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-%.src.tar.gz: \
 		$(OBJDIR)/%/stamps/xc3sprog/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/xc3sprog-$(XC3SP_VERSION)-%.src.tar.gz,%,$@))
-	mkdir -p $(dir $@)
-	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c xc3sprog | gzip > $(abspath $@)
+#	mkdir -p $(dir $@)
+#	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c xc3sprog | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/xc3sprog/install.stamp: \
 		$(OBJDIR)/%/build/xc3sprog/xc3sprog/stamp
@@ -1384,8 +1384,8 @@ $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.src.zip: \
 		$(OBJDIR)/%/stamps/trace-decoder/install.stamp \
 		$(OBJDIR)/%/stamps/trace-decoder/libs.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.src.zip,%,$@))
-	mkdir -p $(dir $@)
-	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) trace-decoder
+#	mkdir -p $(dir $@)
+#	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) trace-decoder
 
 $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.tar.gz: \
 		$(OBJDIR)/%/stamps/trace-decoder/install.stamp
@@ -1396,8 +1396,8 @@ $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.tar.gz: \
 $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.src.tar.gz: \
 		$(OBJDIR)/%/stamps/trace-decoder/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/trace-decoder-$(TDC_VERSION)-%.src.tar.gz,%,$@))
-	mkdir -p $(dir $@)
-	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c trace-decoder | gzip > $(abspath $@)
+#	mkdir -p $(dir $@)
+#	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c trace-decoder | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/trace-decoder/install.stamp: \
 		$(OBJDIR)/%/build/trace-decoder/trace-decoder/stamp
@@ -1449,8 +1449,8 @@ $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.zip: \
 		$(OBJDIR)/%/stamps/sdk-utilities/install.stamp \
 		$(OBJDIR)/%/stamps/sdk-utilities/libs.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.zip,%,$@))
-	mkdir -p $(dir $@)
-	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) sdk-utilities
+#	mkdir -p $(dir $@)
+#	cd $(OBJDIR)/$($@_TARGET)/build; zip -rq $(abspath $@) sdk-utilities
 
 $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.tar.gz: \
 		$(OBJDIR)/%/stamps/sdk-utilities/install.stamp
@@ -1461,8 +1461,8 @@ $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.tar.gz: \
 $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.tar.gz: \
 		$(OBJDIR)/%/stamps/sdk-utilities/install.stamp
 	$(eval $@_TARGET := $(patsubst $(BINDIR)/sdk-utilities-$(SDKU_VERSION)-%.src.tar.gz,%,$@))
-	mkdir -p $(dir $@)
-	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c sdk-utilities | gzip > $(abspath $@)
+#	mkdir -p $(dir $@)
+#	$(TAR) --dereference --hard-dereference -C $(OBJDIR)/$($@_TARGET)/build -c sdk-utilities | gzip > $(abspath $@)
 
 $(OBJDIR)/%/stamps/sdk-utilities/install.stamp: \
 		$(OBJDIR)/%/build/sdk-utilities/dtc/stamp \
