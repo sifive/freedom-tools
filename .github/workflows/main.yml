@@ -7,13 +7,13 @@ on:
     branches: [ v2004-toolchain-only-package ]
 
 jobs:
-  build_bare_linux_mac:
+  build_bare_linux_windows:
     name: baremetal for ${{ matrix.os }} 
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
 #         os: [ubuntu-latest]
-        os: [ubuntu-16.04, macOS-latest]
+        os: [ubuntu-16.04]
     env: 
       CC: gcc-8
       CXX: g++-8
@@ -27,11 +27,6 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
           sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64
-    - name: Install Dependencies on macOS
-      if: startsWith(matrix.os, 'macOS')
-      run: |
-          brew update
-          brew install cmake gawk gnu-sed gnu-tar gmp mpfr libmpc isl zlib expat texinfo libtool pkg-config
     - name: Build Toolchain
       run: |
         make toolchain
