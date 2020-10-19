@@ -27,6 +27,7 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
           sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64 mingw-w64-tools texlive zip python-dev gettext libglib2.0-dev libpixman-1-dev swig ninja-build python3
+          pip install --upgrade pip
           sudo pip3 install meson
     - name: Build Toolchain
       run: |
