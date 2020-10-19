@@ -30,3 +30,17 @@ jobs:
     - name: Build Toolchain
       run: |
         make toolchain
+    - name: Upload built linux toolchain artifact
+      uses: actions/upload-artifact@v2
+      with:
+        # Artifact name
+        name: riscv64-unknown-elf-gcc-8.3.0-2020.04.1-x86_64-linux-ubuntu14
+        # A file, directory or wildcard pattern that describes what to upload
+        path: riscv64-unknown-elf-gcc-8.3.0-2020.04.1-x86_64-linux-ubuntu14.tar.gz
+    - name: Upload built windows toolchain artifact
+      uses: actions/upload-artifact@v2
+      with:
+        # Artifact name
+        name: riscv64-unknown-elf-gcc-8.3.0-2020.04.1-x86_64-w64-mingw32
+        # A file, directory or wildcard pattern that describes what to upload
+        path: riscv64-unknown-elf-gcc-8.3.0-2020.04.1-x86_64-w64-mingw32.tar.gz
