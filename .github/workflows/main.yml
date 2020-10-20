@@ -12,8 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-#         os: [ubuntu-latest]
-        os: [ubuntu-16.04]
+        os: [ubuntu-latest]
     env: 
       CC: gcc-8
       CXX: g++-8
