@@ -16,11 +16,12 @@ flushup: all
 # requires bash
 SHELL = /bin/bash
 
-POSTFIXPATH ?=
-PREFIXPATH ?=
+POSTFIXPATH ?= ./
+SUFFIXPATH ?= ./
+PREFIXPATH ?= ./
 BINDIR := $(POSTFIXPATH)bin
 OBJDIR := $(POSTFIXPATH)obj
-SRCDIR := $(PREFIXPATH)src
+SRCDIR := $(SUFFIXPATH)src
 SCRIPTSDIR := $(PREFIXPATH)scripts
 PATCHESDIR := $(PREFIXPATH)patches
 
