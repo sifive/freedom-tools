@@ -46,8 +46,6 @@ help:
 	@echo "   openocd"
 	@echo "   trace-decoder"
 	@echo "   xc3sprog"
-	@echo "   devtool-machine"
-	@echo "   devtool-image"
 	@echo "   custom"
 	@echo "     Requires that CUSTOM_GITURL is set."
 	@echo ""
@@ -65,5 +63,3 @@ include modules/freedom-sdk-utilities.mk
 include modules/freedom-openocd.mk
 include modules/freedom-trace-decoder.mk
 include modules/freedom-xc3sprog.mk
-include modules/freedom-devtool-machine.mk
-include modules/freedom-devtool-image.mk
