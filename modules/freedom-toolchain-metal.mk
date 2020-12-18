@@ -13,9 +13,9 @@ SRCPATH_FREEDOM_TOOLCHAIN_METAL := $(SRCDIR)/$(SRCNAME_FREEDOM_TOOLCHAIN_METAL)
 toolchain-metal: toolchain-metal-package
 
 .PHONY: toolchain toolchain-package toolchain-regress
-toolchain-package: toolchain-package
-toolchain-regress: toolchain-regress
-toolchain: toolchain
+toolchain-package: toolchain-metal-package
+toolchain-regress: toolchain-metal-regress
+toolchain: toolchain-metal
 
 $(SRCPATH_FREEDOM_TOOLCHAIN_METAL).$(FREEDOM_TOOLCHAIN_METAL_COMMIT):
 	mkdir -p $(dir $@)
