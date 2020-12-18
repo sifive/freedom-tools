@@ -54,10 +54,10 @@ help:
 	@echo ""
 
 # Include Makefiles for all modules (alphabetically)
-include modules/freedom-toolchain-metal.mk
 include modules/freedom-binutils-metal.mk
 include modules/freedom-gcc-metal.mk
 include modules/freedom-gdb-metal.mk
+include modules/freedom-toolchain-metal.mk
 include modules/freedom-qemu.mk
 include modules/freedom-sdk-utilities.mk
 include modules/freedom-openocd.mk
