@@ -16,8 +16,7 @@ $(SRCPATH_FREEDOM_QEMU).$(FREEDOM_QEMU_COMMIT):
 	mkdir -p $(dir $@)
 	rm -rf $(SRCPATH_FREEDOM_QEMU)
 	rm -rf $(SRCPATH_FREEDOM_QEMU).*
-	git clone $(FREEDOM_QEMU_GITURL) $(SRCPATH_FREEDOM_QEMU)
-	cd $(SRCPATH_FREEDOM_QEMU) && git checkout --detach $(FREEDOM_QEMU_COMMIT)
+	git clone $(FREEDOM_QEMU_GITURL) $(SRCPATH_FREEDOM_QEMU) --single-branch -b $(FREEDOM_QEMU_COMMIT)
 	cd $(SRCPATH_FREEDOM_QEMU) && git submodule update --init --recursive
 	date > $@
 
