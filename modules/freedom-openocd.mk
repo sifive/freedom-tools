@@ -16,8 +16,7 @@ $(SRCPATH_FREEDOM_OPENOCD).$(FREEDOM_OPENOCD_COMMIT):
 	mkdir -p $(dir $@)
 	rm -rf $(SRCPATH_FREEDOM_OPENOCD)
 	rm -rf $(SRCPATH_FREEDOM_OPENOCD).*
-	git clone $(FREEDOM_OPENOCD_GITURL) $(SRCPATH_FREEDOM_OPENOCD)
-	cd $(SRCPATH_FREEDOM_OPENOCD) && git checkout --detach $(FREEDOM_OPENOCD_COMMIT)
+	git clone $(FREEDOM_OPENOCD_GITURL) $(SRCPATH_FREEDOM_OPENOCD) --single-branch -b $(FREEDOM_OPENOCD_COMMIT)
 	cd $(SRCPATH_FREEDOM_OPENOCD) && git submodule update --init --recursive
 	date > $@
 
