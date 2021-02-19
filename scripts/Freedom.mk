@@ -16,14 +16,12 @@ flushup: all
 # requires bash
 SHELL = /bin/bash
 
-POSTFIXPATH ?= ./
-SUFFIXPATH ?= ./
-PREFIXPATH ?= ./
-BINDIR := $(POSTFIXPATH)bin
-OBJDIR := $(POSTFIXPATH)obj
-SRCDIR := $(SUFFIXPATH)src
-SCRIPTSDIR := $(PREFIXPATH)scripts
-PATCHESDIR := $(PREFIXPATH)patches
+BINDIR_PREFIX ?= ./
+OBJDIR_PREFIX ?= ./
+SRCDIR_PREFIX ?= ./
+BINDIR := $(BINDIR_PREFIX)bin
+OBJDIR := $(OBJDIR_PREFIX)obj
+SRCDIR := $(SRCDIR_PREFIX)src
 
 UBUNTU64 ?= x86_64-linux-ubuntu14
 REDHAT ?= x86_64-linux-centos6

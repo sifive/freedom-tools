@@ -46,14 +46,12 @@ help:
 	@echo "   openocd"
 	@echo "   trace-decoder"
 	@echo "   xc3sprog"
-	@echo "   custom"
-	@echo "     Requires that CUSTOM_GITURL is set."
 	@echo ""
-	@echo " CUSTOM_COMMIT can be set for a package to"
+	@echo " TARGET_BRANCH can be set for a package to"
 	@echo " override the one in freedom-*.mk files."
 	@echo ""
 
-# Include Makefiles for all modules (alphabetically)
+# Include Makefiles for all modules
 include modules/freedom-binutils-metal.mk
 include modules/freedom-gcc-metal.mk
 include modules/freedom-gdb-metal.mk
