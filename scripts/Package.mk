@@ -1,38 +1,147 @@
 
-FREEDOM_CUSTOM_GITURL := https://github.com/sifive/freedom-sdk-utilities.git
-FREEDOM_CUSTOM_BRANCH := main
-FREEDOM_CUSTOM_MODULE := freedom-custom
+# The package build needs the tools in the PATH, and the windows build might use the ubuntu (native)
+PATH := $(abspath $(OBJ_NATIVE)/install/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE)/bin):$(PATH)
+export PATH
 
-ifneq ($(TARGET_GITURL),)
-FREEDOM_CUSTOM_GITURL := $(TARGET_GITURL)
-endif
-ifneq ($(TARGET_BRANCH),)
-FREEDOM_CUSTOM_BRANCH := $(TARGET_BRANCH)
-endif
+# The actual output of this repository is a set of tarballs.
+.PHONY: win64-package
+win64-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).zip
+win64-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).tar.gz
+win64-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).log.tar.gz
+win64-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).cfg.tar.gz
+win64-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).properties
+.PHONY: ubuntu64-package
+ubuntu64-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(UBUNTU64).tar.gz
+ubuntu64-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(UBUNTU64).log.tar.gz
+ubuntu64-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(UBUNTU64).cfg.tar.gz
+ubuntu64-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(UBUNTU64).properties
+.PHONY: redhat-package
+redhat-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(REDHAT).tar.gz
+redhat-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(REDHAT).log.tar.gz
+redhat-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(REDHAT).cfg.tar.gz
+redhat-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(REDHAT).properties
+.PHONY: darwin-package
+darwin-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(DARWIN).tar.gz
+darwin-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(DARWIN).log.tar.gz
+darwin-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(DARWIN).cfg.tar.gz
+darwin-package: $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(DARWIN).properties
 
-.PHONY: custom custom-package custom-regress custom-cleanup custom-flushup
-custom: custom-package
+# There's enough % rules that make starts blowing intermediate files away.
+.SECONDARY:
 
-$(FREEDOM_CUSTOM_MODULE).$(FREEDOM_CUSTOM_BRANCH):
+$(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).zip: \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/install.stamp \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/libs.stamp
 	mkdir -p $(dir $@)
-	rm -rf $(FREEDOM_CUSTOM_MODULE)
-	rm -rf $(FREEDOM_CUSTOM_MODULE).*
-	git clone $(FREEDOM_CUSTOM_GITURL) $(FREEDOM_CUSTOM_MODULE) --single-branch -b $(FREEDOM_CUSTOM_BRANCH)
-	cd $(FREEDOM_CUSTOM_MODULE) && git submodule update --init --recursive
+	cd $(OBJDIR)/$(WIN64)/install; zip -rq $(abspath $@) $(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64)
+
+$(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).tar.gz: \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/install.stamp \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/libs.stamp
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$(WIN64)/install; $(TAR) --dereference --hard-dereference -c $(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64) | gzip > $(abspath $@)
+
+$(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).log.tar.gz: \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/install.stamp \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/libs.stamp
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$(WIN64)/buildlog/$(PACKAGE_HEADING); $(TAR) --dereference --hard-dereference -c * | gzip > $(abspath $@)
+
+$(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).cfg.tar.gz: \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/install.stamp \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/libs.stamp
+	mkdir -p $(dir $@)
+	cd $(abspath ../../); $(TAR) --dereference --hard-dereference --exclude bin --exclude obj -c * | gzip > $(abspath $@)
+
+$(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).properties: \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/install.stamp \
+		$(OBJDIR)/$(WIN64)/build/$(PACKAGE_HEADING)/libs.stamp
+	mkdir -p $(dir $@)
+	cp $(OBJDIR)/$(WIN64)/install/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).properties $(abspath $@)
+
+$(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).tar.gz: \
+		$(OBJDIR)/$(NATIVE)/build/$(PACKAGE_HEADING)/install.stamp
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$(NATIVE)/install; $(TAR) --dereference --hard-dereference -c $(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE) | gzip > $(abspath $@)
+
+$(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).log.tar.gz: \
+		$(OBJDIR)/$(NATIVE)/build/$(PACKAGE_HEADING)/install.stamp
+	mkdir -p $(dir $@)
+	cd $(OBJDIR)/$(NATIVE)/buildlog/$(PACKAGE_HEADING); $(TAR) --dereference --hard-dereference -c * | gzip > $(abspath $@)
+
+$(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).cfg.tar.gz: \
+		$(OBJDIR)/$(NATIVE)/build/$(PACKAGE_HEADING)/install.stamp
+	mkdir -p $(dir $@)
+	cd $(abspath ../../); $(TAR) --dereference --hard-dereference --exclude bin --exclude obj -c * | gzip > $(abspath $@)
+
+$(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).properties: \
+		$(OBJDIR)/$(NATIVE)/build/$(PACKAGE_HEADING)/install.stamp
+	mkdir -p $(dir $@)
+	cp $(OBJDIR)/$(NATIVE)/install/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).properties $(abspath $@)
+
+# Installs native package.
+PACKAGE_TARBALL = $(wildcard $(BINDIR)/$(PACKAGE_HEADING)-*-$(NATIVE).tar.gz)
+ifneq ($(PACKAGE_TARBALL),)
+PACKAGE_TARNAME = $(basename $(basename $(notdir $(PACKAGE_TARBALL))))
+
+$(OBJDIR)/$(NATIVE)/test/$(PACKAGE_HEADING)/launch.stamp: \
+		$(PACKAGE_TARBALL)
+	mkdir -p $(dir $@)
+	rm -rf $(OBJDIR)/$(NATIVE)/launch/$(PACKAGE_TARNAME)
+	mkdir -p $(OBJDIR)/$(NATIVE)/launch
+	$(TAR) -xz -C $(OBJDIR)/$(NATIVE)/launch -f $(PACKAGE_TARBALL)
 	date > $@
+else
+$(OBJDIR)/$(NATIVE)/test/$(PACKAGE_HEADING)/launch.stamp:
+	$(error No $(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).tar.gz tarball available for testing!)
+endif
 
-custom-package: \
-		$(FREEDOM_CUSTOM_MODULE).$(FREEDOM_CUSTOM_BRANCH)
-	$(MAKE) -C $(FREEDOM_CUSTOM_MODULE) package POSTFIXPATH=$(abspath $(POSTFIXPATH))/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
+.PHONY: native-regress
+native-regress: $(OBJDIR)/$(NATIVE)/test/$(PACKAGE_HEADING)/test.stamp
 
-custom-regress: \
-		$(FREEDOM_CUSTOM_MODULE).$(FREEDOM_CUSTOM_BRANCH)
-	$(MAKE) -C $(FREEDOM_CUSTOM_MODULE) regress POSTFIXPATH=$(abspath $(POSTFIXPATH))/ EXTRA_OPTION=$(EXTRA_OPTION) EXTRA_SUFFIX=$(EXTRA_SUFFIX)
+.PHONY: cleanup native-cleanup cross-cleanup
+cleanup: native-cleanup cross-cleanup
 
-custom-cleanup:
-	$(MAKE) -C $(FREEDOM_CUSTOM_MODULE) cleanup POSTFIXPATH=$(abspath $(POSTFIXPATH))/
-	rm -rf $(FREEDOM_CUSTOM_MODULE).*
-	rm -rf $(FREEDOM_CUSTOM_MODULE)
+native-cleanup:
+	rm -rf $(OBJ_NATIVE)/test/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_NATIVE)/build/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_NATIVE)/launch/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE)
+	rm -rf $(OBJ_NATIVE)/install/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE)
+	rm -rf $(OBJ_NATIVE)/testlog/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_NATIVE)/buildlog/$(PACKAGE_HEADING)
+	rm -rf $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).tar.gz
+	rm -rf $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).log.tar.gz
+	rm -rf $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).cfg.tar.gz
+	rm -rf $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE).properties
 
-custom-flushup:
-	$(MAKE) -C $(FREEDOM_CUSTOM_MODULE) flushup POSTFIXPATH=$(abspath $(POSTFIXPATH))/
+cross-cleanup:
+	rm -rf $(OBJ_WIN64)/test/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_WIN64)/build/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_WIN64)/launch/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64)
+	rm -rf $(OBJ_WIN64)/install/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64)
+	rm -rf $(OBJ_WIN64)/testlog/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_WIN64)/buildlog/$(PACKAGE_HEADING)
+	rm -rf $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).zip
+	rm -rf $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).tar.gz
+	rm -rf $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).log.tar.gz
+	rm -rf $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).cfg.tar.gz
+	rm -rf $(BINDIR)/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64).properties
+
+.PHONY: flushup native-flushup cross-flushup
+flushup: native-flushup cross-flushup
+
+native-flushup:
+	rm -rf $(OBJ_NATIVE)/test/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_NATIVE)/build/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_NATIVE)/launch/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE)
+	rm -rf $(OBJ_NATIVE)/install/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(NATIVE)
+	rm -rf $(OBJ_NATIVE)/testlog/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_NATIVE)/buildlog/$(PACKAGE_HEADING)
+
+cross-flushup:
+	rm -rf $(OBJ_WIN64)/test/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_WIN64)/build/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_WIN64)/launch/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64)
+	rm -rf $(OBJ_WIN64)/install/$(PACKAGE_HEADING)-$(PACKAGE_VERSION)-$(WIN64)
+	rm -rf $(OBJ_WIN64)/testlog/$(PACKAGE_HEADING)
+	rm -rf $(OBJ_WIN64)/buildlog/$(PACKAGE_HEADING)

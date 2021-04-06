@@ -1,21 +1,35 @@
-SiFive Freedom RISC-V Tools
+SiFive Freedom RISC-V Tools for Embedded Development
 --------
 
-At SiFive we've been distributing binary release packages of the
-tools that target our Freedom RISC-V platforms. This repository
-contains the scripts we use to build these tools.
+At SiFive we've been distributing binary release packages of the embedded development
+tools that target our Freedom RISC-V platforms.  This repository contains the scripts
+we use to build these tools.
 
-### The packages:
+### Packages and their contents
 
-* https://github.com/sifive/freedom-toolchain-metal
-* https://github.com/sifive/freedom-binutils-metal
-* https://github.com/sifive/freedom-gcc-metal
-* https://github.com/sifive/freedom-gdb-metal
-* https://github.com/sifive/freedom-qemu
-* https://github.com/sifive/freedom-sdk-utilities
-* https://github.com/sifive/freedom-openocd
-* https://github.com/sifive/freedom-trace-decoder
-* https://github.com/sifive/freedom-xc3sprog
+* RISC-V GNU Newlib Toolchain (`riscv64-unknown-elf-*`)
+    * Binutils
+    * GCC
+    * GDB
+    * Newlib (and nano)
+    * LibExpat
+    * Python
+* RISC-V OpenOCD (`riscv-openocd-*`)
+    * OpenOCD
+    * LibUSB, LibUSB-Compat, LibFTDI
+* RISC-V QEMU (`riscv-qemu-*`)
+    * QEMU (riscv32-softmmu + riscv64-softmmu)
+    * ZLib, LibFFI, LibIConv, GetText, GLib, LibPNG, JPEG, PixMan
+* SDK Utilities (`sdk-utilities-*`)
+    * DTC (Device Tree Compiler)
+    * Freedom Elf2Hex
+    * Spike DASM (Disassembler)
+* Trace Decoder (`trace-decoder-*`)
+    * Trace Decoder
+    * SWIG, Binutils (bfd, opcodes, liberty, ZLib
+* XC3SPROG (`xc3sprog-*`)
+    * XC3SPROG
+    * LibUSB, LibUSB-Compat, LibFTDI, LibIConv
 
 All the packages has a uniquely named root folder, making it easy to untar/unzip'ing
 multiple versions next to each other.
@@ -39,6 +53,10 @@ On Ubuntu, executing the following command should suffice:
 
     $ sudo apt-get install cmake autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf patchutils bc zlib1g-dev libexpat-dev libtool pkg-config mingw-w64 mingw-w64-tools texlive zip python-dev gettext libglib2.0-dev libpixman-1-dev swig ninja-build python3
     $ sudo pip3 install meson
+
+On Ubuntu, for cross-building Windows packages you should use [Linuxbrew](https://docs.brew.sh/Homebrew-on-Linux) to install extra dependencies:
+
+    $ brew install mingw-w64
 
 On OS X, you can use [Homebrew](http://brew.sh) to install most of the dependencies and then you also need [MacTex](http://www.tug.org/mactex/):
 
